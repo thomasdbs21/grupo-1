@@ -34,7 +34,6 @@ Los siguientes componentes están aprobados para incrementos posteriores, pero n
 
 - TextFSM para analizar salidas de comandos `show`.
 - Netmiko para conexiones SSH de solo lectura.
-- FastAPI para exponer la API del sistema.
 - PostgreSQL para la persistencia de datos.
 - SQLAlchemy como ORM.
 - Alembic para gestionar migraciones de base de datos.
@@ -67,6 +66,18 @@ Los siguientes componentes están aprobados para incrementos posteriores, pero n
 - La carga utilizará `yaml.safe_load` y se limitará a archivos esperados dentro de los recursos del paquete.
 - `RuleMetadata` será inmutable y el registro rechazará campos inválidos, versiones vacías, severidades desconocidas, IDs duplicados o asociaciones inconsistentes.
 - Un `RuleRegistry` central mantendrá el orden determinista, permitirá consulta por ID y ejecutará únicamente reglas habilitadas.
+
+## Decisiones sobre la API local
+
+- FastAPI y Uvicorn implementan la API del Incremento 3 sin incorporar lógica técnica de reglas.
+- La API procesa archivos multipart en memoria, acepta `.cfg`, `.conf` y `.txt` y limita cada carga a 2 MiB.
+- Se acepta UTF-8 y UTF-8 con BOM; los binarios, archivos vacíos y codificaciones inválidas se rechazan.
+- Los nombres se sanitizan a su componente base y nunca se utilizan rutas proporcionadas por el cliente.
+- Las respuestas no incluyen rutas absolutas, configuraciones completas ni secretos sin redactar.
+- Cada análisis síncrono completado recibe un UUID y se guarda temporalmente en memoria.
+- El repositorio es seguro para concurrencia básica, conserva como máximo 100 análisis y elimina el más antiguo al superar el límite.
+- El almacenamiento se pierde al reiniciar y será reemplazado por PostgreSQL en el Incremento 6.
+- Solo existe el estado de ejecución `COMPLETED`; no se implementan tareas pendientes, workers ni colas.
 
 ## Decisiones sobre inteligencia artificial
 
@@ -104,7 +115,7 @@ Quedan expresamente fuera del primer incremento:
 Las siguientes decisiones deberán concretarse cuando se planifiquen los incrementos correspondientes:
 
 - El esquema físico definitivo de PostgreSQL y las relaciones entre evaluaciones, hallazgos y evidencias.
-- El contrato y versionado de la API FastAPI.
+- La evolución del contrato más allá de `/api/v1`.
 - La lista blanca definitiva de comandos permitidos mediante SSH.
 - El formato de plantillas TextFSM y la estrategia de normalización de comandos `show`.
 - El mecanismo de despliegue y operación en Ubuntu Server.

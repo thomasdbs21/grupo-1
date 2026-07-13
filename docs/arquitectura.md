@@ -57,10 +57,10 @@ RuleEvaluation                                    [PRIMER INCREMENTO]
             +---- estado FAIL -------------------> Finding
                                                        |
                                                        v
-Persistencia PostgreSQL                           [MVP]
+Repositorio temporal en memoria (máximo 100)      [INCREMENTO 3]
             |
             v
-API FastAPI                                       [MVP]
+API FastAPI local y síncrona                      [INCREMENTO 3]
             |
             v
 Interfaz Streamlit y reportes                     [MVP]
@@ -164,21 +164,23 @@ El YAML no contiene condiciones ni lógica de evaluación. La detección permane
 - **Relación:** consume `RuleEvaluation` y entrega resultados a salida, persistencia, API y reportes.
 - **Etapa:** primer incremento.
 
-### 4.12 Persistencia futura
+### 4.12 Repositorio temporal y persistencia futura
 
-- **Responsabilidad:** almacenar ejecuciones, dispositivos, evidencias, definiciones, evaluaciones y hallazgos.
-- **Entrada:** entidades de dominio validadas.
-- **Salida:** historial consultable en PostgreSQL mediante SQLAlchemy y Alembic.
-- **Relación:** sirve a la API y a la interfaz sin ser accedida directamente por las reglas.
-- **Etapa:** MVP, incremento futuro.
+- **Responsabilidad:** conservar temporalmente hasta 100 resultados asociados a UUID y eliminar el más antiguo al superar el límite.
+- **Entrada:** resultados sanitizados ya producidos por el analizador.
+- **Salida:** consultas por identificador durante la vida del proceso.
+- **Relación:** sirve a FastAPI sin ser accedido por las reglas; utiliza bloqueo para concurrencia básica y no escribe archivos.
+- **Etapa:** repositorio en memoria completado en el Incremento 3. PostgreSQL, SQLAlchemy y Alembic lo reemplazarán en el Incremento 6.
 
-### 4.13 FastAPI futura
+### 4.13 FastAPI local
 
-- **Responsabilidad:** exponer carga, análisis y consulta de resultados mediante una API.
-- **Entrada:** solicitudes validadas.
-- **Salida:** respuestas estructuradas y documentación OpenAPI.
-- **Relación:** coordina servicios de aplicación y persistencia; no contiene lógica de reglas.
-- **Etapa:** MVP, incremento futuro.
+- **Responsabilidad:** exponer salud, reglas habilitadas, carga, análisis síncrono y consulta de resultados.
+- **Entrada:** solicitudes validadas y archivos multipart `.cfg`, `.conf` o `.txt` de hasta 2 MiB.
+- **Salida:** respuestas tipadas sin rutas absolutas ni configuración completa y documentación OpenAPI.
+- **Relación:** usa los servicios existentes, el registro central y el repositorio temporal; no contiene lógica de reglas.
+- **Etapa:** completado en el Incremento 3.
+
+Los archivos se procesan en memoria como UTF-8 o UTF-8 con BOM. El nombre se reduce a su componente base, se rechazan binarios y no se escriben cargas en disco.
 
 ### 4.14 Streamlit futuro
 
@@ -305,6 +307,16 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - `RuleRegistry` central con orden determinista.
 - Ejecución exclusiva de reglas habilitadas.
 - Lógica técnica conservada en Python.
+
+### Incremento 3
+
+- FastAPI y Uvicorn para servicio local en `127.0.0.1`.
+- Análisis síncrono de cargas multipart en memoria.
+- Límite de 2 MiB y extensiones controladas.
+- Modelos API tipados mediante Pydantic.
+- Repositorio temporal concurrente de hasta 100 análisis.
+- Consulta de resultados, evaluaciones y hallazgos mediante UUID.
+- Errores estructurados y logging sin contenido sensible.
 
 ### MVP
 

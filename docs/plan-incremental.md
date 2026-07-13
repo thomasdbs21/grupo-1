@@ -101,14 +101,28 @@ Criterios de cierre cumplidos:
 
 ## 6. Incremento 3 — API FastAPI
 
+**Estado:** COMPLETADO.
+
 Incluye:
 
-- Carga de archivos.
-- Inicio de análisis.
-- Consulta de evaluaciones.
-- Consulta de `findings`.
-- Manejo estructurado de errores.
-- Documentación OpenAPI.
+- Estado de salud y consulta de reglas habilitadas.
+- Carga multipart de archivos `.cfg`, `.conf` y `.txt`.
+- Análisis síncrono en memoria con límite de 2 MiB.
+- Consulta por UUID del resultado, evaluaciones y `findings`.
+- Repositorio temporal concurrente de hasta 100 análisis.
+- Modelos de respuesta tipados con Pydantic.
+- Manejo estructurado de errores y logging seguro.
+- Documentación OpenAPI en `/docs` y `/redoc` para desarrollo local.
+- Compatibilidad completa con la CLI existente.
+
+Criterios de cierre cumplidos:
+
+- La API no escribe archivos subidos ni confía en rutas del cliente.
+- Las respuestas no contienen rutas absolutas ni configuraciones completas.
+- La configuración incorrecta produce tres hallazgos y la correcta ninguno.
+- La expulsión del análisis más antiguo al superar 100 está probada.
+- Las 33 pruebas anteriores continúan aprobadas.
+- Las 59 pruebas totales están aprobadas.
 
 ## 7. Incremento 4 — SSH de solo lectura
 
@@ -248,4 +262,4 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 ## 17. Próxima acción oficial
 
-La próxima acción oficial será implementar el Incremento 1 mediante Codex, comenzando por una planificación breve y sin implementar componentes futuros.
+La siguiente etapa planificada es el Incremento 4, pero no debe implementarse sin una solicitud específica y una planificación breve.

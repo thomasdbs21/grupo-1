@@ -43,6 +43,41 @@ python -m ios_auditor analyze samples/running_config_incorrecta.cfg --pretty
 
 Los errores se escriben en `stderr` y producen un código de salida distinto de cero.
 
+La CLI continúa disponible y utiliza el mismo analizador que la API.
+
+## API local con FastAPI
+
+El Incremento 3 expone el analizador mediante una API REST local y síncrona. Para iniciarla:
+
+```powershell
+python -m uvicorn ios_auditor.api.app:app --host 127.0.0.1 --port 8000
+```
+
+Se utiliza `127.0.0.1` para no publicar accidentalmente el servicio en toda la red. Durante el desarrollo local, FastAPI ofrece documentación interactiva en:
+
+- `http://127.0.0.1:8000/docs`
+- `http://127.0.0.1:8000/redoc`
+
+Endpoints disponibles:
+
+- `GET /health`: estado y versión del servicio.
+- `GET /api/v1/rules`: reglas habilitadas.
+- `POST /api/v1/analyses`: carga y análisis síncrono de un archivo.
+- `GET /api/v1/analyses/{analysis_id}`: resultado completo.
+- `GET /api/v1/analyses/{analysis_id}/evaluations`: evaluaciones.
+- `GET /api/v1/analyses/{analysis_id}/findings`: hallazgos.
+
+Ejemplo de carga desde PowerShell:
+
+```powershell
+curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" `
+  -F "file=@samples\running_config_incorrecta.cfg"
+```
+
+La API acepta `.cfg`, `.conf` y `.txt`, con un máximo de 2 MiB. Procesa UTF-8 y UTF-8 con BOM directamente en memoria: no confía en rutas del cliente, no escribe archivos subidos y no devuelve rutas absolutas ni la configuración completa.
+
+Los resultados se guardan temporalmente en memoria, con un máximo de 100 análisis. Al superar el límite se elimina el más antiguo. Los datos desaparecen al reiniciar el proceso; PostgreSQL reemplazará este repositorio en el Incremento 6.
+
 ## Ejecución de pruebas
 
 ```powershell
@@ -53,6 +88,7 @@ python -m pytest
 
 ```text
 src/ios_auditor/
+├── api/        # FastAPI, esquemas y repositorio temporal
 ├── cli.py
 ├── domain/     # modelos tipados e inmutables
 ├── parsers/    # parsing y normalización de running-config
@@ -82,10 +118,10 @@ Los archivos se cargan con `yaml.safe_load`, se validan contra campos obligatori
 - Solo analiza archivos locales `running-config` en UTF-8.
 - Implementa exactamente tres reglas piloto.
 - Los metadatos solo pueden modificarse editando los YAML antes de iniciar una ejecución.
-- No persiste resultados; los entrega en JSON.
+- La API conserva como máximo 100 resultados en memoria y no ofrece persistencia durable.
 - No analiza estado operacional ni comandos `show`.
 - La detección depende de la sintaxis soportada por Cisco IOS y `ciscoconfparse2`.
 
 ## Componentes futuros fuera de alcance
 
-SSH y Netmiko, TextFSM, FastAPI, PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes HTML/PDF e inteligencia artificial no forman parte de este incremento.
+SSH y Netmiko, TextFSM, PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes HTML/PDF e inteligencia artificial permanecen fuera de alcance.
