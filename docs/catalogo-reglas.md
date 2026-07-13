@@ -27,7 +27,9 @@ Cada regla deberá documentar, como mínimo:
 - **Excepciones:** casos aprobados en los que el control no corresponde.
 - **Estado de habilitación:** indica si la regla está activa para una ejecución.
 
-La lógica compleja residirá en Python; YAML almacenará metadatos declarativos.
+La lógica de evaluación reside exclusivamente en Python; YAML almacena metadatos declarativos. En el Incremento 2, los tres YAML oficiales se cargan de forma segura, se validan y se convierten en objetos `RuleMetadata` inmutables.
+
+El `RuleRegistry` asocia cada ID YAML con una única clase Python, rechaza duplicados e inconsistencias, conserva un orden oficial determinista y ejecuta solamente las habilitadas. El campo `enabled` controla la ejecución, pero no modifica la lógica técnica.
 
 ## 3. Estados posibles
 

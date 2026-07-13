@@ -44,6 +44,9 @@ Normalización                                     [PRIMER INCREMENTO]
 Contexto inmutable                                [PRIMER INCREMENTO]
             |
             v
+Carga YAML segura y RuleRegistry                  [INCREMENTO 2]
+            |
+            v
 Motor de reglas deterministas                     [PRIMER INCREMENTO]
             |
             v
@@ -129,11 +132,13 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 
 ### 4.8 Registro de reglas
 
-- **Responsabilidad:** identificar, versionar, habilitar y cargar reglas junto con sus metadatos.
-- **Entrada:** definiciones Python y metadatos YAML validados.
-- **Salida:** conjunto controlado de reglas ejecutables.
-- **Relación:** entrega reglas al motor sin concederles acceso a infraestructura.
-- **Etapa:** registro básico implícito en el primer incremento; formalización en el MVP.
+- **Responsabilidad:** identificar, versionar, habilitar y cargar reglas junto con sus metadatos declarativos.
+- **Entrada:** clases Python y exactamente los archivos YAML esperados, leídos mediante carga segura.
+- **Salida:** conjunto validado de reglas en un orden oficial determinista; el subconjunto habilitado alimenta al motor.
+- **Relación:** asocia cada clase con un `RuleMetadata` inmutable, rechaza duplicados e inconsistencias y entrega reglas al motor sin concederles acceso a infraestructura.
+- **Etapa:** completado en el Incremento 2.
+
+El YAML no contiene condiciones ni lógica de evaluación. La detección permanece exclusivamente en Python. El registro no descubre archivos arbitrarios: solo carga nombres previamente autorizados dentro de la carpeta de recursos.
 
 ### 4.9 Motor de reglas
 
@@ -290,6 +295,16 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Tres reglas piloto.
 - Salida JSON.
 - Pruebas con pytest.
+
+### Incremento 2
+
+- Tres archivos YAML oficiales y versionados.
+- Modelo `RuleMetadata` inmutable.
+- Carga segura mediante `yaml.safe_load`.
+- Validación de campos, versiones, severidades, IDs y duplicados.
+- `RuleRegistry` central con orden determinista.
+- Ejecución exclusiva de reglas habilitadas.
+- Lógica técnica conservada en Python.
 
 ### MVP
 

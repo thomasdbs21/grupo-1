@@ -56,7 +56,8 @@ src/ios_auditor/
 ├── cli.py
 ├── domain/     # modelos tipados e inmutables
 ├── parsers/    # parsing y normalización de running-config
-├── rules/      # tres reglas deterministas
+├── resources/  # metadatos YAML declarativos de las reglas
+├── rules/      # lógica determinista, carga segura y registro central
 └── services/   # carga, análisis y serialización
 ```
 
@@ -70,10 +71,17 @@ Las configuraciones de ejemplo están en `samples/` y las pruebas en `tests/`.
 
 Solo las evaluaciones `FAIL` generan hallazgos. Las evidencias sensibles se redactan antes de incluirse en JSON.
 
+## Registro y metadatos de reglas
+
+Cada regla piloto tiene un archivo YAML versionado dentro de `src/ios_auditor/resources/rules/`. Los YAML contienen únicamente metadatos declarativos, como identidad, severidad, fuentes, plataformas, riesgo, recomendación, referencias y estado de habilitación. La lógica de evaluación permanece exclusivamente en Python.
+
+Los archivos se cargan con `yaml.safe_load`, se validan contra campos obligatorios y se asocian con su clase Python mediante un `RuleRegistry` central. El registro rechaza IDs duplicados o inconsistentes, mantiene un orden determinista y ejecuta solamente reglas cuyo campo `enabled` sea `true`. No existe todavía una opción de CLI para alterar estos archivos.
+
 ## Limitaciones actuales
 
 - Solo analiza archivos locales `running-config` en UTF-8.
 - Implementa exactamente tres reglas piloto.
+- Los metadatos solo pueden modificarse editando los YAML antes de iniciar una ejecución.
 - No persiste resultados; los entrega en JSON.
 - No analiza estado operacional ni comandos `show`.
 - La detección depende de la sintaxis soportada por Cisco IOS y `ciscoconfparse2`.

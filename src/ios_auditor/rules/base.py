@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from ios_auditor.domain import AnalysisContext, RuleEvaluation
+from ios_auditor.domain import AnalysisContext, RuleEvaluation, RuleMetadata
 
 
 class Rule(Protocol):
-    rule_id: str
-    name: str
+    expected_id: str
+    metadata: RuleMetadata
 
     def evaluate(self, context: AnalysisContext) -> RuleEvaluation: ...

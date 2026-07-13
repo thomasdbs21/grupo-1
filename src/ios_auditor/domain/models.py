@@ -21,6 +21,24 @@ class RuleStatus(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
+class RuleMetadata:
+    id: str
+    version: str
+    name: str
+    category: str
+    description: str
+    default_severity: Severity
+    required_sources: tuple[str, ...]
+    applicable_platforms: tuple[str, ...]
+    risk: str
+    recommendation: str
+    references: tuple[str, ...]
+    false_positives: tuple[str, ...]
+    exceptions: tuple[str, ...]
+    enabled: bool
+
+
+@dataclass(frozen=True, slots=True)
 class Evidence:
     source: str
     sha256: str

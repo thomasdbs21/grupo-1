@@ -62,6 +62,11 @@ Los siguientes componentes están aprobados para incrementos posteriores, pero n
 - `findings` almacenará únicamente hallazgos derivados de evaluaciones con estado `FAIL`.
 - Las evidencias conservarán, como mínimo, su origen, fecha de recopilación, contenido original, contenido normalizado, fragmento relevante, hash de integridad e identificador de ejecución.
 - Cada hallazgo deberá estar vinculado con la regla determinista y la evidencia que justifican el resultado.
+- Los metadatos oficiales de cada regla se almacenarán en un YAML independiente y versionado.
+- Los YAML no contendrán condiciones ni lógica de detección; la evaluación permanecerá exclusivamente en Python.
+- La carga utilizará `yaml.safe_load` y se limitará a archivos esperados dentro de los recursos del paquete.
+- `RuleMetadata` será inmutable y el registro rechazará campos inválidos, versiones vacías, severidades desconocidas, IDs duplicados o asociaciones inconsistentes.
+- Un `RuleRegistry` central mantendrá el orden determinista, permitirá consulta por ID y ejecutará únicamente reglas habilitadas.
 
 ## Decisiones sobre inteligencia artificial
 

@@ -76,14 +76,28 @@ Criterios de aceptación:
 
 ## 5. Incremento 2 — Registro y metadatos de reglas
 
+**Estado:** COMPLETADO.
+
 Incluye:
 
-- Metadatos en YAML.
-- Carga controlada y validada de metadatos.
-- Registro de reglas.
+- Tres archivos de metadatos YAML, uno por regla piloto.
+- Carga segura, controlada y validada mediante `yaml.safe_load`.
+- Modelo `RuleMetadata` inmutable.
+- Registro central de reglas con consulta por ID y orden determinista.
 - Versionado de definiciones.
-- Activación o desactivación de reglas.
-- Validación de consistencia entre los metadatos YAML y la lógica Python.
+- Activación o desactivación mediante `enabled`.
+- Ejecución exclusiva de reglas habilitadas.
+- Validación de consistencia entre IDs YAML y clases Python.
+- Lógica de evaluación mantenida exclusivamente en Python.
+
+Criterios de cierre cumplidos:
+
+- Los tres YAML oficiales cargan correctamente.
+- Los campos obligatorios, versiones, severidades e IDs se validan.
+- Los duplicados y YAML inválidos se rechazan con errores comprensibles.
+- Una regla deshabilitada no produce evaluación ni hallazgo.
+- Las 19 pruebas anteriores conservan su comportamiento.
+- Las 33 pruebas totales están aprobadas.
 
 ## 6. Incremento 3 — API FastAPI
 

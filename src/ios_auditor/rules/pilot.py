@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import ClassVar
+
 from ios_auditor.domain import (
     AnalysisContext,
     Evidence,
     RuleEvaluation,
+    RuleMetadata,
     RuleStatus,
     Severity,
 )
@@ -27,11 +31,10 @@ def _evidence(
     )
 
 
+@dataclass(frozen=True, slots=True)
 class TelnetVtyRule:
-    rule_id = "IOS-ADM-001"
-    name = "Telnet permitido en líneas VTY"
-    severity = Severity.HIGH
-    recommendation = "Restringir el acceso remoto a SSH mediante 'transport input ssh'."
+    metadata: RuleMetadata
+    expected_id: ClassVar[str] = "IOS-ADM-001"
 
     def evaluate(self, context: AnalysisContext) -> RuleEvaluation:
         telnet_evidence: list[Evidence] = []
@@ -67,23 +70,20 @@ class TelnetVtyRule:
             evidence = ()
 
         return RuleEvaluation(
-            rule_id=self.rule_id,
-            rule_name=self.name,
+            rule_id=self.metadata.id,
+            rule_name=self.metadata.name,
             status=status,
-            severity=self.severity,
+            severity=self.metadata.default_severity,
             message=message,
-            recommendation=self.recommendation,
+            recommendation=self.metadata.recommendation,
             evidence=evidence,
         )
 
 
+@dataclass(frozen=True, slots=True)
 class HttpServerRule:
-    rule_id = "IOS-SRV-001"
-    name = "Servidor HTTP sin cifrado habilitado"
-    severity = Severity.MEDIUM
-    recommendation = (
-        "Deshabilitar HTTP si no es necesario y evaluar HTTPS cuando corresponda."
-    )
+    metadata: RuleMetadata
+    expected_id: ClassVar[str] = "IOS-SRV-001"
 
     def evaluate(self, context: AnalysisContext) -> RuleEvaluation:
         target = "ip http server"
@@ -94,25 +94,24 @@ class HttpServerRule:
             else ()
         )
         return RuleEvaluation(
-            rule_id=self.rule_id,
-            rule_name=self.name,
+            rule_id=self.metadata.id,
+            rule_name=self.metadata.name,
             status=RuleStatus.FAIL if exists else RuleStatus.PASS,
-            severity=self.severity,
+            severity=self.metadata.default_severity,
             message=(
                 "El servidor HTTP sin cifrado está habilitado."
                 if exists
                 else "El servidor HTTP sin cifrado no está habilitado."
             ),
-            recommendation=self.recommendation,
+            recommendation=self.metadata.recommendation,
             evidence=evidence,
         )
 
 
+@dataclass(frozen=True, slots=True)
 class EnablePasswordRule:
-    rule_id = "IOS-AUTH-001"
-    name = "Enable password sin enable secret"
-    severity = Severity.HIGH
-    recommendation = "Utilizar enable secret y retirar enable password."
+    metadata: RuleMetadata
+    expected_id: ClassVar[str] = "IOS-AUTH-001"
 
     def evaluate(self, context: AnalysisContext) -> RuleEvaluation:
         password_lines = tuple(
@@ -143,14 +142,11 @@ class EnablePasswordRule:
             evidence = ()
 
         return RuleEvaluation(
-            rule_id=self.rule_id,
-            rule_name=self.name,
+            rule_id=self.metadata.id,
+            rule_name=self.metadata.name,
             status=status,
-            severity=self.severity,
+            severity=self.metadata.default_severity,
             message=message,
-            recommendation=self.recommendation,
+            recommendation=self.metadata.recommendation,
             evidence=evidence,
         )
-
-
-PILOT_RULES = (TelnetVtyRule(), HttpServerRule(), EnablePasswordRule())

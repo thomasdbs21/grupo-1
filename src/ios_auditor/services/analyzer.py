@@ -10,7 +10,7 @@ from ios_auditor.domain import (
     RuleStatus,
 )
 from ios_auditor.parsers import parse_running_config
-from ios_auditor.rules import PILOT_RULES
+from ios_auditor.rules import RuleRegistry, get_default_registry
 from ios_auditor.rules.base import Rule
 
 
@@ -50,18 +50,24 @@ def _evaluate_rule(rule: Rule, context) -> RuleEvaluation:
         return rule.evaluate(context)
     except Exception as exc:
         return RuleEvaluation(
-            rule_id=rule.rule_id,
-            rule_name=rule.name,
+            rule_id=rule.metadata.id,
+            rule_name=rule.metadata.name,
             status=RuleStatus.ERROR,
-            severity=getattr(rule, "severity"),
+            severity=rule.metadata.default_severity,
             message=f"Error interno al evaluar la regla: {type(exc).__name__}",
-            recommendation=getattr(rule, "recommendation"),
+            recommendation=rule.metadata.recommendation,
         )
 
 
-def analyze_file(path_value: str | Path) -> AnalysisResult:
+def analyze_file(
+    path_value: str | Path, *, registry: RuleRegistry | None = None
+) -> AnalysisResult:
     context = load_context(path_value)
-    evaluations = tuple(_evaluate_rule(rule, context) for rule in PILOT_RULES)
+    active_registry = registry or get_default_registry()
+    evaluations = tuple(
+        _evaluate_rule(rule, context)
+        for rule in active_registry.list_rules(enabled_only=True)
+    )
     findings = tuple(
         Finding(
             rule_id=evaluation.rule_id,

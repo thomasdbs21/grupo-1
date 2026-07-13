@@ -1,3 +1,3 @@
-from ios_auditor.rules.pilot import PILOT_RULES
+from ios_auditor.rules.registry import RuleRegistry, get_default_registry
 
-__all__ = ["PILOT_RULES"]
+__all__ = ["RuleRegistry", "get_default_registry"]
