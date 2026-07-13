@@ -1,0 +1,43 @@
+# Entorno virtual
+.venv/
+
+# Python: cache y archivos temporales
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.Python
+
+# Configuracion local de Visual Studio Code
+.vscode/
+
+# Variables de entorno y secretos locales
+.env
+.env.*
+!.env.example
+
+# Pytest
+.pytest_cache/
+
+# Cobertura
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.temp
+~$*
+
+# Bases de datos SQLite locales
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
