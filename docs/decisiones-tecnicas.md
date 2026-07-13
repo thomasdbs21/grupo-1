@@ -13,14 +13,14 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 - VMware Workstation y GNS3 VM proporcionarán la virtualización del laboratorio.
 - Ubuntu Server será, en un incremento posterior, el servidor del asistente.
 - Python será el lenguaje principal del proyecto.
-- CiscoConfParse se utilizará para analizar archivos `running-config`.
+- `ciscoconfparse2` se utilizará para analizar archivos `running-config`; la clase importada continúa llamándose `CiscoConfParse`.
 - El sistema conservará una separación explícita entre recopilación, parsing, normalización, reglas, almacenamiento, API, interfaz e inteligencia artificial.
 - El sistema no realizará cambios automáticos sobre dispositivos Cisco IOS.
 
 ## Stack del MVP
 
 - Python como lenguaje principal.
-- CiscoConfParse para el parsing de configuraciones `running-config`.
+- `ciscoconfparse2`, mediante la clase `CiscoConfParse`, para el parsing de configuraciones `running-config`.
 - pytest para las pruebas automatizadas.
 - Reglas deterministas con lógica implementada en Python.
 - YAML para los metadatos declarativos de las reglas.
@@ -79,7 +79,7 @@ El primer incremento analizará únicamente archivos locales `running-config` e 
 
 - Lectura y validación básica de archivos locales.
 - Conservación del contenido original y cálculo de su hash.
-- Parsing mediante CiscoConfParse.
+- Parsing mediante `ciscoconfparse2`, usando la clase `CiscoConfParse`.
 - Construcción de un contexto normalizado.
 - Ejecución de tres reglas piloto deterministas.
 - Registro de las evaluaciones y creación de hallazgos solamente para resultados `FAIL`.

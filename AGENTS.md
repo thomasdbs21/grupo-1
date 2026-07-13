@@ -111,7 +111,7 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 
 - Lenguaje principal: Python 3.
 - Estructura de proyecto: diseño basado en carpeta `src/`.
-- Parsing de `running-config`: CiscoConfParse.
+- Parsing de `running-config`: `ciscoconfparse2`, mediante la clase `CiscoConfParse`.
 - Parsing futuro de comandos `show`: TextFSM.
 - Conexión SSH futura: Netmiko.
 - API futura: FastAPI y Uvicorn.
@@ -476,7 +476,7 @@ Debe incluir:
 - Validación de la ruta y formato básico.
 - Conservación del contenido original.
 - Cálculo de hash.
-- Parsing mediante CiscoConfParse.
+- Parsing mediante `ciscoconfparse2`, usando la clase `CiscoConfParse`.
 - Creación de un contexto normalizado e inmutable.
 - Ejecución de dos o tres reglas piloto.
 - Estados de evaluación.
@@ -577,7 +577,7 @@ Estos componentes se agregarán en incrementos posteriores.
 ### Incremento 1
 
 - Archivo `running-config`.
-- CiscoConfParse.
+- `ciscoconfparse2` (clase `CiscoConfParse`).
 - Tres reglas piloto.
 - Salida JSON.
 - pytest.

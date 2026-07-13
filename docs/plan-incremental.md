@@ -45,7 +45,7 @@ Incluye:
 
 - Proyecto Python definido mediante `pyproject.toml`.
 - Estructura basada en `src/`.
-- CiscoConfParse.
+- `ciscoconfparse2`, usando la clase `CiscoConfParse`.
 - Modelos tipados.
 - Lectura y hash del archivo.
 - Contexto normalizado e inmutable.

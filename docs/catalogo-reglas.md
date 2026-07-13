@@ -54,7 +54,7 @@ Todos los estados se almacenan como `RuleEvaluation`. Solo `FAIL` genera un `Fin
 - **Evidencia esperada:** encabezado completo de la sección VTY, líneas `transport input` asociadas y fragmento relevante sin secretos.
 - **Posibles falsos positivos:** líneas VTY no accesibles por controles externos, sintaxis heredada dependiente de plataforma o configuraciones parciales.
 - **Excepciones:** laboratorio aislado con excepción formal y temporal; aun así, la excepción debe documentarse y no cambia la detección técnica sin política explícita.
-- **Validación con CiscoConfParse:** localizar objetos padre que coincidan con `line vty`, consultar sus hijos `transport input` y evaluar todas las secciones VTY, no solo la primera.
+- **Validación con ciscoconfparse2:** mediante la clase `CiscoConfParse`, localizar objetos padre que coincidan con `line vty`, consultar sus hijos `transport input` y evaluar todas las secciones VTY, no solo la primera.
 
 Ejemplos inseguros:
 
@@ -94,7 +94,7 @@ Casos esperados:
 - **Evidencia esperada:** línea exacta `ip http server` y su ubicación en la evidencia original.
 - **Posibles falsos positivos:** servicio requerido de manera excepcional dentro de una red aislada y compensado por controles externos.
 - **Excepciones:** necesidad operacional documentada y aceptada formalmente; no elimina el resultado técnico salvo que la política de excepciones lo contemple.
-- **Validación con CiscoConfParse:** buscar una línea activa que coincida exactamente con `ip http server`, excluyendo comentarios y `no ip http server`.
+- **Validación con ciscoconfparse2:** mediante la clase `CiscoConfParse`, buscar una línea activa que coincida exactamente con `ip http server`, excluyendo comentarios y `no ip http server`.
 
 Casos esperados:
 
@@ -115,7 +115,7 @@ Casos esperados:
 - **Evidencia esperada:** presencia de las directivas, con sus valores completamente enmascarados, y constancia de ausencia o presencia de la alternativa requerida.
 - **Posibles falsos positivos:** configuraciones parciales, autenticación externa con una política distinta o sintaxis específica de una versión no contemplada.
 - **Excepciones:** plataformas sin soporte del mecanismo o política formal de autenticación externa demostrable.
-- **Validación con CiscoConfParse:** buscar directivas activas `enable password` y `enable secret` en el nivel global, comparar su presencia y sanitizar cualquier valor antes de registrar evidencia.
+- **Validación con ciscoconfparse2:** mediante la clase `CiscoConfParse`, buscar directivas activas `enable password` y `enable secret` en el nivel global, comparar su presencia y sanitizar cualquier valor antes de registrar evidencia.
 
 Ejemplo inseguro sin contraseña real:
 

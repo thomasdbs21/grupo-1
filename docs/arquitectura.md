@@ -34,7 +34,7 @@ o recopilación SSH                                [MVP]
 Conservación de evidencia original                [PRIMER INCREMENTO]
             |
             v
-Parsing: CiscoConfParse                           [PRIMER INCREMENTO]
+Parsing: ciscoconfparse2 (clase CiscoConfParse)   [PRIMER INCREMENTO]
          TextFSM para comandos show               [MVP]
             |
             v
@@ -95,9 +95,9 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 - **Relación:** abastece parsers, contexto, evaluaciones, hallazgos y persistencia.
 - **Etapa:** conceptual y local en el primer incremento; persistente en el MVP.
 
-### 4.4 Parser de running-config con CiscoConfParse
+### 4.4 Parser de running-config con ciscoconfparse2
 
-- **Responsabilidad:** interpretar la estructura jerárquica de `running-config`.
+- **Responsabilidad:** interpretar la estructura jerárquica de `running-config` mediante `ciscoconfparse2`; la clase utilizada continúa llamándose `CiscoConfParse`.
 - **Entrada:** contenido original validado.
 - **Salida:** representación parseada o error explícito.
 - **Relación:** entrega datos al normalizador sin alterar la evidencia original.
@@ -114,7 +114,7 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 ### 4.6 Normalizador
 
 - **Responsabilidad:** unificar datos parseados en estructuras estables para las reglas.
-- **Entrada:** resultados de CiscoConfParse o TextFSM y metadatos disponibles.
+- **Entrada:** resultados de `ciscoconfparse2` (`CiscoConfParse`) o TextFSM y metadatos disponibles.
 - **Salida:** datos normalizados.
 - **Relación:** construye el contexto sin reemplazar el contenido original.
 - **Etapa:** primer incremento y ampliaciones posteriores.
@@ -205,7 +205,7 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 2. Se valida que el archivo exista y sea legible.
 3. Se conserva el contenido original.
 4. Se calcula un hash.
-5. CiscoConfParse procesa la configuración.
+5. `ciscoconfparse2`, mediante la clase `CiscoConfParse`, procesa la configuración.
 6. Se crea un contexto normalizado e inmutable.
 7. Se ejecutan tres reglas piloto.
 8. Se almacenan conceptualmente todas las evaluaciones.
@@ -221,7 +221,7 @@ Sin implementar todavía, el flujo previsto será:
 3. Conexión mediante Netmiko.
 4. Ejecución de comandos `show` autorizados mediante una lista blanca.
 5. Conservación de la salida original.
-6. Parsing con CiscoConfParse o TextFSM, según la fuente.
+6. Parsing con `ciscoconfparse2` (`CiscoConfParse`) o TextFSM, según la fuente.
 7. Normalización de los resultados.
 8. Creación del contexto inmutable.
 9. Ejecución de reglas deterministas.
@@ -285,7 +285,7 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 ### Primer incremento
 
 - Archivo `running-config` local.
-- CiscoConfParse.
+- `ciscoconfparse2` (clase `CiscoConfParse`).
 - Contexto normalizado e inmutable.
 - Tres reglas piloto.
 - Salida JSON.
