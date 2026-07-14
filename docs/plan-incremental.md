@@ -126,17 +126,44 @@ Criterios de cierre cumplidos:
 
 ## 7. Incremento 4 — SSH de solo lectura
 
+**Estado:** COMPLETADO.
+
 Incluye:
 
-- Netmiko.
-- Lista blanca de comandos autorizados.
-- Credenciales obtenidas mediante variables de entorno.
-- Conexión con dispositivos del laboratorio GNS3.
-- Usuario SSH con privilegios mínimos.
-- Manejo de timeouts y errores de conexión.
-- Conservación de evidencia original.
+- Netmiko como recolector SSH de solo lectura para Cisco IOS e IOS XE.
+- Lista blanca inmutable con cuatro comandos autorizados.
+- Validación exacta de comandos antes de conectar.
+- Recolección de uno o varios comandos en una única sesión.
+- Evidencia inmutable con UUID, fecha UTC, contenido original y normalizado, y SHA-256.
+- Protección de credenciales y salidas en representaciones y errores.
+- Manejo seguro de autenticación, timeout, conexión y cierre.
+- Protocolo `RunningConfigCollector` para desacoplar infraestructura y aplicación.
+- Orquestador `analyze_collected_running_config()`.
+- Integración de `show running-config` con `analyze_bytes()` y las tres reglas piloto.
+- Identidad de hash entre `CommandEvidence` y `AnalysisResult`.
+- Validación manual controlada con un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox.
 
 No incluye comandos de configuración ni cambios sobre dispositivos.
+
+Criterios de cierre cumplidos:
+
+- El recolector rechaza comandos no autorizados antes de abrir una conexión.
+- No utiliza `send_config_set()`, `config_mode()` ni comandos de configuración.
+- Las reglas reciben únicamente `AnalysisContext` y no conocen Netmiko ni credenciales.
+- Las 19 pruebas unitarias del recolector se ejecutan sin conexión real.
+- Las 18 pruebas nuevas del orquestador se ejecutan con recolectores falsos, mocks y spies.
+- La suite alcanzó 78 pruebas aprobadas después del recolector y 96 después de la integración.
+- La validación real inicial recopiló cuatro comandos autorizados en una sesión y cerró la conexión.
+- La validación integrada del 14 de julio de 2026 obtuvo tres evaluaciones, cero findings y `VALIDACION_INTEGRADA_OK`.
+
+Limitaciones pendientes:
+
+- Solo `show running-config` está integrado con el analizador determinista.
+- Los otros comandos `show` todavía no se estructuran mediante TextFSM.
+- FastAPI no expone conexiones SSH.
+- No existe persistencia PostgreSQL para ejecuciones o evidencias.
+- No existe integración SSH con inteligencia artificial.
+- `evidence_id` y `analysis_id` persistentes quedan para incrementos posteriores.
 
 ## 8. Incremento 5 — Comandos show y TextFSM
 
@@ -262,4 +289,4 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 ## 17. Próxima acción oficial
 
-La siguiente etapa planificada es el Incremento 4, pero no debe implementarse sin una solicitud específica y una planificación breve.
+La siguiente etapa planificada es el Incremento 5: comandos `show` y parsing estructurado mediante TextFSM. Incluirá las primeras reglas operacionales y no debe implementarse sin una solicitud específica y una planificación breve.
