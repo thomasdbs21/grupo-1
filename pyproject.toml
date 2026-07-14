@@ -11,6 +11,7 @@ requires-python = ">=3.11"
 dependencies = [
     "ciscoconfparse2>=0.8,<1",
     "fastapi>=0.115,<0.116",
+    "netmiko>=4.7,<5",
     "python-multipart>=0.0.20,<0.1",
     "PyYAML>=6,<7",
     "uvicorn>=0.34,<0.35",
