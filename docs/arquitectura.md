@@ -24,14 +24,17 @@ El sistema operará en modo de solo lectura y no ejecutará cambios automáticos
 ```text
 Fuentes
   Archivo running-config                          [PRIMER INCREMENTO]
-  Dispositivo Cisco IOS                           [MVP / FUTURO]
+  Dispositivo Cisco IOS/IOS XE                    [INCREMENTO 4]
             |
             v
 Entrada de archivo                                [PRIMER INCREMENTO]
-o recopilación SSH                                [MVP]
+o recopilación SSH de solo lectura                [INCREMENTO 4]
             |
             v
-Conservación de evidencia original                [PRIMER INCREMENTO]
+CommandEvidence y evidencia original              [INCREMENTO 4]
+            |
+            v
+Orquestador de running-config recopilado           [INCREMENTO 4]
             |
             v
 Parsing: ciscoconfparse2 (clase CiscoConfParse)   [PRIMER INCREMENTO]
@@ -57,10 +60,10 @@ RuleEvaluation                                    [PRIMER INCREMENTO]
             +---- estado FAIL -------------------> Finding
                                                        |
                                                        v
-Repositorio temporal en memoria (máximo 100)      [INCREMENTO 3]
+Repositorio temporal en memoria (máximo 100)      [INCREMENTO 3; ARCHIVOS]
             |
             v
-API FastAPI local y síncrona                      [INCREMENTO 3]
+API FastAPI local y síncrona                      [INCREMENTO 3; SIN SSH]
             |
             v
 Interfaz Streamlit y reportes                     [MVP]
@@ -82,21 +85,33 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 - **Relación:** entrega el contenido al gestor de evidencia y al parser.
 - **Etapa:** primer incremento.
 
-### 4.2 Recopilación SSH futura
+### 4.2 Recopilación SSH de solo lectura
 
-- **Responsabilidad:** recopilar información autorizada desde dispositivos Cisco IOS en modo de solo lectura.
-- **Entrada:** dispositivo, credenciales seguras y comandos de una lista blanca.
-- **Salida:** salidas originales o errores de conexión estructurados.
-- **Relación:** usa Netmiko y entrega resultados al gestor de evidencia.
-- **Etapa:** MVP, posterior al primer incremento.
+- **Responsabilidad:** recopilar información autorizada desde dispositivos Cisco IOS e IOS XE sin modificar su configuración.
+- **Entrada:** host, puerto, credenciales entregadas en tiempo de ejecución y uno o varios comandos de la lista blanca inmutable.
+- **Salida:** objetos `CommandEvidence` inmutables o errores seguros de recopilación.
+- **Relación:** `NetmikoCollector` valida todos los comandos antes de conectar, reutiliza una sesión y la cierra mediante `disconnect()`.
+- **Etapa:** completado en el Incremento 4.
+
+La lista blanca actual contiene `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`. La autorización es exacta: pipes, argumentos adicionales, punto y coma y saltos de línea se rechazan. El recolector no utiliza métodos de configuración.
+
+### 4.2.1 Orquestador de análisis recopilado
+
+- **Responsabilidad:** coordinar una evidencia de `show running-config` con el analizador existente.
+- **Entrada:** un objeto compatible con el protocolo `RunningConfigCollector`, un UUID opcional y un `RuleRegistry` opcional.
+- **Salida:** `CollectedAnalysisResult`, que conserva la `CommandEvidence` y el `AnalysisResult`.
+- **Relación:** `analyze_collected_running_config()` valida comando, UUID y SHA-256, y entrega `raw_output.encode("utf-8")` a `analyze_bytes()`.
+- **Etapa:** completado en el Incremento 4.
+
+El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsing o lógica de reglas: reutiliza el flujo determinista en memoria.
 
 ### 4.3 Gestión de evidencia
 
 - **Responsabilidad:** conservar origen, fecha, contenido original y normalizado, fragmento relevante, hash e identificador de ejecución.
 - **Entrada:** archivos o salidas recopiladas.
-- **Salida:** objetos `Evidence` trazables.
+- **Salida:** `CommandEvidence` para recopilación y objetos `Evidence` para fragmentos utilizados por las reglas.
 - **Relación:** abastece parsers, contexto, evaluaciones, hallazgos y persistencia.
-- **Etapa:** conceptual y local en el primer incremento; persistente en el MVP.
+- **Etapa:** evidencia local de archivos desde el primer incremento y `CommandEvidence` desde el Incremento 4; persistencia futura.
 
 ### 4.4 Parser de running-config con ciscoconfparse2
 
@@ -219,22 +234,26 @@ Los archivos se procesan en memoria como UTF-8 o UTF-8 con BOM. El nombre se red
 9. Se crean `findings` únicamente desde resultados `FAIL`.
 10. Se entrega una salida JSON.
 
-## 6. Flujo futuro mediante GNS3 y SSH
+## 6. Flujo implementado mediante laboratorio virtual y SSH
 
-Sin implementar todavía, el flujo previsto será:
+La validación real de este flujo se efectuó con un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. GNS3 se conserva como plataforma prevista para el laboratorio general del proyecto, pero no corresponde al entorno de esta validación específica.
 
-1. Selección de un dispositivo del laboratorio.
-2. Obtención segura de credenciales.
-3. Conexión mediante Netmiko.
-4. Ejecución de comandos `show` autorizados mediante una lista blanca.
-5. Conservación de la salida original.
-6. Parsing con `ciscoconfparse2` (`CiscoConfParse`) o TextFSM, según la fuente.
-7. Normalización de los resultados.
-8. Creación del contexto inmutable.
-9. Ejecución de reglas deterministas.
-10. Persistencia de ejecuciones, evidencias, evaluaciones y hallazgos.
-11. Presentación de resultados en la interfaz.
-12. Explicación opcional mediante inteligencia artificial sobre datos sanitizados.
+El flujo completado para `running-config` es:
+
+1. Las credenciales se entregan al recolector en tiempo de ejecución y permanecen fuera de resultados y representaciones.
+2. `NetmikoCollector` recibe exclusivamente comandos incluidos en la lista blanca.
+3. La validación exacta ocurre antes de abrir la conexión.
+4. Netmiko utiliza `device_type="cisco_ios"` para los dispositivos Cisco IOS e IOS XE considerados.
+5. Cada comando genera una `CommandEvidence` con UUID, fecha UTC, salida original, salida normalizada y hash.
+6. La sesión se cierra antes de devolver las evidencias.
+7. Para el flujo integrado, `analyze_collected_running_config()` solicita únicamente `show running-config`.
+8. El orquestador verifica la integridad y entrega la salida original codificada como UTF-8 a `analyze_bytes()`.
+9. `parse_running_config()` procesa y normaliza el contenido mediante `ciscoconfparse2` y `CiscoConfParse`.
+10. Se crea un `AnalysisContext` inmutable.
+11. `RuleRegistry` entrega las reglas habilitadas en orden determinista.
+12. Todas las reglas producen evaluaciones y solo los estados `FAIL` producen findings.
+
+TextFSM para los otros comandos `show`, la persistencia, la exposición mediante FastAPI, la interfaz y la inteligencia artificial continúan en incrementos posteriores. Las reglas no reciben el recolector en ninguna etapa.
 
 ## 7. Aislamiento del motor de reglas
 
@@ -270,7 +289,7 @@ Los estados diferentes de `FAIL` permanecen registrados como evaluaciones, pero 
 - **Error de parsing:** se conserva la evidencia original y se registra el fallo explícitamente.
 - **Fuente requerida ausente:** la regla aplicable produce `NOT_EVALUATED`.
 - **Error interno de una regla:** la evaluación produce `ERROR` y conserva trazabilidad.
-- **Error futuro de conexión:** se registra como error de recopilación sin ejecutar reglas que dependan de la fuente ausente.
+- **Error de conexión:** las excepciones de autenticación, timeout y conexión se traducen a errores seguros; si no existe evidencia válida, el análisis integrado no se ejecuta.
 - **IA no disponible:** se entrega la explicación técnica básica y el análisis continúa funcionando.
 
 Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. La caída de la IA no debe impedir el análisis técnico.
@@ -279,7 +298,7 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 
 - Las credenciales permanecerán fuera del repositorio.
 - Los archivos `.env` estarán excluidos por `.gitignore`; solo podrá versionarse un `.env.example` sin secretos.
-- En incrementos futuros se utilizarán variables de entorno o un gestor de secretos.
+- Las credenciales SSH se suministran en tiempo de ejecución; el mecanismo definitivo de almacenamiento seguro sigue pendiente.
 - La información se sanitizará antes de enviarse a la inteligencia artificial.
 - Los secretos se eliminarán o enmascararán en entradas y salidas.
 - Netmiko solo ejecutará comandos incluidos en una lista blanca.
@@ -317,6 +336,16 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Repositorio temporal concurrente de hasta 100 análisis.
 - Consulta de resultados, evaluaciones y hallazgos mediante UUID.
 - Errores estructurados y logging sin contenido sensible.
+
+### Incremento 4
+
+- Netmiko para SSH de solo lectura en Cisco IOS e IOS XE.
+- Lista blanca inmutable de cuatro comandos.
+- Evidencia inmutable con UUID, fecha UTC, contenido original y normalizado, y SHA-256.
+- Protocolo `RunningConfigCollector` para desacoplar infraestructura y aplicación.
+- Orquestador `analyze_collected_running_config()` para `show running-config`.
+- Identidad de hash entre `CommandEvidence` y `AnalysisResult`.
+- Pruebas automatizadas sin conexión real y validaciones manuales controladas.
 
 ### MVP
 

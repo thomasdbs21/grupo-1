@@ -21,6 +21,7 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 
 - Python como lenguaje principal.
 - `ciscoconfparse2`, mediante la clase `CiscoConfParse`, para el parsing de configuraciones `running-config`.
+- Netmiko para la recopilación SSH de solo lectura desde Cisco IOS e IOS XE.
 - pytest para las pruebas automatizadas.
 - Reglas deterministas con lógica implementada en Python.
 - YAML para los metadatos declarativos de las reglas.
@@ -30,10 +31,9 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 
 ## Componentes futuros
 
-Los siguientes componentes están aprobados para incrementos posteriores, pero no forman parte del primer incremento:
+Los siguientes componentes están aprobados para incrementos posteriores y todavía no están integrados en el flujo SSH completado:
 
 - TextFSM para analizar salidas de comandos `show`.
-- Netmiko para conexiones SSH de solo lectura.
 - PostgreSQL para la persistencia de datos.
 - SQLAlchemy como ORM.
 - Alembic para gestionar migraciones de base de datos.
@@ -45,11 +45,38 @@ Los siguientes componentes están aprobados para incrementos posteriores, pero n
 
 - El sistema será de solo lectura y no ingresará al modo de configuración de los dispositivos.
 - No ejecutará cambios automáticos, comandos destructivos, reinicios ni operaciones de guardado sobre dispositivos.
-- Las conexiones SSH futuras mediante Netmiko estarán limitadas a operaciones de consulta autorizadas.
+- Las conexiones SSH mediante Netmiko están limitadas a operaciones de consulta autorizadas.
 - Las credenciales, contraseñas, claves privadas, tokens, claves API y demás secretos no se almacenarán en texto plano.
 - Las credenciales y los secretos no aparecerán en logs, reportes, mensajes de error ni solicitudes enviadas a servicios de inteligencia artificial.
 - Toda información enviada a la pasarela de inteligencia artificial deberá ser sanitizada previamente.
 - La indisponibilidad de la inteligencia artificial no impedirá ejecutar el análisis técnico.
+
+## Decisiones sobre SSH de solo lectura
+
+- `NetmikoCollector` es el recolector oficial de solo lectura para Cisco IOS e IOS XE en el Incremento 4.
+- La lista blanca es un `frozenset` inmutable con `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`.
+- Los comandos se normalizan antes de comparar, pero después deben coincidir exactamente con la lista blanca.
+- Pipes, punto y coma, saltos de línea y argumentos adicionales se rechazan antes de abrir una conexión.
+- Uno o varios comandos autorizados utilizan una única sesión y comparten un `execution_id`.
+- Cada salida produce una `CommandEvidence` inmutable con fecha UTC, contenido original, contenido normalizado y SHA-256.
+- Usuario, contraseña y fábrica de conexión se excluyen del `repr` del recolector; las salidas se excluyen del `repr` de la evidencia.
+- La sesión se cierra mediante `disconnect()` incluso cuando ocurre un error durante la ejecución.
+- Las excepciones de autenticación, timeout, conexión y contrato utilizan mensajes sanitizados.
+- Se prohíbe utilizar `send_config_set()`, `config_mode()` o cualquier comando de configuración.
+- El sistema continúa sin aplicar cambios automáticos sobre dispositivos.
+
+## Decisiones sobre la integración SSH y el analizador
+
+- `RunningConfigCollector` define el protocolo mínimo entre el orquestador y cualquier recolector compatible; no almacena credenciales ni depende de la implementación concreta.
+- `analyze_collected_running_config()` es el orquestador separado para integrar `show running-config` con el analizador en memoria.
+- El orquestador solicita un único comando exacto, valida cardinalidad, tipo de evidencia, comando, UUID e integridad, y no crea archivos temporales.
+- `CommandEvidence.sha256` se calcula sobre `raw_output.encode("utf-8")`.
+- `analyze_bytes()` recibe esos mismos bytes para que `AnalysisResult.sha256` coincida con el hash de la evidencia.
+- `parse_running_config()` normaliza después el contenido y construye el `AnalysisContext` inmutable.
+- `normalized_output` permanece en la evidencia para trazabilidad, pero no reemplaza la salida original analizada.
+- `CollectedAnalysisResult` conserva juntos la evidencia y el resultado sin almacenar el recolector ni copiar las salidas.
+- Las reglas continúan recibiendo únicamente `AnalysisContext`; no conocen Netmiko, SSH, credenciales, FastAPI, repositorios, base de datos ni inteligencia artificial.
+- La integración SSH no está expuesta mediante FastAPI y no tiene persistencia en esta etapa.
 
 ## Decisiones sobre reglas y hallazgos
 
@@ -110,13 +137,21 @@ Quedan expresamente fuera del primer incremento:
 - TextFSM y el análisis de comandos `show`.
 - La pasarela de inteligencia artificial.
 
+## Alcance completado del Incremento 4
+
+El Incremento 4 incorpora el recolector Netmiko de solo lectura y su integración con el analizador determinista para `show running-config`. Incluye lista blanca, evidencias inmutables, cierre seguro, excepciones sanitizadas, protocolo desacoplado, verificación de hashes y pruebas sin red.
+
+La validación automatizada alcanzó 78 pruebas después del recolector y 96 después de la integración. Además, se realizaron validaciones manuales controladas del recolector y del flujo integrado contra un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox, sin conservar configuración ni información sensible en la documentación.
+
+Permanecen fuera de este incremento el parsing TextFSM de los otros comandos `show`, la persistencia PostgreSQL, la exposición SSH mediante FastAPI y la integración con inteligencia artificial.
+
 ## Decisiones pendientes
 
 Las siguientes decisiones deberán concretarse cuando se planifiquen los incrementos correspondientes:
 
 - El esquema físico definitivo de PostgreSQL y las relaciones entre evaluaciones, hallazgos y evidencias.
 - La evolución del contrato más allá de `/api/v1`.
-- La lista blanca definitiva de comandos permitidos mediante SSH.
+- La eventual ampliación controlada de la lista blanca para incrementos posteriores.
 - El formato de plantillas TextFSM y la estrategia de normalización de comandos `show`.
 - El mecanismo de despliegue y operación en Ubuntu Server.
 - El proveedor, modelo y política de retención de datos de la pasarela opcional de inteligencia artificial.
