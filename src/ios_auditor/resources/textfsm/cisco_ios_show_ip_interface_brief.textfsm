@@ -1,0 +1,13 @@
+Value Required INTERFACE (\S+)
+Value IP_ADDRESS (\S+)
+Value METHOD (\S+)
+Value Required STATUS (administratively\s+down|up|down|deleted)
+Value Required PROTOCOL (up|down)
+
+Start
+  ^Interface\s+IP-Address\s+OK\?\s+Method\s+Status\s+Protocol\s*$$
+  ^${INTERFACE}\s+${IP_ADDRESS}\s+\S+\s+${METHOD}\s+${STATUS}\s+${PROTOCOL}\s*$$ -> Record
+  ^Load\s+for\s+.*$$
+  ^Time\s+source\s+is\s+.*$$
+  ^\s*$$
+  ^.+ -> Error "Salida de interfaz no reconocida"
