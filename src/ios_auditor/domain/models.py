@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
+from typing import TypeAlias
+from uuid import UUID
 
 
 class Severity(StrEnum):
@@ -18,6 +21,18 @@ class RuleStatus(StrEnum):
     NOT_APPLICABLE = "NOT_APPLICABLE"
     NOT_EVALUATED = "NOT_EVALUATED"
     ERROR = "ERROR"
+
+
+class InterfaceStatus(StrEnum):
+    UP = "up"
+    DOWN = "down"
+    ADMINISTRATIVELY_DOWN = "administratively down"
+    DELETED = "deleted"
+
+
+class ProtocolStatus(StrEnum):
+    UP = "up"
+    DOWN = "down"
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,6 +75,51 @@ class AnalysisContext:
     original_content: str
     normalized_lines: tuple[str, ...]
     vty_sections: tuple[VtySection, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ShowVersionData:
+    ios_version: str
+    platform: str | None
+    software_image: str | None
+    uptime: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class InterfaceBriefEntry:
+    name: str
+    ip_address: str | None
+    method: str | None
+    status: InterfaceStatus
+    protocol: ProtocolStatus
+
+
+@dataclass(frozen=True, slots=True)
+class ShowIpInterfaceBriefData:
+    interfaces: tuple[InterfaceBriefEntry, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ShowIpSshData:
+    enabled: bool
+    version: str | None
+    authentication_timeout_seconds: int | None
+    authentication_retries: int | None
+
+
+ShowCommandData: TypeAlias = (
+    ShowVersionData | ShowIpInterfaceBriefData | ShowIpSshData
+)
+
+
+@dataclass(frozen=True, slots=True)
+class OperationalContext:
+    execution_id: UUID
+    device_host: str
+    command: str
+    collected_at: datetime
+    sha256: str
+    data: ShowCommandData
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,0 +1,20 @@
+id: IOS-IF-001
+version: "1.0.0"
+name: Interfaz físicamente activa con protocolo de línea inactivo
+category: interfaces
+description: Verifica que una interfaz con estado físico up también tenga el protocolo de línea up.
+default_severity: MEDIUM
+required_sources:
+  - show ip interface brief
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Una interfaz físicamente activa con el protocolo de línea inactivo puede indicar una inconsistencia de capa 2 o pérdida de conectividad.
+recommendation: Revisar el estado del enlace, la encapsulación y la configuración de ambos extremos antes de aplicar cambios.
+references:
+  - Cisco IOS Interface and Hardware Component Command Reference
+false_positives:
+  - Estado transitorio durante convergencia, inicialización o pruebas controladas del enlace.
+exceptions:
+  - Condición temporal documentada y supervisada durante una ventana de mantenimiento.
+enabled: true

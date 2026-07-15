@@ -1,0 +1,11 @@
+Value Required IOS_VERSION ([^,\s]+)
+Value PLATFORM (\S+)
+Value SOFTWARE_IMAGE (\S+)
+Value UPTIME (.+)
+
+Start
+  ^Cisco IOS XE Software, Version ${IOS_VERSION}\s*$$
+  ^Cisco IOS Software.*Version ${IOS_VERSION},.*$$
+  ^\S+\s+uptime is ${UPTIME}\s*$$
+  ^System image file is ".*:${SOFTWARE_IMAGE}"\s*$$
+  ^[Cc]isco\s+${PLATFORM}\s+\(.+\).*
