@@ -12,7 +12,7 @@ El proyecto se construirá mediante incrementos pequeños, verificables y respal
 - No implementar funciones futuras anticipadamente.
 - Revisar seguridad y ausencia de secretos en cada etapa.
 - Registrar decisiones en los documentos núcleo (CORE) y en la documentación técnica oficial.
-- Validar progresivamente los escenarios en GNS3.
+- Validar progresivamente los escenarios en laboratorios virtuales autorizados; GNS3 permanece como opción futura.
 - Incorporar inteligencia artificial solo después de disponer de un motor técnico determinista y validado.
 
 ## 3. Incremento 0 — Preparación del repositorio
@@ -159,7 +159,7 @@ Criterios de cierre cumplidos:
 Limitaciones pendientes:
 
 - Solo `show running-config` está integrado con el analizador determinista.
-- Los otros comandos `show` todavía no se estructuran mediante TextFSM.
+- Al cierre del Incremento 4, los otros comandos `show` todavía no se estructuraban mediante TextFSM; esta limitación fue abordada en el Incremento 5.
 - FastAPI no expone conexiones SSH.
 - No existe persistencia PostgreSQL para ejecuciones o evidencias.
 - No existe integración SSH con inteligencia artificial.
@@ -167,15 +167,40 @@ Limitaciones pendientes:
 
 ## 8. Incremento 5 — Comandos show y TextFSM
 
+**Estado:** COMPLETADO.
+
 Incluye:
 
-- Plantillas TextFSM validadas.
-- Normalización de evidencia operacional.
-- Recopilación de comandos `show` autorizados.
-- Estado `NOT_EVALUATED` cuando falte una fuente requerida.
-- Primeras reglas operacionales.
+- TextFSM declarado directamente como `textfsm>=2.1,<3`.
+- Plantillas propias para `show version`, `show ip interface brief` y `show ip ssh`.
+- Parsing separado de Netmiko y sin acceso a red.
+- Modelos tipados y `OperationalContext` inmutable sin salidas completas.
+- Servicio `parse_collected_show_evidence()` para validar SHA-256, normalización, comando y fecha UTC.
+- Regla operacional `IOS-IF-001` separada del `RuleRegistry` de `running-config`.
+- Rechazo de filas de interfaz desconocidas y normalización de espacios en `administratively down`.
+- Pruebas automatizadas sin conexiones reales.
 
-## 9. Incremento 6 — Persistencia
+Criterios de cierre cumplidos:
+
+- Las tres salidas autorizadas producen modelos estructurados.
+- `show running-config` continúa usando `ciscoconfparse2` y `CiscoConfParse`.
+- `OperationalContext` y la colección de interfaces son inmutables.
+- `IOS-IF-001` produce `FAIL` únicamente ante una interfaz `up` con protocolo distinto de `up` e ignora `administratively down`.
+- Se agregaron 28 pruebas: 12 del parser, 9 del servicio y 7 de la regla.
+- La suite pasó de 96 a 122 pruebas y luego a 124 con dos regresiones; las 124 quedaron aprobadas después del merge.
+- La validación real con CSR1000v IOS XE 16.9.5 en VirtualBox produjo tres evidencias, un `execution_id`, hashes correctos, tres modelos, una interfaz evaluable, cero inconsistencias, `IOS-IF-001` en `PASS`, sesión cerrada y `VALIDACION_TEXTFSM_OK`.
+- La implementación se registró en `0ca7cf3`, Pull Request #4, y se integró mediante el merge `b7be551`.
+
+Limitaciones pendientes:
+
+- Solo tres comandos `show` tienen parsing estructurado.
+- Existe una sola regla operacional.
+- El servicio procesa una evidencia por llamada.
+- FastAPI no procesa resultados operacionales.
+- No existe persistencia ni integración operacional con inteligencia artificial.
+- Las plantillas se validaron únicamente con las variantes disponibles.
+
+## 9. Persistencia futura — etapa por decidir
 
 Incluye:
 
@@ -186,7 +211,7 @@ Incluye:
 - Historial de análisis.
 - Almacenamiento de todas las evaluaciones y únicamente hallazgos derivados de `FAIL`.
 
-## 10. Incremento 7 — Interfaz Streamlit
+## 10. Interfaz Streamlit futura — etapa por decidir
 
 Incluye:
 
@@ -197,7 +222,7 @@ Incluye:
 - Recomendaciones técnicas validadas.
 - Historial de análisis.
 
-## 11. Incremento 8 — Reportes
+## 11. Reportes futuros — etapa por decidir
 
 Incluye:
 
@@ -208,7 +233,7 @@ Incluye:
 - Resumen por severidad.
 - Trazabilidad entre ejecución, evidencia, evaluación y hallazgo.
 
-## 12. Incremento 9 — Inteligencia artificial opcional
+## 12. Inteligencia artificial opcional — etapa por decidir
 
 Incluye:
 
@@ -223,12 +248,12 @@ Incluye:
 
 La IA no creará reglas, hallazgos ni evidencias y no cambiará estados o severidades.
 
-## 13. Incremento 10 — Catálogo MVP y validación GNS3
+## 13. Catálogo MVP y validación ampliada — etapa por decidir
 
 Incluye:
 
 - Implementación progresiva de 20 a 25 reglas.
-- Escenarios correctos e incorrectos en GNS3.
+- Escenarios correctos e incorrectos en laboratorios virtuales autorizados. GNS3 podrá evaluarse si se dispone legalmente de imágenes compatibles.
 - Medición de verdaderos positivos.
 - Revisión de falsos positivos.
 - Revisión de falsos negativos.
@@ -289,4 +314,11 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 ## 17. Próxima acción oficial
 
-La siguiente etapa planificada es el Incremento 5: comandos `show` y parsing estructurado mediante TextFSM. Incluirá las primeras reglas operacionales y no debe implementarse sin una solicitud específica y una planificación breve.
+El Incremento 5 está completado. La próxima etapa no está definida y deberá aprobarse antes de programar. Las alternativas actuales son:
+
+- ampliar el catálogo de reglas operacionales;
+- integrar resultados operacionales con FastAPI;
+- incorporar persistencia;
+- preparar una capa explicativa de inteligencia artificial después de ampliar y validar las reglas deterministas.
+
+Estas alternativas no constituyen todavía un Incremento 6 oficial ni autorizan implementación anticipada.
