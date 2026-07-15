@@ -38,7 +38,7 @@ Orquestador de running-config recopilado           [INCREMENTO 4]
             |
             v
 Parsing: ciscoconfparse2 (clase CiscoConfParse)   [PRIMER INCREMENTO]
-         TextFSM para comandos show               [MVP]
+         TextFSM para comandos show               [INCREMENTO 5]
             |
             v
 Normalización                                     [PRIMER INCREMENTO]
@@ -121,13 +121,15 @@ El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsi
 - **Relación:** entrega datos al normalizador sin alterar la evidencia original.
 - **Etapa:** primer incremento.
 
-### 4.5 Parser futuro de comandos show con TextFSM
+### 4.5 Parser de comandos show con TextFSM
 
 - **Responsabilidad:** transformar salidas de comandos `show` en registros estructurados.
-- **Entrada:** salida original y plantilla TextFSM correspondiente.
-- **Salida:** datos operacionales parseados o error explícito.
-- **Relación:** recibe evidencia desde SSH y alimenta al normalizador.
-- **Etapa:** MVP, incremento posterior.
+- **Entrada:** comando normalizado, salida normalizada y plantilla TextFSM propia correspondiente.
+- **Salida:** `ShowVersionData`, `ShowIpInterfaceBriefData` o `ShowIpSshData`, o un error seguro y explícito.
+- **Relación:** `parse_show_command()` utiliza un mapeo inmutable, carga recursos empaquetados y no accede a SSH.
+- **Etapa:** completado en el Incremento 5.
+
+TextFSM procesa exclusivamente `show version`, `show ip interface brief` y `show ip ssh`. `show running-config` continúa siendo responsabilidad de `ciscoconfparse2` y `CiscoConfParse`.
 
 ### 4.6 Normalizador
 
@@ -145,6 +147,21 @@ El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsi
 - **Relación:** única entrada técnica permitida para las reglas.
 - **Etapa:** primer incremento.
 
+Existen dos contextos separados:
+
+- `AnalysisContext`, dedicado a datos normalizados de `running-config`;
+- `OperationalContext`, dedicado a un comando `show`, su modelo tipado y la trazabilidad mediante UUID, comando, fecha UTC y SHA-256.
+
+`OperationalContext` no contiene `raw_output`, `normalized_output`, credenciales ni objetos Netmiko. Ambos contextos son inmutables y las reglas reciben solamente el que corresponde a su fuente.
+
+### 4.7.1 Servicio operational_analysis
+
+- **Responsabilidad:** validar una `CommandEvidence` y construir el contexto operacional.
+- **Entrada:** una evidencia ya recopilada; no recibe credenciales ni conexiones.
+- **Salida:** `OperationalContext` o una excepción segura.
+- **Relación:** `parse_collected_show_evidence()` verifica comando, SHA-256, normalización y fecha UTC antes de llamar a `parse_show_command()`.
+- **Etapa:** completado en el Incremento 5.
+
 ### 4.8 Registro de reglas
 
 - **Responsabilidad:** identificar, versionar, habilitar y cargar reglas junto con sus metadatos declarativos.
@@ -154,6 +171,8 @@ El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsi
 - **Etapa:** completado en el Incremento 2.
 
 El YAML no contiene condiciones ni lógica de evaluación. La detección permanece exclusivamente en Python. El registro no descubre archivos arbitrarios: solo carga nombres previamente autorizados dentro de la carpeta de recursos.
+
+El `RuleRegistry` existente continúa reservado a las tres reglas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto ni alterar las evaluaciones offline.
 
 ### 4.9 Motor de reglas
 
@@ -185,7 +204,7 @@ El YAML no contiene condiciones ni lógica de evaluación. La detección permane
 - **Entrada:** resultados sanitizados ya producidos por el analizador.
 - **Salida:** consultas por identificador durante la vida del proceso.
 - **Relación:** sirve a FastAPI sin ser accedido por las reglas; utiliza bloqueo para concurrencia básica y no escribe archivos.
-- **Etapa:** repositorio en memoria completado en el Incremento 3. PostgreSQL, SQLAlchemy y Alembic lo reemplazarán en el Incremento 6.
+- **Etapa:** repositorio en memoria completado en el Incremento 3. La persistencia mediante PostgreSQL, SQLAlchemy y Alembic permanece como alternativa futura pendiente de planificación.
 
 ### 4.13 FastAPI local
 
@@ -236,7 +255,7 @@ Los archivos se procesan en memoria como UTF-8 o UTF-8 con BOM. El nombre se red
 
 ## 6. Flujo implementado mediante laboratorio virtual y SSH
 
-La validación real de este flujo se efectuó con un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. GNS3 se conserva como plataforma prevista para el laboratorio general del proyecto, pero no corresponde al entorno de esta validación específica.
+La validación real de este flujo se efectuó con un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. GNS3 no se utilizó y queda solamente como ampliación futura opcional si se dispone legalmente de imágenes IOSv o IOSvL2 autorizadas.
 
 El flujo completado para `running-config` es:
 
@@ -253,7 +272,37 @@ El flujo completado para `running-config` es:
 11. `RuleRegistry` entrega las reglas habilitadas en orden determinista.
 12. Todas las reglas producen evaluaciones y solo los estados `FAIL` producen findings.
 
-TextFSM para los otros comandos `show`, la persistencia, la exposición mediante FastAPI, la interfaz y la inteligencia artificial continúan en incrementos posteriores. Las reglas no reciben el recolector en ninguna etapa.
+El flujo operacional completado en el Incremento 5 es:
+
+```text
+NetmikoCollector
+        |
+        v
+CommandEvidence
+        |
+        v
+parse_collected_show_evidence()
+        |
+        v
+parse_show_command()
+        |
+        v
+plantilla TextFSM propia
+        |
+        v
+modelo tipado
+        |
+        v
+OperationalContext inmutable
+        |
+        v
+IOS-IF-001
+        |
+        v
+RuleEvaluation
+```
+
+La validación operacional real se realizó con el CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. La persistencia, la exposición operacional mediante FastAPI, la interfaz y la inteligencia artificial continúan fuera de alcance. Las reglas no reciben el recolector en ninguna etapa.
 
 ## 7. Aislamiento del motor de reglas
 
@@ -347,6 +396,16 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Identidad de hash entre `CommandEvidence` y `AnalysisResult`.
 - Pruebas automatizadas sin conexión real y validaciones manuales controladas.
 
+### Incremento 5
+
+- TextFSM como dependencia directa y parser oficial de tres comandos `show`.
+- Plantillas propias, versionadas y empaquetadas.
+- Modelos tipados y `OperationalContext` inmutable.
+- Servicio `operational_analysis` para integridad y parsing sin red.
+- Regla operacional `IOS-IF-001`, separada del `RuleRegistry` de `running-config`.
+- 28 pruebas nuevas y 124 pruebas totales aprobadas.
+- Validación real sanitizada con CSR1000v IOS XE 16.9.5 en VirtualBox.
+
 ### MVP
 
 - Catálogo de 20 a 25 reglas.
@@ -357,7 +416,7 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Streamlit.
 - Reportes JSON, HTML y PDF.
 - Pasarela de IA opcional.
-- Validación en laboratorio GNS3 con IOSv e IOSvL2.
+- Validación ampliada en laboratorios virtuales autorizados. GNS3 queda como opción futura si se dispone legalmente de imágenes IOSv o IOSvL2.
 
 ### Mejoras futuras
 
@@ -374,7 +433,7 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 
 - Método definitivo de almacenamiento de credenciales.
 - Uso de un modelo local o una API externa de inteligencia artificial.
-- Plantillas TextFSM definitivas.
+- Ampliación y versionado de plantillas TextFSM para nuevas variantes y comandos.
 - Formato final de los reportes.
 - Diseño final de Streamlit.
 - Necesidad y tecnología de procesamiento en segundo plano.

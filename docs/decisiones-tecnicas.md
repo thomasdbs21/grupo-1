@@ -8,9 +8,9 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 
 ## Decisiones oficiales
 
-- El laboratorio se implementará en GNS3 con routers Cisco IOSv y switches Cisco IOSvL2.
 - Windows 11 será el sistema anfitrión del entorno de desarrollo y laboratorio.
-- VMware Workstation y GNS3 VM proporcionarán la virtualización del laboratorio.
+- La validación real de los Incrementos 4 y 5 utilizó un CSR1000v en VirtualBox.
+- GNS3 será una ampliación futura opcional si se dispone legalmente de imágenes IOSv o IOSvL2 autorizadas; actualmente no se dispone de ellas.
 - Ubuntu Server será, en un incremento posterior, el servidor del asistente.
 - Python será el lenguaje principal del proyecto.
 - `ciscoconfparse2` se utilizará para analizar archivos `running-config`; la clase importada continúa llamándose `CiscoConfParse`.
@@ -21,19 +21,20 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 
 - Python como lenguaje principal.
 - `ciscoconfparse2`, mediante la clase `CiscoConfParse`, para el parsing de configuraciones `running-config`.
+- TextFSM para el parsing estructurado de comandos `show` mediante plantillas propias.
 - Netmiko para la recopilación SSH de solo lectura desde Cisco IOS e IOS XE.
 - pytest para las pruebas automatizadas.
 - Reglas deterministas con lógica implementada en Python.
 - YAML para los metadatos declarativos de las reglas.
 - Streamlit como interfaz inicial del MVP, en un incremento posterior al primero.
-- GNS3, GNS3 VM, Cisco IOSv e IOSvL2 para el laboratorio de validación.
-- Windows 11 y VMware Workstation como plataforma anfitriona y de virtualización.
+- VirtualBox y CSR1000v para las validaciones reales disponibles.
+- GNS3 como opción futura condicionada a imágenes autorizadas.
+- Windows 11 como plataforma anfitriona actual.
 
 ## Componentes futuros
 
-Los siguientes componentes están aprobados para incrementos posteriores y todavía no están integrados en el flujo SSH completado:
+Los siguientes componentes están aprobados para incrementos posteriores y todavía no están integrados en el flujo operacional completado:
 
-- TextFSM para analizar salidas de comandos `show`.
 - PostgreSQL para la persistencia de datos.
 - SQLAlchemy como ORM.
 - Alembic para gestionar migraciones de base de datos.
@@ -75,8 +76,26 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - `parse_running_config()` normaliza después el contenido y construye el `AnalysisContext` inmutable.
 - `normalized_output` permanece en la evidencia para trazabilidad, pero no reemplaza la salida original analizada.
 - `CollectedAnalysisResult` conserva juntos la evidencia y el resultado sin almacenar el recolector ni copiar las salidas.
-- Las reglas continúan recibiendo únicamente `AnalysisContext`; no conocen Netmiko, SSH, credenciales, FastAPI, repositorios, base de datos ni inteligencia artificial.
+- Las reglas de `running-config` continúan recibiendo únicamente `AnalysisContext`; las reglas operacionales reciben únicamente `OperationalContext`. Ninguna conoce Netmiko, SSH, credenciales, FastAPI, repositorios, base de datos ni inteligencia artificial.
 - La integración SSH no está expuesta mediante FastAPI y no tiene persistencia en esta etapa.
+
+## Decisiones sobre TextFSM y contexto operacional
+
+- TextFSM es una dependencia directa de producción con rango `textfsm>=2.1,<3`.
+- `ciscoconfparse2` y `CiscoConfParse` continúan procesando exclusivamente `running-config`; TextFSM procesa `show version`, `show ip interface brief` y `show ip ssh`.
+- Las plantillas TextFSM son recursos propios, versionados y empaquetados dentro del repositorio.
+- No se utiliza `use_textfsm=True` en `NetmikoCollector`; recopilación y parsing permanecen desacoplados.
+- Los parsers no importan `ConnectHandler`, no reciben credenciales y no abren conexiones.
+- `parse_show_command()` acepta solamente los tres comandos soportados mediante un mapeo inmutable.
+- `parse_collected_show_evidence()` verifica SHA-256, normalización y fecha UTC antes del parsing.
+- `OperationalContext` es inmutable y se mantiene separado de `AnalysisContext`.
+- `OperationalContext` no contiene `raw_output`, `normalized_output`, credenciales ni objetos Netmiko.
+- Las filas de interfaces con formatos o estados desconocidos se rechazan; no se aceptan resultados parciales silenciosos.
+- Los números de serie no se extraen del resultado de `show version`.
+- `IOS-IF-001` permanece separada del `RuleRegistry` de `running-config` y se carga mediante `get_interface_operational_rule()`.
+- Las reglas operacionales no tienen acceso a Netmiko, SSH, FastAPI, persistencia ni inteligencia artificial.
+- SSH 1.99 se registró como observación pendiente para estudiar una regla futura independiente; no genera un finding en el Incremento 5 y no corresponde a `IOS-IF-001`.
+- El sistema continúa prohibiendo cambios automáticos y comandos de configuración.
 
 ## Decisiones sobre reglas y hallazgos
 
@@ -93,6 +112,7 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - La carga utilizará `yaml.safe_load` y se limitará a archivos esperados dentro de los recursos del paquete.
 - `RuleMetadata` será inmutable y el registro rechazará campos inválidos, versiones vacías, severidades desconocidas, IDs duplicados o asociaciones inconsistentes.
 - Un `RuleRegistry` central mantendrá el orden determinista, permitirá consulta por ID y ejecutará únicamente reglas habilitadas.
+- En el alcance actual, ese `RuleRegistry` ejecuta solamente las tres reglas de `running-config`; la regla operacional inicial conserva un cargador separado para no mezclar contextos.
 
 ## Decisiones sobre la API local
 
@@ -103,7 +123,7 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - Las respuestas no incluyen rutas absolutas, configuraciones completas ni secretos sin redactar.
 - Cada análisis síncrono completado recibe un UUID y se guarda temporalmente en memoria.
 - El repositorio es seguro para concurrencia básica, conserva como máximo 100 análisis y elimina el más antiguo al superar el límite.
-- El almacenamiento se pierde al reiniciar y será reemplazado por PostgreSQL en el Incremento 6.
+- El almacenamiento se pierde al reiniciar; su posible reemplazo mediante PostgreSQL permanece pendiente de planificación.
 - Solo existe el estado de ejecución `COMPLETED`; no se implementan tareas pendientes, workers ni colas.
 
 ## Decisiones sobre inteligencia artificial
@@ -145,6 +165,14 @@ La validación automatizada alcanzó 78 pruebas después del recolector y 96 des
 
 Permanecen fuera de este incremento el parsing TextFSM de los otros comandos `show`, la persistencia PostgreSQL, la exposición SSH mediante FastAPI y la integración con inteligencia artificial.
 
+## Alcance completado del Incremento 5
+
+El Incremento 5 incorpora parsing estructurado mediante TextFSM para `show version`, `show ip interface brief` y `show ip ssh`. Incluye plantillas propias, modelos tipados, `OperationalContext` inmutable, validación de evidencia y la regla operacional `IOS-IF-001`.
+
+La suite evolucionó de 96 a 122 pruebas con la primera implementación y a 124 después de dos pruebas de regresión. Las 124 pruebas quedaron aprobadas después del merge. La validación manual controlada se realizó contra un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox y terminó con tres evidencias, un UUID, hashes correctos, tres modelos, una interfaz evaluable, cero inconsistencias, `IOS-IF-001` en `PASS`, sesión cerrada y `VALIDACION_TEXTFSM_OK`.
+
+FastAPI todavía no procesa comandos `show`; tampoco existe persistencia o integración con inteligencia artificial para el contexto operacional.
+
 ## Decisiones pendientes
 
 Las siguientes decisiones deberán concretarse cuando se planifiquen los incrementos correspondientes:
@@ -152,7 +180,7 @@ Las siguientes decisiones deberán concretarse cuando se planifiquen los increme
 - El esquema físico definitivo de PostgreSQL y las relaciones entre evaluaciones, hallazgos y evidencias.
 - La evolución del contrato más allá de `/api/v1`.
 - La eventual ampliación controlada de la lista blanca para incrementos posteriores.
-- El formato de plantillas TextFSM y la estrategia de normalización de comandos `show`.
+- La ampliación de plantillas TextFSM y la estrategia para nuevas variantes y comandos `show`.
 - El mecanismo de despliegue y operación en Ubuntu Server.
 - El proveedor, modelo y política de retención de datos de la pasarela opcional de inteligencia artificial.
 - El diseño definitivo de la interfaz Streamlit.
