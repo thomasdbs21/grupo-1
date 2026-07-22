@@ -176,13 +176,13 @@ FastAPI todavía no procesa comandos `show`; tampoco existe persistencia o integ
 
 ## Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
+**Estado:** COMPLETADO FUNCIONALMENTE.
 
 ### Objetivo
 
 Construir un servicio que produzca una auditoría integral, inmutable y trazable de un dispositivo a partir de una única sesión SSH de solo lectura.
 
-### Flujo previsto
+### Flujo implementado
 
 1. Abrir una única sesión mediante `NetmikoCollector`.
 2. Recopilar exclusivamente `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`.
@@ -205,8 +205,8 @@ Construir un servicio que produzca una auditoría integral, inmutable y trazable
 - Resultado agregado inmutable con evaluaciones completas y `findings` derivados exclusivamente de `FAIL`.
 - Errores sanitizados.
 - Pruebas automatizadas sin conexiones SSH reales.
-- Validación manual posterior contra CSR1000v.
-- Documentación e Informe Técnico N.º 4 al cierre.
+- Validación manual controlada contra CSR1000v.
+- Registro técnico de cierre y material para el Informe Técnico N.º 4.
 
 ### Fuera del alcance
 
@@ -222,22 +222,35 @@ Construir un servicio que produzca una auditoría integral, inmutable y trazable
 - Cambios automáticos en dispositivos.
 - Incorporación de GNS3 o nuevas imágenes Cisco.
 
-### Criterios previstos de cierre
+### Criterios de cierre verificados
 
 - Los cuatro comandos se recopilan en una sola sesión y existe exactamente una evidencia por comando.
 - Las cuatro evidencias comparten el mismo `execution_id` y sus hashes son válidos.
 - El resultado integral es inmutable.
 - Se ejecutan las tres reglas de configuración e `IOS-IF-001`.
-- Cada evaluación `FAIL` produce un `Finding`; `PASS`, `NOT_APPLICABLE` y `ERROR` no producen hallazgos.
+- Cada evaluación `FAIL` produce un `Finding`; `PASS`, `NOT_APPLICABLE`, `NOT_EVALUATED` y `ERROR` no producen hallazgos.
 - Las fuentes ausentes, duplicadas o adicionales fallan explícitamente.
 - Los errores no filtran información sensible.
 - Todas las pruebas anteriores continúan aprobándose.
-- La validación manual termina con `VALIDACION_ANALISIS_INTEGRAL_OK`.
+- La validación manual terminó con `VALIDACION_CSR1000V: OK`.
 - La sesión SSH queda correctamente cerrada.
+
+### Resultado verificado
+
+- La recopilación canónica produce cuatro `CommandEvidence` en una sola sesión y mediante una sola llamada a `NetmikoCollector.collect()`.
+- Las cuatro evidencias conservan el mismo `execution_id`, generado una vez mediante UUID.
+- `validate_evidence_batch()` valida obligatoriamente el lote antes de entregarlo por identidad a `analyze_validated_evidence_batch()`.
+- El SHA-256 se calcula sobre `raw_output.encode("utf-8")`; no se calcula sobre `normalized_output`.
+- El resultado se devuelve directamente como `FullDeviceAnalysisResult` inmutable.
+- Se ejecutan las reglas `IOS-ADM-001`, `IOS-SRV-001`, `IOS-AUTH-001` e `IOS-IF-001`.
+- El incremento agregó 73 casos pytest y la suite total alcanzó 197 pruebas aprobadas.
+- La validación manual del 22-07-2026 se realizó una sola vez contra una CSR1000v IOS XE 16.9.5 en VirtualBox.
+- El resultado sanitizado confirmó una conexión, una desconexión, cuatro comandos, cuatro evidencias válidas, un UUID común, fechas UTC, normalización e integridad correctas, tres contextos operacionales, cuatro evaluaciones y cero findings.
+- Cero findings permite concluir que no hubo evaluaciones `FAIL`, pero no demuestra que todas las evaluaciones fueran `PASS`.
 
 ### Justificación del orden
 
-Este incremento se realizará antes de PostgreSQL porque primero debe estabilizarse el contrato que representará una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
+Este incremento se realizó antes de PostgreSQL para estabilizar primero el contrato que representa una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
 
 No se declara automáticamente cuál será el Incremento 7. Las alternativas posteriores permanecen pendientes de evaluación y aprobación.
 
