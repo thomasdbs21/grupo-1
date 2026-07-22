@@ -5,6 +5,10 @@ from ios_auditor.services.evidence_batch import (
     ValidatedEvidenceBatch,
     validate_evidence_batch,
 )
+from ios_auditor.services.full_device_analysis import (
+    FullDeviceAnalysisContractError,
+    analyze_validated_evidence_batch,
+)
 from ios_auditor.services.operational_analysis import (
     OperationalAnalysisError,
     OperationalEvidenceError,
@@ -23,6 +27,7 @@ __all__ = [
     "CollectedAnalysisContractError",
     "CollectedAnalysisResult",
     "EvidenceBatchValidationError",
+    "FullDeviceAnalysisContractError",
     "OperationalAnalysisError",
     "OperationalEvidenceError",
     "RunningConfigCollector",
@@ -30,6 +35,7 @@ __all__ = [
     "analyze_bytes",
     "analyze_collected_running_config",
     "analyze_file",
+    "analyze_validated_evidence_batch",
     "parse_collected_show_evidence",
     "validate_evidence_batch",
 ]
