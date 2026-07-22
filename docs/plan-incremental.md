@@ -39,6 +39,8 @@ Criterios de cierre:
 
 ## 4. Incremento 1 — Analizador offline de running-config
 
+**Estado:** COMPLETADO.
+
 **Objetivo:** analizar un archivo local `running-config` y producir evaluaciones y `findings` trazables.
 
 Incluye:
@@ -200,7 +202,75 @@ Limitaciones pendientes:
 - No existe persistencia ni integración operacional con inteligencia artificial.
 - Las plantillas se validaron únicamente con las variantes disponibles.
 
-## 9. Persistencia futura — etapa por decidir
+## 9. Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
+
+**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
+
+**Objetivo:** construir un servicio que produzca una auditoría integral, inmutable y trazable de un dispositivo a partir de una única sesión SSH de solo lectura.
+
+Flujo previsto:
+
+1. Abrir una única sesión mediante `NetmikoCollector`.
+2. Recopilar exclusivamente `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`.
+3. Producir una `CommandEvidence` por comando.
+4. Exigir un mismo `execution_id` para las cuatro evidencias.
+5. Validar comando, fecha UTC, UUID, normalización y SHA-256.
+6. Analizar `show running-config` con el flujo existente basado en CiscoConfParse.
+7. Analizar los tres comandos `show` con el flujo existente basado en TextFSM.
+8. Ejecutar las tres reglas actuales de `running-config`.
+9. Ejecutar `IOS-IF-001` sobre el contexto correspondiente.
+10. Producir un resultado agregado, inmutable y trazable del dispositivo.
+11. Conservar todas las evaluaciones.
+12. Derivar `findings` únicamente de resultados `FAIL`.
+
+Alcance incluido:
+
+- Contrato de resultado integral.
+- Validación estricta del conjunto de evidencias.
+- Detección de comandos ausentes, duplicados o adicionales.
+- Reutilización de servicios existentes.
+- Orquestación de análisis de configuración y operacional.
+- Resultado agregado inmutable.
+- Evaluaciones completas.
+- `Findings` derivados exclusivamente de `FAIL`.
+- Errores sanitizados.
+- Pruebas automatizadas sin SSH real.
+- Validación manual posterior contra CSR1000v.
+- Documentación e Informe Técnico N.º 4 al cierre.
+
+Fuera del alcance:
+
+- PostgreSQL.
+- SQLAlchemy y Alembic.
+- Streamlit.
+- Pasarela de inteligencia artificial.
+- Nuevos endpoints SSH de FastAPI.
+- Nuevos comandos `show`.
+- Nuevas reglas técnicas.
+- Unificación general de todos los registros de reglas.
+- Gestión definitiva de credenciales.
+- Cambios automáticos en dispositivos.
+- Incorporación de GNS3 o nuevas imágenes Cisco.
+
+Criterios previstos de cierre:
+
+- Los cuatro comandos son recopilados en una sola sesión.
+- Existe exactamente una evidencia por comando y todas comparten el mismo `execution_id`.
+- Los hashes son válidos.
+- El resultado integral es inmutable.
+- Se ejecutan tres reglas de configuración e `IOS-IF-001`.
+- Todos los `FAIL` producen `findings`; `PASS`, `NOT_APPLICABLE` y `ERROR` no los producen.
+- Las fuentes ausentes, duplicadas o adicionales fallan explícitamente.
+- Los errores no filtran información sensible.
+- Todas las pruebas anteriores continúan aprobándose.
+- La validación manual termina con `VALIDACION_ANALISIS_INTEGRAL_OK`.
+- La sesión SSH queda correctamente cerrada.
+
+Justificación del orden:
+
+Este incremento se realizará antes de PostgreSQL porque primero debe estabilizarse el contrato que representará una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
+
+## 10. Persistencia futura — etapa por decidir
 
 Incluye:
 
@@ -211,7 +281,7 @@ Incluye:
 - Historial de análisis.
 - Almacenamiento de todas las evaluaciones y únicamente hallazgos derivados de `FAIL`.
 
-## 10. Interfaz Streamlit futura — etapa por decidir
+## 11. Interfaz Streamlit futura — etapa por decidir
 
 Incluye:
 
@@ -222,7 +292,7 @@ Incluye:
 - Recomendaciones técnicas validadas.
 - Historial de análisis.
 
-## 11. Reportes futuros — etapa por decidir
+## 12. Reportes futuros — etapa por decidir
 
 Incluye:
 
@@ -233,7 +303,7 @@ Incluye:
 - Resumen por severidad.
 - Trazabilidad entre ejecución, evidencia, evaluación y hallazgo.
 
-## 12. Inteligencia artificial opcional — etapa por decidir
+## 13. Inteligencia artificial opcional — etapa por decidir
 
 Incluye:
 
@@ -248,7 +318,7 @@ Incluye:
 
 La IA no creará reglas, hallazgos ni evidencias y no cambiará estados o severidades.
 
-## 13. Catálogo MVP y validación ampliada — etapa por decidir
+## 14. Catálogo MVP y validación ampliada — etapa por decidir
 
 Incluye:
 
@@ -262,7 +332,7 @@ Incluye:
 - Medición del tiempo de análisis.
 - Evidencias reproducibles para el informe del proyecto.
 
-## 14. Estrategia de Git
+## 15. Estrategia de Git
 
 - Mantener una rama `main` estable.
 - Crear commits por incremento o cambio coherente.
@@ -279,7 +349,7 @@ Incluye:
 
 No se define todavía un flujo complejo con múltiples ramas.
 
-## 15. Definición de terminado
+## 16. Definición de terminado
 
 Una tarea se considera terminada cuando:
 
@@ -296,7 +366,7 @@ Una tarea se considera terminada cuando:
 
 Cuando una tarea solicite explícitamente no realizar commit o push, dichos pasos quedarán pendientes y deberán informarse; la tarea documental podrá considerarse completada en su alcance local, pero no respaldada todavía.
 
-## 16. Riesgos del desarrollo
+## 17. Riesgos del desarrollo
 
 | Riesgo | Mitigación breve |
 |---|---|
@@ -312,13 +382,8 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 | Falta de tiempo | Priorizar reglas demostrables y criterios esenciales del MVP. |
 | Pérdida de reproducibilidad | Versionar código, metadatos, ejemplos y documentación; registrar el entorno. |
 
-## 17. Próxima acción oficial
+## 18. Próxima acción oficial
 
-El Incremento 5 está completado. La próxima etapa no está definida y deberá aprobarse antes de programar. Las alternativas actuales son:
+El Incremento 5 está completado. La próxima etapa aprobada es el **Incremento 6 — Orquestación multifuente y análisis integral del dispositivo**. Esta aprobación define su alcance, pero no declara que esté implementado ni autoriza componentes fuera de él.
 
-- ampliar el catálogo de reglas operacionales;
-- integrar resultados operacionales con FastAPI;
-- incorporar persistencia;
-- preparar una capa explicativa de inteligencia artificial después de ampliar y validar las reglas deterministas.
-
-Estas alternativas no constituyen todavía un Incremento 6 oficial ni autorizan implementación anticipada.
+No se declara automáticamente cuál será el Incremento 7. PostgreSQL, Streamlit, reportes, inteligencia artificial, ampliación del catálogo y demás alternativas posteriores permanecen pendientes de evaluación y aprobación.
