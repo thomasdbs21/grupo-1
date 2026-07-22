@@ -10,19 +10,43 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from ios_auditor import __version__
-from ios_auditor.api.dependencies import get_analysis_repository, get_rule_registry
+from ios_auditor.api.dependencies import (
+    get_analysis_repository,
+    get_connection_factory,
+    get_rule_registry,
+)
 from ios_auditor.api.errors import ApiError
+from ios_auditor.api.full_device_serialization import (
+    FullDeviceResponseContractError,
+    to_full_device_analysis_response,
+)
 from ios_auditor.api.repository import InMemoryAnalysisRepository, StoredAnalysis
 from ios_auditor.api.schemas import (
     AnalysisCreatedResponse,
     AnalysisResponse,
+    DeviceAnalysisRequest,
     ErrorResponse,
     FindingResponse,
+    FullDeviceAnalysisResponse,
     HealthResponse,
     RuleEvaluationResponse,
     RuleSummaryResponse,
 )
+from ios_auditor.collectors import (
+    CollectorAuthenticationError,
+    CollectorConnectionError,
+    CollectorTimeoutError,
+    CommandNotAllowedError,
+)
+from ios_auditor.collectors.netmiko_collector import ConnectionFactory
 from ios_auditor.rules import RuleRegistry
+from ios_auditor.services import (
+    AnalysisError,
+    EvidenceBatchValidationError,
+    FullDeviceAnalysisContractError,
+    OperationalAnalysisError,
+    collect_and_analyze_device,
+)
 from ios_auditor.services.analyzer import (
     EmptyContentError,
     InvalidEncodingError,
@@ -36,6 +60,14 @@ SERVICE_NAME = "ios-auditor"
 MAX_UPLOAD_BYTES = 2 * 1024 * 1024
 ALLOWED_EXTENSIONS = frozenset({".cfg", ".conf", ".txt"})
 logger = logging.getLogger("ios_auditor.api")
+
+DEVICE_TIMEOUT_CODE = "DEVICE_TIMEOUT"
+DEVICE_ANALYSIS_FAILED_CODE = "DEVICE_ANALYSIS_FAILED"
+DEVICE_TIMEOUT_MESSAGE = "El dispositivo no respondió dentro del tiempo permitido."
+DEVICE_ANALYSIS_FAILED_MESSAGE = (
+    "No fue posible completar el análisis del dispositivo."
+)
+INTERNAL_ERROR_MESSAGE = "Ocurrió un error interno inesperado."
 
 app = FastAPI(
     title="Cisco IOS Auditor API",
@@ -69,13 +101,13 @@ async def validation_error_handler(
 
 @app.exception_handler(Exception)
 async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResponse:
-    logger.exception(
+    logger.error(
         "error_interno method=%s path=%s type=%s",
         request.method,
         request.url.path,
         type(exc).__name__,
     )
-    return _error_response(500, "INTERNAL_ERROR", "Ocurrió un error interno inesperado.")
+    return _error_response(500, "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE)
 
 
 @app.middleware("http")
@@ -165,6 +197,58 @@ def list_rules(
         )
         for rule in registry.list_rules(enabled_only=True)
     ]
+
+
+@app.post(
+    "/api/v1/device-analyses",
+    response_model=FullDeviceAnalysisResponse,
+    status_code=200,
+    responses={
+        422: {"model": ErrorResponse},
+        500: {"model": ErrorResponse},
+        502: {"model": ErrorResponse},
+        504: {"model": ErrorResponse},
+    },
+)
+def create_device_analysis(
+    request: DeviceAnalysisRequest,
+    connection_factory: ConnectionFactory = Depends(get_connection_factory),
+) -> FullDeviceAnalysisResponse:
+    try:
+        result = collect_and_analyze_device(
+            host=str(request.host),
+            port=request.port,
+            username=request.username,
+            password=request.password.get_secret_value(),
+            connection_factory=connection_factory,
+        )
+        return to_full_device_analysis_response(result)
+    except CollectorTimeoutError:
+        raise ApiError(
+            504,
+            DEVICE_TIMEOUT_CODE,
+            DEVICE_TIMEOUT_MESSAGE,
+        ) from None
+    except (
+        CollectorAuthenticationError,
+        CollectorConnectionError,
+        EvidenceBatchValidationError,
+        OperationalAnalysisError,
+        AnalysisError,
+    ):
+        raise ApiError(
+            502,
+            DEVICE_ANALYSIS_FAILED_CODE,
+            DEVICE_ANALYSIS_FAILED_MESSAGE,
+        ) from None
+    except (
+        CommandNotAllowedError,
+        FullDeviceAnalysisContractError,
+        FullDeviceResponseContractError,
+    ):
+        raise ApiError(500, "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE) from None
+    except Exception:
+        raise ApiError(500, "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE) from None
 
 
 @app.post(
