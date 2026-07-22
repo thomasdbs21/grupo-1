@@ -49,6 +49,7 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - Las conexiones SSH mediante Netmiko están limitadas a operaciones de consulta autorizadas.
 - Las credenciales, contraseñas, claves privadas, tokens, claves API y demás secretos no se almacenarán en texto plano.
 - Las credenciales y los secretos no aparecerán en logs, reportes, mensajes de error ni solicitudes enviadas a servicios de inteligencia artificial.
+- No se expondrán configuraciones completas, direcciones reales del laboratorio, nombres de host reales, números de serie, claves, certificados ni salidas completas de comandos `show`.
 - Toda información enviada a la pasarela de inteligencia artificial deberá ser sanitizada previamente.
 - La indisponibilidad de la inteligencia artificial no impedirá ejecutar el análisis técnico.
 
@@ -173,6 +174,73 @@ La suite evolucionó de 96 a 122 pruebas con la primera implementación y a 124 
 
 FastAPI todavía no procesa comandos `show`; tampoco existe persistencia o integración con inteligencia artificial para el contexto operacional.
 
+## Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
+
+**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
+
+### Objetivo
+
+Construir un servicio que produzca una auditoría integral, inmutable y trazable de un dispositivo a partir de una única sesión SSH de solo lectura.
+
+### Flujo previsto
+
+1. Abrir una única sesión mediante `NetmikoCollector`.
+2. Recopilar exclusivamente `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`.
+3. Producir una `CommandEvidence` por comando.
+4. Exigir el mismo `execution_id` para las cuatro evidencias.
+5. Validar comando, fecha UTC, UUID, normalización y SHA-256 de cada evidencia.
+6. Analizar `show running-config` con el flujo existente basado en CiscoConfParse.
+7. Analizar los otros tres comandos `show` con el flujo existente basado en TextFSM.
+8. Ejecutar las tres reglas actuales de `running-config`.
+9. Ejecutar `IOS-IF-001` sobre el contexto operacional correspondiente.
+10. Producir un resultado agregado, inmutable y trazable del dispositivo.
+11. Conservar todas las evaluaciones.
+12. Derivar `findings` únicamente de evaluaciones con estado `FAIL`.
+
+### Alcance incluido
+
+- Contrato de resultado integral.
+- Validación estricta del conjunto de evidencias y detección de comandos ausentes, duplicados o adicionales.
+- Reutilización de los servicios existentes y orquestación de los análisis de configuración y operacional.
+- Resultado agregado inmutable con evaluaciones completas y `findings` derivados exclusivamente de `FAIL`.
+- Errores sanitizados.
+- Pruebas automatizadas sin conexiones SSH reales.
+- Validación manual posterior contra CSR1000v.
+- Documentación e Informe Técnico N.º 4 al cierre.
+
+### Fuera del alcance
+
+- PostgreSQL.
+- SQLAlchemy y Alembic.
+- Streamlit.
+- Pasarela de inteligencia artificial.
+- Nuevos endpoints SSH de FastAPI.
+- Nuevos comandos `show`.
+- Nuevas reglas técnicas.
+- Unificación general de todos los registros de reglas.
+- Gestión definitiva de credenciales.
+- Cambios automáticos en dispositivos.
+- Incorporación de GNS3 o nuevas imágenes Cisco.
+
+### Criterios previstos de cierre
+
+- Los cuatro comandos se recopilan en una sola sesión y existe exactamente una evidencia por comando.
+- Las cuatro evidencias comparten el mismo `execution_id` y sus hashes son válidos.
+- El resultado integral es inmutable.
+- Se ejecutan las tres reglas de configuración e `IOS-IF-001`.
+- Cada evaluación `FAIL` produce un `Finding`; `PASS`, `NOT_APPLICABLE` y `ERROR` no producen hallazgos.
+- Las fuentes ausentes, duplicadas o adicionales fallan explícitamente.
+- Los errores no filtran información sensible.
+- Todas las pruebas anteriores continúan aprobándose.
+- La validación manual termina con `VALIDACION_ANALISIS_INTEGRAL_OK`.
+- La sesión SSH queda correctamente cerrada.
+
+### Justificación del orden
+
+Este incremento se realizará antes de PostgreSQL porque primero debe estabilizarse el contrato que representará una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
+
+No se declara automáticamente cuál será el Incremento 7. Las alternativas posteriores permanecen pendientes de evaluación y aprobación.
+
 ## Decisiones pendientes
 
 Las siguientes decisiones deberán concretarse cuando se planifiquen los incrementos correspondientes:
@@ -185,4 +253,4 @@ Las siguientes decisiones deberán concretarse cuando se planifiquen los increme
 - El proveedor, modelo y política de retención de datos de la pasarela opcional de inteligencia artificial.
 - El diseño definitivo de la interfaz Streamlit.
 
-Estas decisiones pendientes no amplían el alcance del primer incremento y deberán documentarse antes de implementar cada componente futuro.
+Estas decisiones pendientes no amplían el alcance del Incremento 6 y deberán documentarse antes de implementar cada componente futuro.

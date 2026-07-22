@@ -17,8 +17,8 @@ El sistema no administrará ni modificará automáticamente los dispositivos.
 El sistema deberá poder recibir configuraciones Cisco IOS mediante:
 
 - Archivos locales `running-config`.
-- Conexión SSH de solo lectura, en incrementos posteriores.
-- Salidas de comandos `show`, en incrementos posteriores.
+- Conexión SSH de solo lectura mediante Netmiko.
+- Salidas estructuradas de los comandos `show` actualmente soportados mediante TextFSM.
 
 Después deberá:
 
@@ -61,7 +61,7 @@ El sistema deberá poder detectar:
 - Ausencia o mala configuración de Syslog.
 - Riesgos relacionados con SNMP.
 - Falta de documentación o nomenclatura.
-- Problemas operacionales detectados mediante comandos `show`, en incrementos posteriores.
+- Problemas operacionales detectados mediante comandos `show` soportados.
 
 Toda detección deberá estar respaldada por:
 
@@ -100,21 +100,18 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 ### Plataforma del laboratorio
 
 - Sistema anfitrión: Windows 11.
-- Virtualización: VMware Workstation.
-- Laboratorio de red: GNS3 y GNS3 VM.
-- Routers virtuales: Cisco IOSv.
-- Switches virtuales: Cisco IOSvL2.
-- Servidor del asistente: Ubuntu Server.
-- Equipos de prueba: VPCS o clientes Linux.
+- Plataforma utilizada en las validaciones reales de los Incrementos 4 y 5: VirtualBox con CSR1000v IOS XE 16.9.5.
+- GNS3, GNS3 VM, IOSv e IOSvL2 permanecen como ampliación futura opcional, condicionada a disponer legalmente de imágenes autorizadas; no deben describirse como ya utilizados.
+- Ubuntu Server permanece pendiente como futuro servidor del asistente.
 
 ### Desarrollo
 
 - Lenguaje principal: Python 3.
 - Estructura de proyecto: diseño basado en carpeta `src/`.
 - Parsing de `running-config`: `ciscoconfparse2`, mediante la clase `CiscoConfParse`.
-- Parsing futuro de comandos `show`: TextFSM.
-- Conexión SSH futura: Netmiko.
-- API futura: FastAPI y Uvicorn.
+- Parsing implementado de los comandos `show` soportados: TextFSM mediante plantillas propias.
+- Conexión SSH implementada: Netmiko, exclusivamente para recopilación de solo lectura mediante lista blanca.
+- API implementada para archivos locales: FastAPI y Uvicorn; todavía no expone conexiones SSH ni resultados operacionales.
 - Validación de modelos: Pydantic.
 - Base de datos futura: PostgreSQL.
 - ORM futuro: SQLAlchemy.
@@ -126,6 +123,17 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 - Reportes futuros: Jinja2, HTML, PDF y JSON.
 - Inteligencia artificial: pasarela opcional compatible con modelo local o API externa.
 - Control de versiones: Git.
+
+### Estado actual de implementación
+
+- Los Incrementos 0 a 3 están completados: preparación del repositorio, analizador offline de `running-config`, reglas piloto, CLI, metadatos YAML, registro de reglas y API FastAPI para archivos locales.
+- El Incremento 4 está completado: recolector Netmiko de solo lectura e integración de `show running-config` con el analizador existente.
+- El Incremento 5 está completado: TextFSM para `show version`, `show ip interface brief` y `show ip ssh`, `OperationalContext` inmutable, validación operacional e `IOS-IF-001`.
+- La suite vigente al cierre del Incremento 5 contiene 124 pruebas; ese incremento agregó 28 pruebas.
+- La validación real sanitizada de los Incrementos 4 y 5 se efectuó contra un CSR1000v IOS XE 16.9.5 en VirtualBox.
+- PostgreSQL, SQLAlchemy, Alembic, Streamlit y la pasarela de inteligencia artificial continúan pendientes.
+- El servicio operacional procesa actualmente una `CommandEvidence` por llamada.
+- Los análisis de `running-config` y de comandos `show` permanecen separados y aún no existe un resultado integral de auditoría de dispositivo.
 
 ---
 
@@ -187,6 +195,13 @@ El contexto de análisis deberá representar de forma estructurada la informaci�
 El contexto deberá ser inmutable durante la evaluación de las reglas.
 
 Las reglas no deberán analizar directamente conexiones SSH ni interactuar con dispositivos.
+
+En la implementación actual existen dos contratos separados:
+
+- `AnalysisContext`, construido con CiscoConfParse para las tres reglas de `running-config` registradas en `RuleRegistry`.
+- `OperationalContext`, construido con TextFSM para datos estructurados de un comando `show`; `IOS-IF-001` se carga y ejecuta separadamente sobre el contexto correspondiente.
+
+Ninguno de estos contextos concede a las reglas acceso a Netmiko, SSH, credenciales, base de datos o inteligencia artificial. Su orquestación en una auditoría integral pertenece al Incremento 6 aprobado y todavía no está implementada.
 
 ---
 
@@ -333,28 +348,20 @@ Solo podrá versionarse un archivo `.env.example` sin valores reales.
 
 Antes de enviar información a la inteligencia artificial, deberá aplicarse sanitización o eliminación de datos sensibles.
 
+Tampoco deberán exponerse en documentación, logs, reportes, salidas de consola o mensajes de error configuraciones completas, direcciones reales del laboratorio, nombres de host reales, números de serie, claves, certificados ni salidas completas de comandos `show`.
+
 ---
 
 ## 14. Restricciones de comandos de red
 
-En los incrementos que utilicen SSH, solamente podrán ejecutarse comandos previamente autorizados mediante una lista blanca.
-
-Ejemplos de comandos permitidos:
+En los incrementos que utilicen SSH, solamente podrán ejecutarse comandos previamente autorizados mediante una lista blanca. La lista implementada actualmente contiene exactamente:
 
     show running-config
     show version
     show ip interface brief
-    show interfaces
-    show interfaces status
-    show interfaces trunk
-    show vlan brief
-    show spanning-tree
-    show ip ospf neighbor
-    show ip route
-    show access-lists
-    show ntp associations
-    show logging
-    show snmp
+    show ip ssh
+
+Cualquier ampliación de esta lista requiere una decisión técnica y pruebas específicas; no se aceptarán comandos arbitrarios proporcionados directamente por el usuario.
 
 Ejemplos de comandos prohibidos:
 
@@ -462,15 +469,15 @@ El catálogo podrá incluir reglas de:
 
 El catálogo completo podrá contener aproximadamente 30 reglas.
 
-El MVP deberá priorizar entre 20 y 25 reglas técnicamente demostrables dentro del laboratorio GNS3.
+El MVP deberá priorizar entre 20 y 25 reglas técnicamente demostrables en laboratorios virtuales autorizados. GNS3 podrá evaluarse en el futuro si se dispone legalmente de imágenes compatibles.
 
 ---
 
-## 18. Primer incremento funcional
+## 18. Primer incremento funcional completado
 
-El primer incremento analizará únicamente archivos locales `running-config`.
+El primer incremento analizó únicamente archivos locales `running-config`.
 
-Debe incluir:
+Incluyó:
 
 - Lectura de archivo local.
 - Validación de la ruta y formato básico.
@@ -542,9 +549,9 @@ Resultado esperado:
 
 ---
 
-## 20. Elementos fuera del primer incremento
+## 20. Alcance histórico fuera del primer incremento
 
-No implementar todavía:
+En la definición original del Incremento 1 quedaron fuera:
 
 - Conexión SSH.
 - Netmiko.
@@ -568,76 +575,28 @@ No implementar todavía:
 - Redis.
 - Alta disponibilidad.
 
-Estos componentes se agregarán en incrementos posteriores.
+SSH, Netmiko, FastAPI, Uvicorn, TextFSM y los tres comandos `show` soportados fueron incorporados posteriormente en los Incrementos 3, 4 y 5. PostgreSQL, SQLAlchemy, Alembic, Streamlit, inteligencia artificial, reportes PDF, autenticación de usuarios, el catálogo ampliado y los demás componentes enumerados continúan pendientes. GNS3 sigue siendo una opción futura, no una plataforma ya utilizada.
 
 ---
 
 ## 21. Plan incremental
 
-### Incremento 1
+### Incrementos 0 a 5 — completados
 
-- Archivo `running-config`.
-- `ciscoconfparse2` (clase `CiscoConfParse`).
-- Tres reglas piloto.
-- Salida JSON.
-- pytest.
+- Incremento 0: preparación del repositorio.
+- Incremento 1: analizador offline de `running-config`, CiscoConfParse, tres reglas piloto, CLI, JSON y pytest.
+- Incremento 2: metadatos YAML y `RuleRegistry` determinista.
+- Incremento 3: FastAPI para carga y consulta de análisis de archivos locales.
+- Incremento 4: Netmiko, SSH de solo lectura e integración del análisis de `show running-config`.
+- Incremento 5: TextFSM para los tres comandos `show` soportados, `OperationalContext` e `IOS-IF-001`.
 
-### Incremento 2
+### Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-- Metadatos YAML.
-- Registro de reglas.
-- Carga controlada de reglas.
-- Más pruebas unitarias.
+**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
 
-### Incremento 3
+Construirá un servicio que, mediante una única sesión SSH de solo lectura, recopile exactamente los cuatro comandos autorizados, produzca una `CommandEvidence` por comando con un mismo `execution_id`, reutilice los flujos actuales de CiscoConfParse y TextFSM, ejecute las tres reglas de configuración e `IOS-IF-001`, y entregue un resultado agregado, inmutable y trazable. Deberá conservar todas las evaluaciones y derivar hallazgos únicamente de resultados `FAIL`.
 
-- FastAPI.
-- Carga de archivos mediante API.
-- Consulta de evaluaciones y hallazgos.
-
-### Incremento 4
-
-- Netmiko.
-- SSH de solo lectura.
-- Lista blanca de comandos.
-- Recopilación desde GNS3.
-
-### Incremento 5
-
-- TextFSM.
-- Comandos `show`.
-- Evidencia operacional.
-
-### Incremento 6
-
-- PostgreSQL.
-- SQLAlchemy.
-- Alembic.
-- Historial de análisis.
-
-### Incremento 7
-
-- Streamlit.
-- Visualización de resultados.
-- Selección de dispositivos.
-- Historial.
-
-### Incremento 8
-
-- Reportes HTML, JSON y PDF.
-
-### Incremento 9
-
-- Pasarela opcional de inteligencia artificial.
-- Sanitización de datos.
-- Explicaciones de hallazgos.
-
-### Incremento 10
-
-- Implementación progresiva de 20 a 25 reglas.
-- Validación completa en GNS3.
-- Medición de precisión.
-- Revisión de falsos positivos y falsos negativos.
+Este incremento se realizará antes de PostgreSQL para estabilizar primero el contrato de una auditoría completa. La persistencia, Streamlit, los reportes, la inteligencia artificial, la ampliación de reglas y las plataformas adicionales permanecen pendientes de evaluación y no reciben todavía una numeración oficial posterior.
 
 ---
 
