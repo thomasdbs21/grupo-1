@@ -5,13 +5,13 @@ from pathlib import Path
 
 from ios_auditor.domain import (
     AnalysisResult,
-    Finding,
     RuleEvaluation,
     RuleStatus,
 )
 from ios_auditor.parsers import parse_running_config
 from ios_auditor.rules import RuleRegistry, get_default_registry
 from ios_auditor.rules.base import Rule
+from ios_auditor.services.rule_results import findings_from_evaluations
 
 
 class AnalysisError(Exception):
@@ -112,18 +112,7 @@ def analyze_context(context, *, registry: RuleRegistry | None = None) -> Analysi
         _evaluate_rule(rule, context)
         for rule in active_registry.list_rules(enabled_only=True)
     )
-    findings = tuple(
-        Finding(
-            rule_id=evaluation.rule_id,
-            rule_name=evaluation.rule_name,
-            severity=evaluation.severity,
-            message=evaluation.message,
-            recommendation=evaluation.recommendation,
-            evidence=evaluation.evidence,
-        )
-        for evaluation in evaluations
-        if evaluation.status is RuleStatus.FAIL
-    )
+    findings = findings_from_evaluations(evaluations)
     return AnalysisResult(
         source_path=context.source_path,
         sha256=context.sha256,

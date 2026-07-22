@@ -204,11 +204,11 @@ Limitaciones pendientes:
 
 ## 9. Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
+**Estado:** COMPLETADO FUNCIONALMENTE.
 
 **Objetivo:** construir un servicio que produzca una auditoría integral, inmutable y trazable de un dispositivo a partir de una única sesión SSH de solo lectura.
 
-Flujo previsto:
+Flujo implementado:
 
 1. Abrir una única sesión mediante `NetmikoCollector`.
 2. Recopilar exclusivamente `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`.
@@ -235,7 +235,7 @@ Alcance incluido:
 - `Findings` derivados exclusivamente de `FAIL`.
 - Errores sanitizados.
 - Pruebas automatizadas sin SSH real.
-- Validación manual posterior contra CSR1000v.
+- Validación manual controlada contra CSR1000v.
 - Documentación e Informe Técnico N.º 4 al cierre.
 
 Fuera del alcance:
@@ -252,23 +252,36 @@ Fuera del alcance:
 - Cambios automáticos en dispositivos.
 - Incorporación de GNS3 o nuevas imágenes Cisco.
 
-Criterios previstos de cierre:
+Criterios de cierre verificados:
 
 - Los cuatro comandos son recopilados en una sola sesión.
 - Existe exactamente una evidencia por comando y todas comparten el mismo `execution_id`.
 - Los hashes son válidos.
 - El resultado integral es inmutable.
 - Se ejecutan tres reglas de configuración e `IOS-IF-001`.
-- Todos los `FAIL` producen `findings`; `PASS`, `NOT_APPLICABLE` y `ERROR` no los producen.
+- Todos los `FAIL` producen `findings`; `PASS`, `NOT_APPLICABLE`, `NOT_EVALUATED` y `ERROR` no los producen.
 - Las fuentes ausentes, duplicadas o adicionales fallan explícitamente.
 - Los errores no filtran información sensible.
 - Todas las pruebas anteriores continúan aprobándose.
-- La validación manual termina con `VALIDACION_ANALISIS_INTEGRAL_OK`.
+- La validación manual terminó con `VALIDACION_CSR1000V: OK`.
 - La sesión SSH queda correctamente cerrada.
+
+Resultado del incremento:
+
+- Se implementaron `FullDeviceAnalysisResult`, `ValidatedEvidenceBatch`, `analyze_validated_evidence_batch()` y `collect_and_analyze_device()`.
+- El flujo conserva por identidad las evidencias y el lote validado, y devuelve directamente el resultado integral.
+- El SHA-256 se calcula sobre `raw_output.encode("utf-8")`; `normalized_output` se valida por separado y no es la entrada del hash.
+- Se ejecutan `IOS-ADM-001`, `IOS-SRV-001`, `IOS-AUTH-001` e `IOS-IF-001`.
+- Se agregaron 73 casos pytest: 14 del resultado integral, 27 del lote, 20 del orquestador puro y 12 de la integración SSH.
+- La suite pasó de 124 a 197 pruebas y las 197 quedaron aprobadas.
+- La validación manual se realizó una sola vez el 22-07-2026 contra una CSR1000v IOS XE 16.9.5 en VirtualBox.
+- El resultado sanitizado confirmó una conexión, una desconexión, cuatro comandos y evidencias, un UUID común, fechas UTC, normalización e integridad válidas, tres contextos operacionales, cuatro evaluaciones y cero findings.
+- Los cero findings demuestran que no hubo evaluaciones `FAIL`; no se conservó evidencia suficiente para afirmar que las cuatro evaluaciones fueran `PASS`.
+- La implementación se registró en `f7e4398`, `ae832dd`, `92d82fd` y `5753768`.
 
 Justificación del orden:
 
-Este incremento se realizará antes de PostgreSQL porque primero debe estabilizarse el contrato que representará una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
+Este incremento se realizó antes de PostgreSQL para estabilizar primero el contrato que representa una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
 
 ## 10. Persistencia futura — etapa por decidir
 
@@ -384,6 +397,6 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 ## 18. Próxima acción oficial
 
-El Incremento 5 está completado. La próxima etapa aprobada es el **Incremento 6 — Orquestación multifuente y análisis integral del dispositivo**. Esta aprobación define su alcance, pero no declara que esté implementado ni autoriza componentes fuera de él.
+El **Incremento 6 — Orquestación multifuente y análisis integral del dispositivo** está funcionalmente completado. Su cierre se documenta en `docs/registro-incremento-6-analisis-integral-dispositivo.md`.
 
 No se declara automáticamente cuál será el Incremento 7. PostgreSQL, Streamlit, reportes, inteligencia artificial, ampliación del catálogo y demás alternativas posteriores permanecen pendientes de evaluación y aprobación.

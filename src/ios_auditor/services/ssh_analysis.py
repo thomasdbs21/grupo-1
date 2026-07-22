@@ -6,12 +6,20 @@ import hashlib
 from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Protocol
-from uuid import UUID
+from uuid import UUID, uuid4
 
-from ios_auditor.collectors import CommandEvidence
-from ios_auditor.domain import AnalysisResult
+from ios_auditor.collectors import CommandEvidence, NetmikoCollector
+from ios_auditor.collectors.netmiko_collector import ConnectionFactory
+from ios_auditor.domain import AnalysisResult, FullDeviceAnalysisResult
 from ios_auditor.rules import RuleRegistry
 from ios_auditor.services.analyzer import analyze_bytes
+from ios_auditor.services.evidence_batch import (
+    CANONICAL_EVIDENCE_COMMANDS,
+    validate_evidence_batch,
+)
+from ios_auditor.services.full_device_analysis import (
+    analyze_validated_evidence_batch,
+)
 
 
 _RUNNING_CONFIG_COMMAND = "show running-config"
@@ -107,3 +115,38 @@ def analyze_collected_running_config(
         evidence=evidence,
         analysis_result=analysis_result,
     )
+
+
+def collect_and_analyze_device(
+    *,
+    host: str,
+    port: int,
+    username: str,
+    password: str,
+    connection_factory: ConnectionFactory | None = None,
+) -> FullDeviceAnalysisResult:
+    """Recopila y analiza un dispositivo usando una sola sesión de lectura."""
+
+    collector = (
+        NetmikoCollector(
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+        )
+        if connection_factory is None
+        else NetmikoCollector(
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            connection_factory=connection_factory,
+        )
+    )
+    execution_id = uuid4()
+    evidences = collector.collect(
+        CANONICAL_EVIDENCE_COMMANDS,
+        execution_id=execution_id,
+    )
+    validated_batch = validate_evidence_batch(evidences)
+    return analyze_validated_evidence_batch(validated_batch)

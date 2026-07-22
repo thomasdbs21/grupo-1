@@ -1,3 +1,4 @@
+from ios_auditor.domain.full_device import FullDeviceAnalysisResult
 from ios_auditor.domain.models import (
     AnalysisContext,
     AnalysisResult,
@@ -15,6 +16,7 @@ __all__ = [
     "AnalysisResult",
     "Evidence",
     "Finding",
+    "FullDeviceAnalysisResult",
     "RuleEvaluation",
     "RuleMetadata",
     "RuleStatus",
