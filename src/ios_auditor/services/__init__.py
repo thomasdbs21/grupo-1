@@ -19,6 +19,7 @@ from ios_auditor.services.ssh_analysis import (
     CollectedAnalysisResult,
     RunningConfigCollector,
     analyze_collected_running_config,
+    collect_and_analyze_device,
 )
 
 __all__ = [
@@ -36,6 +37,7 @@ __all__ = [
     "analyze_collected_running_config",
     "analyze_file",
     "analyze_validated_evidence_batch",
+    "collect_and_analyze_device",
     "parse_collected_show_evidence",
     "validate_evidence_batch",
 ]
