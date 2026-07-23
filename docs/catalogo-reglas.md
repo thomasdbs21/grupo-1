@@ -137,18 +137,88 @@ Casos esperados:
 - **FAIL:** existe `enable password` sin `enable secret`.
 - **NOT_APPLICABLE:** el mecanismo no corresponde a la plataforma o esquema de autenticación demostrado.
 
-## 5. Catálogo previsto para el MVP
+## 5. Reglas aprobadas para el Incremento 8
 
-Los identificadores, severidades y prioridades no piloto son preliminares. La tabla no define todavía toda su lógica.
+Las siguientes reglas están formalmente aprobadas, pero todavía no están implementadas. Utilizarán exclusivamente `running-config`, recibirán `AnalysisContext` inmutable y se incorporarán al `RuleRegistry` existente. Sus excepciones inesperadas producirán `ERROR`; todas sus evaluaciones se conservarán y únicamente `FAIL` generará un `Finding`.
+
+### IOS-ADM-002 — SSH versión 1 habilitada
+
+- **Categoría:** administración remota.
+- **Fuente requerida:** `running-config`.
+- **Plataforma:** Cisco IOS e IOS XE con configuración explícita de versión SSH.
+- **Severidad:** `HIGH`.
+- **Condición FAIL:** existe una directiva activa y exacta `ip ssh version 1`. Esta condición prevalece si también aparece una directiva de versión 2.
+- **Condición PASS:** existe una directiva activa y exacta `ip ssh version 2` y no existe `ip ssh version 1`.
+- **Condición NOT_EVALUATED:** no existe ninguna directiva explícita de versión SSH.
+- **Criterio de seguridad:** no se infiere como segura una versión predeterminada.
+- **Evidencia FAIL:** únicamente la directiva detectada y su número de línea; no se incluyen claves SSH ni salidas operacionales.
+- **Riesgo técnico:** uso permitido de una versión heredada del protocolo SSH.
+- **Posibles falsos positivos:** configuración parcial o sintaxis específica de plataforma no contemplada.
+- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+
+### IOS-SRV-002 — Servicios TCP/UDP pequeños habilitados
+
+- **Categoría:** servicios innecesarios.
+- **Fuente requerida:** `running-config`.
+- **Plataforma:** Cisco IOS e IOS XE que admitan servicios TCP/UDP pequeños.
+- **Severidad:** `MEDIUM`.
+- **Condición FAIL:** existe una o ambas directivas activas y exactas `service tcp-small-servers` y `service udp-small-servers`.
+- **Condición PASS:** no existe ninguna de esas directivas activas.
+- **Condición NOT_APPLICABLE:** no se utiliza.
+- **Directivas negadas:** `no service tcp-small-servers` y `no service udp-small-servers` no producen `FAIL`.
+- **Evidencia:** exclusivamente las directivas inseguras activas encontradas y sus números de línea.
+- **Riesgo técnico:** exposición innecesaria de servicios pequeños TCP o UDP.
+- **Posibles falsos positivos:** necesidad operacional excepcional y formalmente aceptada en un entorno controlado.
+- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+
+### IOS-NTP-001 — Servidor NTP no configurado
+
+- **Categoría:** NTP.
+- **Fuente requerida:** `running-config`.
+- **Plataforma:** Cisco IOS e IOS XE que admitan configuración NTP.
+- **Severidad:** `MEDIUM`.
+- **Condición PASS:** existe al menos una directiva activa y válida `ntp server` con un destino.
+- **Condición FAIL:** no existe ningún servidor NTP activo.
+- **Contrato de entrada:** la evaluación parte del contrato vigente de `running-config` completo y no incorpora heurísticas nuevas de completitud.
+- **Evidencia PASS:** indicación genérica `servidor NTP: configurado`.
+- **Evidencia FAIL:** texto sintético seguro `servidor NTP: no configurado`.
+- **Sanitización:** no se exponen direcciones, hostnames, claves ni parámetros sensibles.
+- **Riesgo técnico:** ausencia de una fuente de tiempo remota configurada para correlación y trazabilidad temporal.
+- **Posibles falsos positivos:** sincronización provista por un mecanismo de plataforma no representado mediante `ntp server`.
+- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+
+### IOS-LOG-001 — Servidor Syslog no configurado
+
+- **Categoría:** Syslog.
+- **Fuente requerida:** `running-config`.
+- **Plataforma:** Cisco IOS e IOS XE con destinos remotos de logging.
+- **Severidad:** `MEDIUM`.
+- **Condición PASS:** existe al menos un destino remoto activo con una sintaxis soportada.
+- **Condición FAIL:** no existe ningún destino remoto ni indicio de una sintaxis de destino no reconocida.
+- **Condición NOT_EVALUATED:** existe una posible sintaxis activa de destino remoto que no puede reconocerse con seguridad; se evita convertirla en un falso `FAIL`.
+- **Sintaxis moderna soportada:** `logging host <destino> [opciones soportadas]`.
+- **Sintaxis heredada soportada:** `logging <destino>`.
+- **Exclusiones de la sintaxis heredada:** no son destinos remotos directivas como `logging buffered`, `logging console`, `logging monitor`, `logging trap`, `logging facility`, `logging source-interface`, `logging origin-id`, `logging discriminator`, `logging history`, `logging rate-limit` o `logging queue-limit`.
+- **Directivas negadas:** las formas iniciadas por `no logging` no configuran un destino activo.
+- **Evidencia PASS:** indicación genérica `servidor Syslog remoto: configurado`.
+- **Evidencia FAIL:** texto sintético seguro `servidor Syslog remoto: no configurado`.
+- **Sanitización:** no se exponen destino, VRF, dirección, hostname ni opciones asociadas.
+- **Riesgo técnico:** ausencia de envío remoto de eventos para supervisión y trazabilidad.
+- **Posibles falsos positivos:** variantes de sintaxis dependientes de plataforma todavía no reconocidas; deben conducir a `NOT_EVALUATED` cuando se detecte un indicio.
+- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+
+## 6. Catálogo previsto para el MVP
+
+Los identificadores, severidades y prioridades no piloto continúan preliminares, excepto las cuatro reglas aprobadas para el Incremento 8. Sus contratos oficiales están definidos en la sección anterior.
 
 | ID provisional | Nombre | Categoría | Fuente requerida | Severidad preliminar | Prioridad MVP | Estado |
 |---|---|---|---|---|---|---|
 | IOS-ADM-001 | Telnet permitido en líneas VTY | Administración remota | `running-config` | HIGH | Alta | PILOTO |
-| IOS-ADM-002 | SSH versión 1 habilitada | Administración remota | `running-config` | HIGH | Alta | MVP |
+| IOS-ADM-002 | SSH versión 1 habilitada | Administración remota | `running-config` | HIGH | Alta | INCREMENTO 8 APROBADO |
 | IOS-AUTH-001 | Enable password sin enable secret | Contraseñas y autenticación | `running-config` | HIGH | Alta | PILOTO |
 | IOS-AUTH-002 | Contraseña de consola ausente o no protegida | Contraseñas y autenticación | `running-config` | MEDIUM | Media | MVP |
 | IOS-SRV-001 | Servidor HTTP sin cifrado habilitado | Servicios innecesarios | `running-config` | MEDIUM | Alta | PILOTO |
-| IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | Servicios innecesarios | `running-config` | MEDIUM | Media | MVP |
+| IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | Servicios innecesarios | `running-config` | MEDIUM | Media | INCREMENTO 8 APROBADO |
 | IOS-INT-001 | Interfaz no utilizada sin shutdown | Interfaces | `running-config`, `show interfaces` | MEDIUM | Media | MVP |
 | IOS-INT-002 | Descripción ausente en interfaz activa | Interfaces | `running-config`, `show interfaces` | LOW | Baja | MVP |
 | IOS-VLAN-001 | VLAN 1 utilizada para acceso de usuarios | VLAN | `running-config`, `show vlan brief` | MEDIUM | Media | MVP |
@@ -162,14 +232,14 @@ Los identificadores, severidades y prioridades no piloto son preliminares. La ta
 | IOS-ACL-002 | ACL definida pero no aplicada | ACL | `running-config`, `show access-lists` | MEDIUM | Media | MVP |
 | IOS-OSPF-001 | Autenticación OSPF ausente | OSPF | `running-config` | HIGH | Alta | MVP |
 | IOS-OSPF-002 | Vecino OSPF esperado no establecido | OSPF | `show ip ospf neighbor` | HIGH | Media | FUTURA |
-| IOS-NTP-001 | Servidor NTP no configurado | NTP | `running-config` | MEDIUM | Alta | MVP |
+| IOS-NTP-001 | Servidor NTP no configurado | NTP | `running-config` | MEDIUM | Alta | INCREMENTO 8 APROBADO |
 | IOS-NTP-002 | Asociación NTP no sincronizada | NTP | `show ntp associations` | MEDIUM | Media | FUTURA |
-| IOS-LOG-001 | Servidor Syslog no configurado | Syslog | `running-config` | MEDIUM | Alta | MVP |
+| IOS-LOG-001 | Servidor Syslog no configurado | Syslog | `running-config` | MEDIUM | Alta | INCREMENTO 8 APROBADO |
 | IOS-SNMP-001 | Comunidad SNMP insegura o predeterminada | SNMP | `running-config` | HIGH | Alta | MVP |
 | IOS-AVL-001 | Interfaz operativa con errores elevados | Disponibilidad | `show interfaces` | HIGH | Media | FUTURA |
 | IOS-DOC-001 | Hostname genérico o ausente | Documentación y nomenclatura | `running-config` | LOW | Baja | MVP |
 
-## 6. Reglas basadas en running-config
+## 7. Reglas basadas en running-config
 
 Pueden evaluarse exclusivamente con una configuración completa, entre otras:
 
@@ -186,7 +256,7 @@ Pueden evaluarse exclusivamente con una configuración completa, entre otras:
 
 Las reglas que dependan del estado operacional, de la aplicación efectiva de una configuración o de relaciones entre dispositivos no deben inferirse únicamente desde `running-config`.
 
-## 7. Reglas que requieren comandos show
+## 8. Reglas que requieren comandos show
 
 En incrementos futuros, algunas reglas necesitarán evidencia operacional:
 
@@ -201,10 +271,10 @@ En incrementos futuros, algunas reglas necesitarán evidencia operacional:
 
 Cuando una regla requiera una de estas fuentes y no esté disponible, deberá producir `NOT_EVALUATED`, no `PASS` ni `FAIL`.
 
-## 8. Criterios para seleccionar reglas del MVP
+## 9. Criterios para seleccionar reglas del MVP
 
 - Relevancia técnica para redes Cisco IOS.
-- Posibilidad de demostrar el control en GNS3 con IOSv o IOSvL2.
+- Posibilidad de demostrar el control en un laboratorio virtual autorizado; GNS3 con IOSv o IOSvL2 permanece como opción futura condicionada a disponer legalmente de imágenes compatibles.
 - Baja subjetividad y condición determinista explícita.
 - Evidencia clara, trazable y sanitizable.
 - Referencias técnicas disponibles.
@@ -213,10 +283,10 @@ Cuando una regla requiera una de estas fuentes y no esté disponible, deberá pr
 - Posibilidad de construir casos reproducibles `PASS` y `FAIL`.
 - Capacidad de controlar y documentar falsos positivos.
 
-## 9. Decisiones pendientes
+## 10. Decisiones pendientes
 
-- Severidades definitivas de las reglas no piloto.
-- Referencias técnicas definitivas para cada control.
+- Severidades definitivas de las reglas no piloto y no aprobadas para el Incremento 8.
+- Referencias técnicas definitivas para cada control; las cuatro reglas del Incremento 8 requieren todavía fuentes oficiales específicas antes de crear sus YAML.
 - Excepciones y política formal para administrarlas.
 - Reglas que requerirán contexto entre dispositivos.
 - Reglas operacionales que entrarán finalmente al MVP.

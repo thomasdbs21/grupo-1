@@ -31,10 +31,10 @@ Entrada de archivo                                [PRIMER INCREMENTO]
 o recopilación SSH de solo lectura                [INCREMENTO 4]
             |
             v
-CommandEvidence y evidencia original              [INCREMENTO 4]
+Cuatro CommandEvidence con execution_id común     [INCREMENTO 6]
             |
             v
-Orquestador de running-config recopilado           [INCREMENTO 4]
+Validación obligatoria del lote                    [INCREMENTO 6]
             |
             v
 Parsing: ciscoconfparse2 (clase CiscoConfParse)   [PRIMER INCREMENTO]
@@ -45,9 +45,10 @@ Normalización                                     [PRIMER INCREMENTO]
             |
             v
 Contexto inmutable                                [PRIMER INCREMENTO]
+  AnalysisContext + tres OperationalContext       [INCREMENTO 6]
             |
             v
-Carga YAML segura y RuleRegistry                  [INCREMENTO 2]
+Carga YAML segura y registros de reglas           [INCREMENTOS 2 Y 5]
             |
             v
 Motor de reglas deterministas                     [PRIMER INCREMENTO]
@@ -60,10 +61,10 @@ RuleEvaluation                                    [PRIMER INCREMENTO]
             +---- estado FAIL -------------------> Finding
                                                        |
                                                        v
-Repositorio temporal en memoria (máximo 100)      [INCREMENTO 3; ARCHIVOS]
+FullDeviceAnalysisResult inmutable                 [INCREMENTO 6]
             |
             v
-API FastAPI local y síncrona                      [INCREMENTO 3; SIN SSH]
+API FastAPI y respuesta sanitizada                [INCREMENTOS 3 Y 7]
             |
             v
 Interfaz Streamlit y reportes                     [MVP]
@@ -104,6 +105,16 @@ La lista blanca actual contiene `show running-config`, `show version`, `show ip 
 - **Etapa:** completado en el Incremento 4.
 
 El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsing o lógica de reglas: reutiliza el flujo determinista en memoria.
+
+### 4.2.2 Orquestación integral multifuente
+
+- **Responsabilidad:** recopilar y analizar las cuatro fuentes canónicas en una sola sesión SSH de solo lectura.
+- **Entrada:** un `NetmikoCollector` configurado con datos transitorios de conexión.
+- **Salida:** `FullDeviceAnalysisResult` inmutable y trazable.
+- **Relación:** `collect_and_analyze_device()` obtiene cuatro `CommandEvidence` con un `execution_id` común, valida obligatoriamente el lote y reutiliza los análisis de `running-config` y comandos `show`.
+- **Etapa:** completado en el Incremento 6.
+
+El resultado conserva cuatro evidencias, tres contextos operacionales y todas las evaluaciones. Solo las evaluaciones `FAIL` producen `findings`; las reglas nunca reciben el recolector ni las credenciales.
 
 ### 4.3 Gestión de evidencia
 
@@ -172,7 +183,7 @@ Existen dos contextos separados:
 
 El YAML no contiene condiciones ni lógica de evaluación. La detección permanece exclusivamente en Python. El registro no descubre archivos arbitrarios: solo carga nombres previamente autorizados dentro de la carpeta de recursos.
 
-El `RuleRegistry` existente continúa reservado a las tres reglas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto ni alterar las evaluaciones offline.
+El `RuleRegistry` existente contiene las tres reglas implementadas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto. El Incremento 8 ampliará el primer registro con cuatro reglas nuevas sin modificar el contrato de `AnalysisContext` ni el endpoint integral.
 
 ### 4.9 Motor de reglas
 
@@ -215,6 +226,16 @@ El `RuleRegistry` existente continúa reservado a las tres reglas de `running-co
 - **Etapa:** completado en el Incremento 3.
 
 Los archivos se procesan en memoria como UTF-8 o UTF-8 con BOM. El nombre se reduce a su componente base, se rechazan binarios y no se escriben cargas en disco.
+
+### 4.13.1 API de análisis integral
+
+- **Responsabilidad:** exponer el análisis integral mediante `POST /api/v1/device-analyses` sin incorporar lógica técnica al endpoint.
+- **Entrada:** host privado, puerto, usuario y contraseña validados; las credenciales se utilizan de forma transitoria.
+- **Salida:** DTO tipado y sanitizado con metadatos de evidencia, evaluaciones, `findings` y resúmenes.
+- **Relación:** invoca el servicio integral existente mediante inyección de dependencias y transforma explícitamente el resultado.
+- **Etapa:** completado en el Incremento 7.
+
+La respuesta excluye credenciales, parámetros de conexión, configuraciones completas, salidas originales y contextos operacionales completos. El cierre del Incremento 7 alcanzó 265 pruebas aprobadas y fue fusionado mediante la Pull Request #8 en `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`.
 
 ### 4.14 Streamlit futuro
 
@@ -302,7 +323,32 @@ IOS-IF-001
 RuleEvaluation
 ```
 
-La validación operacional real se realizó con el CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. La persistencia, la exposición operacional mediante FastAPI, la interfaz y la inteligencia artificial continúan fuera de alcance. Las reglas no reciben el recolector en ninguna etapa.
+La validación operacional real se realizó con el CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox. Al cierre del Incremento 5, la persistencia, la exposición operacional mediante FastAPI, la interfaz y la inteligencia artificial estaban fuera de alcance; los Incrementos 6 y 7 incorporaron después el resultado integral y su endpoint seguro. Las reglas no reciben el recolector en ninguna etapa.
+
+El flujo integral completado en los Incrementos 6 y 7 reúne ambos análisis sin acoplar sus reglas:
+
+```text
+POST /api/v1/device-analyses
+        |
+        v
+collect_and_analyze_device()
+        |
+        v
+una sesión SSH / cuatro CommandEvidence
+        |
+        v
+ValidatedEvidenceBatch
+        |
+        +--> AnalysisContext --> tres reglas running-config
+        |
+        +--> tres OperationalContext --> IOS-IF-001
+        |
+        v
+FullDeviceAnalysisResult inmutable
+        |
+        v
+respuesta tipada y sanitizada
+```
 
 ## 7. Aislamiento del motor de reglas
 
@@ -405,6 +451,29 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Regla operacional `IOS-IF-001`, separada del `RuleRegistry` de `running-config`.
 - 28 pruebas nuevas y 124 pruebas totales aprobadas.
 - Validación real sanitizada con CSR1000v IOS XE 16.9.5 en VirtualBox.
+
+### Incremento 6
+
+- Una sesión SSH de solo lectura y cuatro comandos canónicos.
+- Cuatro `CommandEvidence` con UUID común y validación estricta del lote.
+- Reutilización de CiscoConfParse y TextFSM.
+- Tres `OperationalContext` y `FullDeviceAnalysisResult` inmutable.
+- Cuatro reglas deterministas, todas las evaluaciones y `findings` únicamente desde `FAIL`.
+
+### Incremento 7
+
+- Endpoint `POST /api/v1/device-analyses`.
+- Contratos Pydantic estrictos y credenciales transitorias.
+- Transformador explícito y respuesta tipada y sanitizada.
+- Errores públicos controlados y ausencia de lógica de reglas en FastAPI.
+- 265 pruebas aprobadas; cierre fusionado mediante la Pull Request #8.
+
+### Incremento 8 — planificado
+
+- Cuatro reglas nuevas de `running-config`: `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001`.
+- Ampliación del `RuleRegistry` hasta siete reglas de configuración y ocho evaluaciones integrales en total.
+- Mismo `AnalysisContext` inmutable, evidencia mínima y sanitizada y lógica Python con metadatos YAML.
+- Sin nuevos comandos, dependencias, cambios SSH, persistencia, interfaz, reportes ni inteligencia artificial.
 
 ### MVP
 

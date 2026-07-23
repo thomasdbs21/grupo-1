@@ -9,7 +9,7 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 ## Decisiones oficiales
 
 - Windows 11 será el sistema anfitrión del entorno de desarrollo y laboratorio.
-- La validación real de los Incrementos 4 y 5 utilizó un CSR1000v en VirtualBox.
+- La validación real de los Incrementos 4 a 7 utilizó un CSR1000v en VirtualBox.
 - GNS3 será una ampliación futura opcional si se dispone legalmente de imágenes IOSv o IOSvL2 autorizadas; actualmente no se dispone de ellas.
 - Ubuntu Server será, en un incremento posterior, el servidor del asistente.
 - Python será el lenguaje principal del proyecto.
@@ -33,7 +33,7 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 
 ## Componentes futuros
 
-Los siguientes componentes están aprobados para incrementos posteriores y todavía no están integrados en el flujo operacional completado:
+Los siguientes componentes permanecen pendientes de incrementos posteriores:
 
 - PostgreSQL para la persistencia de datos.
 - SQLAlchemy como ORM.
@@ -78,7 +78,7 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - `normalized_output` permanece en la evidencia para trazabilidad, pero no reemplaza la salida original analizada.
 - `CollectedAnalysisResult` conserva juntos la evidencia y el resultado sin almacenar el recolector ni copiar las salidas.
 - Las reglas de `running-config` continúan recibiendo únicamente `AnalysisContext`; las reglas operacionales reciben únicamente `OperationalContext`. Ninguna conoce Netmiko, SSH, credenciales, FastAPI, repositorios, base de datos ni inteligencia artificial.
-- La integración SSH no está expuesta mediante FastAPI y no tiene persistencia en esta etapa.
+- La integración SSH se expone mediante el endpoint integral implementado en el Incremento 7. No tiene persistencia y las reglas continúan completamente aisladas de FastAPI y de las credenciales.
 
 ## Decisiones sobre TextFSM y contexto operacional
 
@@ -113,7 +113,7 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - La carga utilizará `yaml.safe_load` y se limitará a archivos esperados dentro de los recursos del paquete.
 - `RuleMetadata` será inmutable y el registro rechazará campos inválidos, versiones vacías, severidades desconocidas, IDs duplicados o asociaciones inconsistentes.
 - Un `RuleRegistry` central mantendrá el orden determinista, permitirá consulta por ID y ejecutará únicamente reglas habilitadas.
-- En el alcance actual, ese `RuleRegistry` ejecuta solamente las tres reglas de `running-config`; la regla operacional inicial conserva un cargador separado para no mezclar contextos.
+- En el alcance implementado hasta el Incremento 7, ese `RuleRegistry` ejecuta tres reglas de `running-config`; la regla operacional inicial conserva un cargador separado para no mezclar contextos. El Incremento 8 ampliará el registro de configuración con cuatro reglas sin alterar el contrato de contexto.
 
 ## Decisiones sobre la API local
 
@@ -126,6 +126,16 @@ Los siguientes componentes están aprobados para incrementos posteriores y todav
 - El repositorio es seguro para concurrencia básica, conserva como máximo 100 análisis y elimina el más antiguo al superar el límite.
 - El almacenamiento se pierde al reiniciar; su posible reemplazo mediante PostgreSQL permanece pendiente de planificación.
 - Solo existe el estado de ejecución `COMPLETED`; no se implementan tareas pendientes, workers ni colas.
+
+## Decisiones sobre la API de análisis integral
+
+- El Incremento 7 implementó `POST /api/v1/device-analyses` sobre el servicio integral existente, sin duplicar parsing ni lógica de reglas.
+- La solicitud utiliza validación estricta y trata usuario y contraseña como datos transitorios de conexión.
+- La respuesta es tipada y sanitizada; no contiene credenciales, host, configuración completa, salidas originales ni contextos operacionales completos.
+- El transformador conserva todas las evaluaciones y deriva `findings` únicamente de estados `FAIL`.
+- El endpoint no permite elegir comandos: el servicio recopila exactamente los cuatro comandos canónicos en una sesión SSH de solo lectura.
+- Los errores públicos se traducen de forma controlada y sin filtrar información sensible.
+- El Incremento 7 cerró con 265 pruebas aprobadas y fue fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`.
 
 ## Decisiones sobre inteligencia artificial
 
@@ -172,11 +182,11 @@ El Incremento 5 incorpora parsing estructurado mediante TextFSM para `show versi
 
 La suite evolucionó de 96 a 122 pruebas con la primera implementación y a 124 después de dos pruebas de regresión. Las 124 pruebas quedaron aprobadas después del merge. La validación manual controlada se realizó contra un CSR1000v IOS XE 16.9.5 ejecutado en VirtualBox y terminó con tres evidencias, un UUID, hashes correctos, tres modelos, una interfaz evaluable, cero inconsistencias, `IOS-IF-001` en `PASS`, sesión cerrada y `VALIDACION_TEXTFSM_OK`.
 
-FastAPI todavía no procesa comandos `show`; tampoco existe persistencia o integración con inteligencia artificial para el contexto operacional.
+Al cierre del Incremento 5, FastAPI todavía no procesaba comandos `show`; los Incrementos 6 y 7 incorporaron después el resultado integral y su endpoint seguro. La persistencia y la integración con inteligencia artificial continúan pendientes.
 
 ## Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-**Estado:** COMPLETADO FUNCIONALMENTE.
+**Estado:** COMPLETADO.
 
 ### Objetivo
 
@@ -252,7 +262,63 @@ Construir un servicio que produzca una auditoría integral, inmutable y trazable
 
 Este incremento se realizó antes de PostgreSQL para estabilizar primero el contrato que representa una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
 
-No se declara automáticamente cuál será el Incremento 7. Las alternativas posteriores permanecen pendientes de evaluación y aprobación.
+## Incremento 7 — API segura de análisis integral
+
+**Estado:** COMPLETADO Y FUSIONADO.
+
+El Incremento 7 expone el resultado integral implementado en el Incremento 6 mediante `POST /api/v1/device-analyses`. Conserva una única sesión SSH, cuatro comandos autorizados, cuatro evidencias, tres contextos operacionales y cuatro evaluaciones deterministas, y devuelve una respuesta tipada y sanitizada. Su cierre alcanzó 265 pruebas aprobadas y se fusionó mediante la Pull Request #8 en `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`.
+
+## Incremento 8 — Ampliación controlada del catálogo determinista de running-config
+
+**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+
+### Objetivo
+
+Ampliar de cuatro a ocho las reglas ejecutadas por el análisis integral mediante cuatro reglas nuevas de `running-config`, sin incorporar comandos, dependencias ni componentes de infraestructura adicionales.
+
+### Reglas aprobadas
+
+- `IOS-ADM-002` — SSH versión 1 habilitada — `HIGH`.
+- `IOS-SRV-002` — Servicios TCP/UDP pequeños habilitados — `MEDIUM`.
+- `IOS-NTP-001` — Servidor NTP no configurado — `MEDIUM`.
+- `IOS-LOG-001` — Servidor Syslog no configurado — `MEDIUM`.
+
+Todas utilizan `running-config` como única fuente y reciben exclusivamente `AnalysisContext` inmutable. Las credenciales nunca forman parte de ese contexto. Ninguna regla accede a SSH, Netmiko, base de datos, FastAPI o inteligencia artificial.
+
+### Contratos de evaluación
+
+- `IOS-ADM-002`: `PASS` ante la directiva activa y exacta `ip ssh version 2`; `FAIL` ante `ip ssh version 1`; `NOT_EVALUATED` si no existe una versión explícita. No se presume segura una versión predeterminada.
+- `IOS-SRV-002`: `FAIL` ante una o ambas directivas activas `service tcp-small-servers` y `service udp-small-servers`; `PASS` si no existen. Las directivas negadas no producen `FAIL` y no se utiliza `NOT_APPLICABLE`.
+- `IOS-NTP-001`: `PASS` si existe al menos una directiva activa y válida `ntp server`; `FAIL` si no existe. Se utiliza el contrato vigente de entrada de `running-config` completo sin heurísticas nuevas de completitud.
+- `IOS-LOG-001`: `PASS` si existe un destino remoto con sintaxis soportada; `FAIL` si no existe; `NOT_EVALUATED` si aparece una posible sintaxis de destino que el parser no reconoce con seguridad.
+
+Las sintaxis de destino Syslog aprobadas para la implementación futura son la moderna `logging host <destino> [opciones soportadas]` y la heredada `logging <destino>`. La segunda deberá distinguirse explícitamente de directivas globales que no definen destinos, como `logging buffered`, `logging console`, `logging monitor`, `logging trap`, `logging facility` y `logging source-interface`.
+
+### Evidencia y resultados
+
+- `IOS-ADM-002` registrará únicamente la directiva insegura y su número de línea; no incluirá claves SSH ni salidas operacionales.
+- `IOS-SRV-002` registrará exclusivamente las directivas inseguras activas encontradas.
+- `IOS-NTP-001` utilizará una indicación genérica para `PASS` y el texto `servidor NTP: no configurado` para `FAIL`, sin direcciones, hostnames, claves ni parámetros sensibles.
+- `IOS-LOG-001` utilizará una indicación genérica para `PASS` y el texto `servidor Syslog remoto: no configurado` para `FAIL`, sin destino, VRF, dirección ni hostname.
+- Todas las evaluaciones se conservarán y solo `FAIL` generará `findings`.
+- Las excepciones inesperadas se representarán mediante `ERROR` y no se convertirán en resultados técnicos falsos.
+
+### Alcance incluido
+
+- Cuatro clases Python futuras y cuatro metadatos YAML futuros.
+- Ampliación del `RuleRegistry` de `running-config`.
+- Evidencia mínima y sanitizada.
+- Pruebas unitarias y de integración.
+- Compatibilidad con CLI, API de archivos y API integral sin modificar el endpoint.
+- Validación real posterior de solo lectura.
+
+### Fuera del alcance
+
+- Nuevos comandos `show`, cambios en Netmiko o SSH y nuevas plantillas TextFSM.
+- PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes e inteligencia artificial.
+- GNS3, cambios en dispositivos y reglas OSPF, SNMP, consola o nomenclatura.
+
+PostgreSQL permanece como incremento posterior. Las referencias técnicas específicas de las cuatro reglas deberán completarse con fuentes oficiales antes de implementar sus YAML; el catálogo vigente no contiene referencias suficientes y no se incorporan fuentes no verificadas en esta formalización.
 
 ## Decisiones pendientes
 
