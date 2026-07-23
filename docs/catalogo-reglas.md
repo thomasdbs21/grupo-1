@@ -154,7 +154,7 @@ Las siguientes reglas están formalmente aprobadas, pero todavía no están impl
 - **Evidencia FAIL:** únicamente la directiva detectada y su número de línea; no se incluyen claves SSH ni salidas operacionales.
 - **Riesgo técnico:** uso permitido de una versión heredada del protocolo SSH.
 - **Posibles falsos positivos:** configuración parcial o sintaxis específica de plataforma no contemplada.
-- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+- **Referencia técnica:** [Cisco IOS XE 17.x — Secure Shell Version 2 Support](https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/sec-vpn/b-security-vpn/m_sec-secure-shell-v2-0.html).
 
 ### IOS-SRV-002 — Servicios TCP/UDP pequeños habilitados
 
@@ -169,7 +169,7 @@ Las siguientes reglas están formalmente aprobadas, pero todavía no están impl
 - **Evidencia:** exclusivamente las directivas inseguras activas encontradas y sus números de línea.
 - **Riesgo técnico:** exposición innecesaria de servicios pequeños TCP o UDP.
 - **Posibles falsos positivos:** necesidad operacional excepcional y formalmente aceptada en un entorno controlado.
-- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+- **Referencia técnica:** [Cisco IOS XE 17.x — Performing Basic System Management](https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_bsm-basic-sys-manage-xe.html).
 
 ### IOS-NTP-001 — Servidor NTP no configurado
 
@@ -185,7 +185,7 @@ Las siguientes reglas están formalmente aprobadas, pero todavía no están impl
 - **Sanitización:** no se exponen direcciones, hostnames, claves ni parámetros sensibles.
 - **Riesgo técnico:** ausencia de una fuente de tiempo remota configurada para correlación y trazabilidad temporal.
 - **Posibles falsos positivos:** sincronización provista por un mecanismo de plataforma no representado mediante `ntp server`.
-- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+- **Referencia técnica:** [Cisco IOS XE 17.x — Network Time Protocol](https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_bsm-time-calendar-set.html).
 
 ### IOS-LOG-001 — Servidor Syslog no configurado
 
@@ -205,7 +205,9 @@ Las siguientes reglas están formalmente aprobadas, pero todavía no están impl
 - **Sanitización:** no se exponen destino, VRF, dirección, hostname ni opciones asociadas.
 - **Riesgo técnico:** ausencia de envío remoto de eventos para supervisión y trazabilidad.
 - **Posibles falsos positivos:** variantes de sintaxis dependientes de plataforma todavía no reconocidas; deben conducir a `NOT_EVALUATED` cuando se detecte un indicio.
-- **Referencia técnica:** pendiente de formalización con una fuente oficial; el catálogo vigente no contiene una referencia específica suficiente.
+- **Referencias técnicas:**
+  - [Cisco IOS Embedded Syslog Manager Command Reference — logging host](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/esm/command/esm-cr-book/esm-cr-a1.html).
+  - [Cisco IOS XE 17.17.x — Configuring System Message Logs](https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/17-17/configuration_guide/sys_mgmt/b_1717_sys_mgmt_9600_cg/configuring_system_message_logs.html).
 
 ## 6. Catálogo previsto para el MVP
 
@@ -286,7 +288,7 @@ Cuando una regla requiera una de estas fuentes y no esté disponible, deberá pr
 ## 10. Decisiones pendientes
 
 - Severidades definitivas de las reglas no piloto y no aprobadas para el Incremento 8.
-- Referencias técnicas definitivas para cada control; las cuatro reglas del Incremento 8 requieren todavía fuentes oficiales específicas antes de crear sus YAML.
+- Referencias técnicas definitivas para las reglas futuras que todavía no cuentan con fuentes oficiales específicas; las cuatro reglas del Incremento 8 ya tienen referencias aprobadas.
 - Excepciones y política formal para administrarlas.
 - Reglas que requerirán contexto entre dispositivos.
 - Reglas operacionales que entrarán finalmente al MVP.
