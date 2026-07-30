@@ -137,9 +137,9 @@ Casos esperados:
 - **FAIL:** existe `enable password` sin `enable secret`.
 - **NOT_APPLICABLE:** el mecanismo no corresponde a la plataforma o esquema de autenticación demostrado.
 
-## 5. Reglas aprobadas para el Incremento 8
+## 5. Reglas implementadas en el Incremento 8
 
-Las siguientes reglas están formalmente aprobadas, pero todavía no están implementadas. Utilizarán exclusivamente `running-config`, recibirán `AnalysisContext` inmutable y se incorporarán al `RuleRegistry` existente. Sus excepciones inesperadas producirán `ERROR`; todas sus evaluaciones se conservarán y únicamente `FAIL` generará un `Finding`.
+Las siguientes reglas están implementadas. Utilizan exclusivamente `running-config`, reciben `AnalysisContext` inmutable y forman parte del `RuleRegistry` existente. Sus excepciones inesperadas producen `ERROR`; todas sus evaluaciones se conservan y únicamente `FAIL` genera un `Finding`.
 
 ### IOS-ADM-002 — SSH versión 1 habilitada
 
@@ -211,16 +211,16 @@ Las siguientes reglas están formalmente aprobadas, pero todavía no están impl
 
 ## 6. Catálogo previsto para el MVP
 
-Los identificadores, severidades y prioridades no piloto continúan preliminares, excepto las cuatro reglas aprobadas para el Incremento 8. Sus contratos oficiales están definidos en la sección anterior.
+Los identificadores, severidades y prioridades de las reglas futuras continúan preliminares. Las cuatro reglas implementadas en el Incremento 8 poseen contratos oficiales definidos en la sección anterior.
 
 | ID provisional | Nombre | Categoría | Fuente requerida | Severidad preliminar | Prioridad MVP | Estado |
 |---|---|---|---|---|---|---|
 | IOS-ADM-001 | Telnet permitido en líneas VTY | Administración remota | `running-config` | HIGH | Alta | PILOTO |
-| IOS-ADM-002 | SSH versión 1 habilitada | Administración remota | `running-config` | HIGH | Alta | INCREMENTO 8 APROBADO |
+| IOS-ADM-002 | SSH versión 1 habilitada | Administración remota | `running-config` | HIGH | Alta | IMPLEMENTADA |
 | IOS-AUTH-001 | Enable password sin enable secret | Contraseñas y autenticación | `running-config` | HIGH | Alta | PILOTO |
 | IOS-AUTH-002 | Contraseña de consola ausente o no protegida | Contraseñas y autenticación | `running-config` | MEDIUM | Media | MVP |
 | IOS-SRV-001 | Servidor HTTP sin cifrado habilitado | Servicios innecesarios | `running-config` | MEDIUM | Alta | PILOTO |
-| IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | Servicios innecesarios | `running-config` | MEDIUM | Media | INCREMENTO 8 APROBADO |
+| IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | Servicios innecesarios | `running-config` | MEDIUM | Media | IMPLEMENTADA |
 | IOS-INT-001 | Interfaz no utilizada sin shutdown | Interfaces | `running-config`, `show interfaces` | MEDIUM | Media | MVP |
 | IOS-INT-002 | Descripción ausente en interfaz activa | Interfaces | `running-config`, `show interfaces` | LOW | Baja | MVP |
 | IOS-VLAN-001 | VLAN 1 utilizada para acceso de usuarios | VLAN | `running-config`, `show vlan brief` | MEDIUM | Media | MVP |
@@ -234,9 +234,9 @@ Los identificadores, severidades y prioridades no piloto continúan preliminares
 | IOS-ACL-002 | ACL definida pero no aplicada | ACL | `running-config`, `show access-lists` | MEDIUM | Media | MVP |
 | IOS-OSPF-001 | Autenticación OSPF ausente | OSPF | `running-config` | HIGH | Alta | MVP |
 | IOS-OSPF-002 | Vecino OSPF esperado no establecido | OSPF | `show ip ospf neighbor` | HIGH | Media | FUTURA |
-| IOS-NTP-001 | Servidor NTP no configurado | NTP | `running-config` | MEDIUM | Alta | INCREMENTO 8 APROBADO |
+| IOS-NTP-001 | Servidor NTP no configurado | NTP | `running-config` | MEDIUM | Alta | IMPLEMENTADA |
 | IOS-NTP-002 | Asociación NTP no sincronizada | NTP | `show ntp associations` | MEDIUM | Media | FUTURA |
-| IOS-LOG-001 | Servidor Syslog no configurado | Syslog | `running-config` | MEDIUM | Alta | INCREMENTO 8 APROBADO |
+| IOS-LOG-001 | Servidor Syslog no configurado | Syslog | `running-config` | MEDIUM | Alta | IMPLEMENTADA |
 | IOS-SNMP-001 | Comunidad SNMP insegura o predeterminada | SNMP | `running-config` | HIGH | Alta | MVP |
 | IOS-AVL-001 | Interfaz operativa con errores elevados | Disponibilidad | `show interfaces` | HIGH | Media | FUTURA |
 | IOS-DOC-001 | Hostname genérico o ausente | Documentación y nomenclatura | `running-config` | LOW | Baja | MVP |
@@ -287,7 +287,7 @@ Cuando una regla requiera una de estas fuentes y no esté disponible, deberá pr
 
 ## 10. Decisiones pendientes
 
-- Severidades definitivas de las reglas no piloto y no aprobadas para el Incremento 8.
+- Severidades definitivas de las reglas futuras todavía no implementadas.
 - Referencias técnicas definitivas para las reglas futuras que todavía no cuentan con fuentes oficiales específicas; las cuatro reglas del Incremento 8 ya tienen referencias aprobadas.
 - Excepciones y política formal para administrarlas.
 - Reglas que requerirán contexto entre dispositivos.

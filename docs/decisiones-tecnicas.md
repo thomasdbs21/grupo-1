@@ -9,7 +9,7 @@ El sistema será un asistente de análisis de solo lectura. No administrará dis
 ## Decisiones oficiales
 
 - Windows 11 será el sistema anfitrión del entorno de desarrollo y laboratorio.
-- La validación real de los Incrementos 4 a 7 utilizó un CSR1000v en VirtualBox.
+- La validación real de los Incrementos 4 a 8 utilizó un CSR1000v en VirtualBox.
 - GNS3 será una ampliación futura opcional si se dispone legalmente de imágenes IOSv o IOSvL2 autorizadas; actualmente no se dispone de ellas.
 - Ubuntu Server será, en un incremento posterior, el servidor del asistente.
 - Python será el lenguaje principal del proyecto.
@@ -113,7 +113,7 @@ Los siguientes componentes permanecen pendientes de incrementos posteriores:
 - La carga utilizará `yaml.safe_load` y se limitará a archivos esperados dentro de los recursos del paquete.
 - `RuleMetadata` será inmutable y el registro rechazará campos inválidos, versiones vacías, severidades desconocidas, IDs duplicados o asociaciones inconsistentes.
 - Un `RuleRegistry` central mantendrá el orden determinista, permitirá consulta por ID y ejecutará únicamente reglas habilitadas.
-- En el alcance implementado hasta el Incremento 7, ese `RuleRegistry` ejecuta tres reglas de `running-config`; la regla operacional inicial conserva un cargador separado para no mezclar contextos. El Incremento 8 ampliará el registro de configuración con cuatro reglas sin alterar el contrato de contexto.
+- Desde el Incremento 8, ese `RuleRegistry` ejecuta siete reglas de `running-config`; la regla operacional inicial conserva un cargador separado para no mezclar contextos. La ampliación no alteró los contratos de `AnalysisContext` ni `OperationalContext`.
 
 ## Decisiones sobre la API local
 
@@ -270,11 +270,11 @@ El Incremento 7 expone el resultado integral implementado en el Incremento 6 med
 
 ## Incremento 8 — Ampliación controlada del catálogo determinista de running-config
 
-**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+**Estado:** COMPLETADO.
 
 ### Objetivo
 
-Ampliar de cuatro a ocho las reglas ejecutadas por el análisis integral mediante cuatro reglas nuevas de `running-config`, sin incorporar comandos, dependencias ni componentes de infraestructura adicionales.
+Ampliar de cuatro a ocho las reglas ejecutadas por el análisis integral mediante cuatro reglas nuevas de `running-config`, sin incorporar comandos, dependencias ni componentes de infraestructura adicionales. El objetivo se cumplió conservando los contratos y fronteras existentes.
 
 ### Reglas aprobadas
 
@@ -292,25 +292,25 @@ Todas utilizan `running-config` como única fuente y reciben exclusivamente `Ana
 - `IOS-NTP-001`: `PASS` si existe al menos una directiva activa y válida `ntp server`; `FAIL` si no existe. Se utiliza el contrato vigente de entrada de `running-config` completo sin heurísticas nuevas de completitud.
 - `IOS-LOG-001`: `PASS` si existe un destino remoto con sintaxis soportada; `FAIL` si no existe; `NOT_EVALUATED` si aparece una posible sintaxis de destino que el parser no reconoce con seguridad.
 
-Las sintaxis de destino Syslog aprobadas para la implementación futura son la moderna `logging host <destino> [opciones soportadas]` y la heredada `logging <destino>`. La segunda deberá distinguirse explícitamente de directivas globales que no definen destinos, como `logging buffered`, `logging console`, `logging monitor`, `logging trap`, `logging facility` y `logging source-interface`.
+Las sintaxis de destino Syslog implementadas son la moderna `logging host <destino> [opciones soportadas]` y la heredada `logging <destino>`. La segunda se distingue explícitamente de directivas globales que no definen destinos, como `logging buffered`, `logging console`, `logging monitor`, `logging trap`, `logging facility` y `logging source-interface`.
 
 ### Evidencia y resultados
 
-- `IOS-ADM-002` registrará únicamente la directiva insegura y su número de línea; no incluirá claves SSH ni salidas operacionales.
-- `IOS-SRV-002` registrará exclusivamente las directivas inseguras activas encontradas.
-- `IOS-NTP-001` utilizará una indicación genérica para `PASS` y el texto `servidor NTP: no configurado` para `FAIL`, sin direcciones, hostnames, claves ni parámetros sensibles.
-- `IOS-LOG-001` utilizará una indicación genérica para `PASS` y el texto `servidor Syslog remoto: no configurado` para `FAIL`, sin destino, VRF, dirección ni hostname.
-- Todas las evaluaciones se conservarán y solo `FAIL` generará `findings`.
-- Las excepciones inesperadas se representarán mediante `ERROR` y no se convertirán en resultados técnicos falsos.
+- `IOS-ADM-002` registra únicamente la directiva insegura y su número de línea; no incluye claves SSH ni salidas operacionales.
+- `IOS-SRV-002` registra exclusivamente las directivas inseguras activas encontradas.
+- `IOS-NTP-001` utiliza una indicación genérica para `PASS` y el texto `servidor NTP: no configurado` para `FAIL`, sin direcciones, hostnames, claves ni parámetros sensibles.
+- `IOS-LOG-001` utiliza una indicación genérica para `PASS` y el texto `servidor Syslog remoto: no configurado` para `FAIL`, sin destino, VRF, dirección ni hostname.
+- Todas las evaluaciones se conservan y solo `FAIL` genera `findings`.
+- Las excepciones inesperadas se representan mediante `ERROR` y no se convierten en resultados técnicos falsos.
 
-### Alcance incluido
+### Alcance implementado
 
-- Cuatro clases Python futuras y cuatro metadatos YAML futuros.
+- Cuatro clases Python y cuatro metadatos YAML.
 - Ampliación del `RuleRegistry` de `running-config`.
 - Evidencia mínima y sanitizada.
 - Pruebas unitarias y de integración.
 - Compatibilidad con CLI, API de archivos y API integral sin modificar el endpoint.
-- Validación real posterior de solo lectura.
+- Validación real de solo lectura.
 
 ### Fuera del alcance
 
@@ -318,7 +318,18 @@ Las sintaxis de destino Syslog aprobadas para la implementación futura son la m
 - PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes e inteligencia artificial.
 - GNS3, cambios en dispositivos y reglas OSPF, SNMP, consola o nomenclatura.
 
-PostgreSQL permanece como incremento posterior. Las referencias técnicas específicas de las cuatro reglas deberán completarse con fuentes oficiales antes de implementar sus YAML; el catálogo vigente no contiene referencias suficientes y no se incorporan fuentes no verificadas en esta formalización.
+### Resultado verificado
+
+- Las cuatro reglas y sus metadatos quedaron implementados y registrados en orden determinista.
+- El análisis integral produce siete evaluaciones de `running-config` y una evaluación operacional.
+- Las ejecuciones parciales dirigidas, de servicios y de contratos quedaron aprobadas; la suite completa alcanzó 314 pruebas, sin fallos, omisiones, resultados esperadamente fallidos ni warnings.
+- Las pruebas automatizadas no abrieron SSH, no ejecutaron comandos reales, no iniciaron Uvicorn y no dependieron del dispositivo.
+- La validación real sanitizada utilizó una sesión SSH, una desconexión, los cuatro comandos canónicos, cuatro evidencias válidas y tres contextos operacionales.
+- Las ocho evaluaciones reales conservaron el orden oficial: cuatro `PASS`, dos `FAIL`, un `NOT_APPLICABLE`, un `NOT_EVALUATED` y cero `ERROR`.
+- Los dos findings correspondieron exactamente a `IOS-NTP-001` e `IOS-LOG-001`, ambos con severidad `MEDIUM`.
+- La validación confirmó que NTP y Syslog no revelaron destinos, y que el resumen no expuso credenciales, configuraciones completas, salidas ni contextos operacionales completos.
+
+PostgreSQL y cualquier etapa posterior permanecen pendientes de evaluación y aprobación. Las cuatro reglas cuentan con referencias oficiales incorporadas al catálogo y a sus metadatos.
 
 ## Decisiones pendientes
 

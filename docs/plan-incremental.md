@@ -302,7 +302,7 @@ El incremento se cerró y fusionó mediante la Pull Request #8 y el merge commit
 
 ## 11. Incremento 8 — Ampliación controlada del catálogo determinista de running-config
 
-**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+**Estado:** COMPLETADO.
 
 **Objetivo:** aumentar de cuatro a ocho las reglas del análisis integral mediante cuatro reglas nuevas de `running-config`, reutilizando `AnalysisContext`, `RuleRegistry` y los flujos actuales sin incorporar nuevas fuentes ni dependencias.
 
@@ -315,23 +315,23 @@ Reglas aprobadas:
 | `IOS-NTP-001` | Servidor NTP no configurado | `MEDIUM` | `running-config` |
 | `IOS-LOG-001` | Servidor Syslog no configurado | `MEDIUM` | `running-config` |
 
-Alcance incluido:
+Alcance implementado:
 
-- Cuatro clases Python futuras y cuatro archivos YAML futuros.
+- Cuatro clases Python y cuatro archivos YAML.
 - Ampliación del `RuleRegistry` de `running-config`.
 - Evidencia mínima y sanitizada.
 - Pruebas unitarias y de integración.
 - Compatibilidad con la CLI, la API de archivos y la API integral sin cambios en el endpoint.
-- Validación real posterior de solo lectura.
+- Validación real de solo lectura.
 
-Decisiones obligatorias:
+Decisiones conservadas:
 
-- Las reglas recibirán únicamente `AnalysisContext` inmutable y nunca credenciales.
-- Ninguna regla accederá a SSH, Netmiko, base de datos, FastAPI o inteligencia artificial.
-- Todas las evaluaciones se conservarán; solamente `FAIL` generará `findings`.
-- Las excepciones inesperadas se representarán mediante `ERROR`.
-- La lógica permanecerá en Python y los metadatos declarativos en YAML.
-- La evidencia será la mínima necesaria y no expondrá direcciones, hostnames, claves ni parámetros sensibles.
+- Las reglas reciben únicamente `AnalysisContext` inmutable y nunca credenciales.
+- Ninguna regla accede a SSH, Netmiko, base de datos, FastAPI o inteligencia artificial.
+- Todas las evaluaciones se conservan; solamente `FAIL` genera `findings`.
+- Las excepciones inesperadas se representan mediante `ERROR`.
+- La lógica permanece en Python y los metadatos declarativos en YAML.
+- La evidencia es la mínima necesaria y no expone direcciones, hostnames, claves ni parámetros sensibles.
 
 Fuera del alcance:
 
@@ -340,7 +340,7 @@ Fuera del alcance:
 - GNS3, nuevas imágenes Cisco y cambios en dispositivos.
 - Reglas OSPF, SNMP, consola o nomenclatura.
 
-Criterios previstos de cierre:
+Criterios de cierre cumplidos:
 
 - Las cuatro reglas nuevas respetan exactamente los contratos oficiales del catálogo.
 - El análisis integral ejecuta ocho reglas sin cambiar el endpoint.
@@ -348,9 +348,22 @@ Criterios previstos de cierre:
 - Las evidencias de las reglas nuevas son mínimas y sanitizadas.
 - Las excepciones inesperadas producen `ERROR`, no resultados técnicos falsos.
 - Las pruebas anteriores y las nuevas quedan aprobadas sin conexiones reales.
-- La validación manual posterior utiliza exclusivamente el flujo de solo lectura.
+- La validación manual utilizó exclusivamente el flujo de solo lectura.
 
-PostgreSQL permanece como incremento posterior; primero se ampliará y estabilizará el catálogo determinista sobre el contrato integral ya cerrado.
+Resultado del incremento:
+
+- `RuleRegistry` contiene siete reglas de `running-config` en orden determinista y el flujo integral agrega `IOS-IF-001` como octava evaluación.
+- Las pruebas iniciales dirigidas obtuvieron 34 aprobaciones; las revisiones individuales obtuvieron 15, 16, 16 y 14 aprobaciones.
+- Las ejecuciones superpuestas de reglas, metadatos y registro obtuvieron 63 aprobaciones; servicios, CLI y orquestaciones simuladas, 68; contratos y API, 88.
+- La suite completa obtuvo 314 pruebas aprobadas antes y después del commit de implementación, con cero fallos, omisiones, resultados esperadamente fallidos y warnings.
+- La validación real sanitizada produjo una conexión, una desconexión, cuatro comandos, cuatro evidencias válidas, tres contextos operacionales y ocho evaluaciones.
+- Los estados reales fueron cuatro `PASS`, dos `FAIL`, un `NOT_APPLICABLE`, un `NOT_EVALUATED` y cero `ERROR`.
+- `IOS-NTP-001` e `IOS-LOG-001` produjeron los dos findings reales, ambos `MEDIUM`; ningún estado distinto de `FAIL` produjo hallazgos.
+- La validación no reveló credenciales, configuración completa, salidas, direcciones de interfaces, contextos operacionales completos ni destinos NTP o Syslog.
+
+Los grupos parciales corresponden a ejecuciones superpuestas y no se suman. El total oficial es 314 pruebas.
+
+PostgreSQL y cualquier etapa posterior permanecen pendientes de evaluación y aprobación.
 
 ## 12. Persistencia futura — etapa por decidir
 
@@ -466,6 +479,6 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 ## 20. Próxima acción oficial
 
-Los Incrementos 6 y 7 están completados. El cierre del Incremento 7 fue fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`; la suite alcanzó 265 pruebas aprobadas.
+Los Incrementos 6, 7 y 8 están completados. El cierre del Incremento 7 fue fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`. El Incremento 8 amplió el catálogo integral hasta ocho reglas y su suite alcanzó 314 pruebas aprobadas.
 
-La próxima etapa oficial es el **Incremento 8 — Ampliación controlada del catálogo determinista de running-config**, aprobado y todavía no implementado. PostgreSQL, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores permanecen fuera de su alcance y pendientes de evaluación.
+La próxima etapa no está aprobada ni numerada. PostgreSQL, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores permanecen pendientes de evaluación.

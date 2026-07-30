@@ -183,7 +183,7 @@ Existen dos contextos separados:
 
 El YAML no contiene condiciones ni lógica de evaluación. La detección permanece exclusivamente en Python. El registro no descubre archivos arbitrarios: solo carga nombres previamente autorizados dentro de la carpeta de recursos.
 
-El `RuleRegistry` existente contiene las tres reglas implementadas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto. El Incremento 8 ampliará el primer registro con cuatro reglas nuevas sin modificar el contrato de `AnalysisContext` ni el endpoint integral.
+El `RuleRegistry` existente contiene siete reglas implementadas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto. El Incremento 8 amplió el primer registro con cuatro reglas sin modificar el contrato de `AnalysisContext` ni el endpoint integral.
 
 ### 4.9 Motor de reglas
 
@@ -339,7 +339,7 @@ una sesión SSH / cuatro CommandEvidence
         v
 ValidatedEvidenceBatch
         |
-        +--> AnalysisContext --> tres reglas running-config
+        +--> AnalysisContext --> siete reglas running-config
         |
         +--> tres OperationalContext --> IOS-IF-001
         |
@@ -468,12 +468,13 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Errores públicos controlados y ausencia de lógica de reglas en FastAPI.
 - 265 pruebas aprobadas; cierre fusionado mediante la Pull Request #8.
 
-### Incremento 8 — planificado
+### Incremento 8
 
 - Cuatro reglas nuevas de `running-config`: `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001`.
 - Ampliación del `RuleRegistry` hasta siete reglas de configuración y ocho evaluaciones integrales en total.
 - Mismo `AnalysisContext` inmutable, evidencia mínima y sanitizada y lógica Python con metadatos YAML.
 - Sin nuevos comandos, dependencias, cambios SSH, persistencia, interfaz, reportes ni inteligencia artificial.
+- 314 pruebas aprobadas y validación real sanitizada de solo lectura con una sesión, cuatro evidencias y ocho evaluaciones.
 
 ### MVP
 
