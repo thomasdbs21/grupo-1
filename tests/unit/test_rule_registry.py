@@ -52,7 +52,15 @@ def test_registry_registers_and_gets_rule_by_id():
 
 def test_registry_has_deterministic_order():
     ids = tuple(rule.metadata.id for rule in get_default_registry().list_rules())
-    assert ids == ("IOS-ADM-001", "IOS-SRV-001", "IOS-AUTH-001")
+    assert ids == (
+        "IOS-ADM-001",
+        "IOS-SRV-001",
+        "IOS-AUTH-001",
+        "IOS-ADM-002",
+        "IOS-SRV-002",
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    )
 
 
 def test_registry_rejects_yaml_id_mismatch_with_python_rule(tmp_path):
@@ -92,7 +100,7 @@ def test_disabled_rule_is_not_listed_as_enabled(tmp_path):
     enabled_ids = tuple(rule.metadata.id for rule in registry.list_rules(enabled_only=True))
 
     assert "IOS-SRV-001" not in enabled_ids
-    assert len(enabled_ids) == 2
+    assert len(enabled_ids) == 6
 
 
 def test_disabled_rule_produces_no_evaluation_or_finding(tmp_path):
@@ -114,5 +122,5 @@ def test_disabled_rule_produces_no_evaluation_or_finding(tmp_path):
 
     assert "IOS-SRV-001" not in evaluated_ids
     assert "IOS-SRV-001" not in finding_ids
-    assert len(result.evaluations) == 2
-    assert len(result.findings) == 2
+    assert len(result.evaluations) == 6
+    assert len(result.findings) == 4

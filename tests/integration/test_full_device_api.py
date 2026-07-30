@@ -165,16 +165,17 @@ def test_success_response_contains_only_authorized_integral_data(client):
         for item in body["evidences"]
     )
     assert body["operational_context_count"] == 3
-    assert body["total_evaluations"] == 4
-    assert body["total_findings"] == 1
+    assert body["total_evaluations"] == 8
+    assert body["total_findings"] == 3
     assert len(body["rule_evaluations"]) == body["total_evaluations"]
     assert len(body["findings"]) == body["total_findings"]
     assert body["status_summary"] == {
-        "PASS": 2,
+        "PASS": 3,
         "NOT_APPLICABLE": 1,
-        "FAIL": 1,
+        "NOT_EVALUATED": 1,
+        "FAIL": 3,
     }
-    assert body["finding_severity_summary"] == {"MEDIUM": 1}
+    assert body["finding_severity_summary"] == {"MEDIUM": 3}
     serialized = response.text
     for forbidden in (
         SYNTHETIC_HOST,
@@ -387,10 +388,10 @@ def test_endpoint_preserves_future_additional_evaluations(client, monkeypatch):
     response = _post(client)
 
     assert response.status_code == 200
-    assert response.json()["total_evaluations"] == 5
+    assert response.json()["total_evaluations"] == 9
     assert response.json()["rule_evaluations"][-2]["rule_id"] == "IOS-FUTURE-001"
     assert response.json()["status_summary"]["ERROR"] == 1
-    assert response.json()["total_findings"] == 1
+    assert response.json()["total_findings"] == 3
 
 
 def test_request_logging_never_contains_connection_parameters(client, caplog):

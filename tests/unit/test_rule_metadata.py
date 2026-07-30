@@ -36,7 +36,7 @@ def _write_yaml(directory: Path, filename: str, data: dict) -> None:
     )
 
 
-def test_loads_three_official_yaml_files():
+def test_loads_seven_official_running_config_yaml_files():
     resource_dir = (
         Path(__file__).resolve().parents[2]
         / "src"
@@ -44,17 +44,87 @@ def test_loads_three_official_yaml_files():
         / "resources"
         / "rules"
     )
-    filenames = ("IOS-ADM-001.yaml", "IOS-AUTH-001.yaml", "IOS-SRV-001.yaml")
+    filenames = (
+        "IOS-ADM-001.yaml",
+        "IOS-SRV-001.yaml",
+        "IOS-AUTH-001.yaml",
+        "IOS-ADM-002.yaml",
+        "IOS-SRV-002.yaml",
+        "IOS-NTP-001.yaml",
+        "IOS-LOG-001.yaml",
+    )
 
     metadata = load_metadata_files(resource_dir, filenames)
 
-    assert len(metadata) == 3
+    assert len(metadata) == 7
     assert {item.id for item in metadata} == {
         "IOS-ADM-001",
         "IOS-AUTH-001",
         "IOS-SRV-001",
+        "IOS-ADM-002",
+        "IOS-SRV-002",
+        "IOS-NTP-001",
+        "IOS-LOG-001",
     }
     assert all(item.default_severity in Severity for item in metadata)
+
+
+def test_increment8_metadata_matches_approved_catalog_contracts():
+    resource_dir = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "ios_auditor"
+        / "resources"
+        / "rules"
+    )
+    filenames = (
+        "IOS-ADM-002.yaml",
+        "IOS-SRV-002.yaml",
+        "IOS-NTP-001.yaml",
+        "IOS-LOG-001.yaml",
+    )
+
+    metadata = {
+        item.id: item for item in load_metadata_files(resource_dir, filenames)
+    }
+
+    assert {
+        rule_id: (
+            item.name,
+            item.category,
+            item.default_severity,
+            item.required_sources,
+        )
+        for rule_id, item in metadata.items()
+    } == {
+        "IOS-ADM-002": (
+            "SSH versión 1 habilitada",
+            "administración remota",
+            Severity.HIGH,
+            ("running-config",),
+        ),
+        "IOS-SRV-002": (
+            "Servicios TCP/UDP pequeños habilitados",
+            "servicios innecesarios",
+            Severity.MEDIUM,
+            ("running-config",),
+        ),
+        "IOS-NTP-001": (
+            "Servidor NTP no configurado",
+            "NTP",
+            Severity.MEDIUM,
+            ("running-config",),
+        ),
+        "IOS-LOG-001": (
+            "Servidor Syslog no configurado",
+            "Syslog",
+            Severity.MEDIUM,
+            ("running-config",),
+        ),
+    }
+    assert all(item.description for item in metadata.values())
+    assert all(item.recommendation for item in metadata.values())
+    assert all(item.references for item in metadata.values())
 
 
 def test_rule_metadata_is_immutable():

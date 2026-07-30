@@ -7,6 +7,12 @@ from pathlib import Path
 
 from ios_auditor.domain import RuleMetadata
 from ios_auditor.rules.base import Rule
+from ios_auditor.rules.increment8 import (
+    NtpServerRule,
+    RemoteSyslogServerRule,
+    SmallServersRule,
+    SshVersionRule,
+)
 from ios_auditor.rules.metadata import MetadataError, load_metadata_files
 from ios_auditor.rules.pilot import EnablePasswordRule, HttpServerRule, TelnetVtyRule
 
@@ -15,8 +21,20 @@ OFFICIAL_RULE_FILES = (
     "IOS-ADM-001.yaml",
     "IOS-SRV-001.yaml",
     "IOS-AUTH-001.yaml",
+    "IOS-ADM-002.yaml",
+    "IOS-SRV-002.yaml",
+    "IOS-NTP-001.yaml",
+    "IOS-LOG-001.yaml",
 )
-RULE_TYPES = (TelnetVtyRule, HttpServerRule, EnablePasswordRule)
+RULE_TYPES = (
+    TelnetVtyRule,
+    HttpServerRule,
+    EnablePasswordRule,
+    SshVersionRule,
+    SmallServersRule,
+    NtpServerRule,
+    RemoteSyslogServerRule,
+)
 
 
 class RegistryError(ValueError):

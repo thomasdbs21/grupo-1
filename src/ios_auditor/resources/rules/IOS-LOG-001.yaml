@@ -1,0 +1,20 @@
+id: IOS-LOG-001
+version: "1.0.0"
+name: Servidor Syslog no configurado
+category: Syslog
+description: Verifica que exista al menos un destino remoto Syslog con una sintaxis soportada.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Sin un destino remoto, los eventos pueden perderse y no quedar disponibles para supervisión o auditoría.
+recommendation: Configurar un servidor Syslog remoto autorizado y revisar los parámetros de transporte y severidad.
+references:
+  - "Cisco IOS Embedded Syslog Manager Command Reference — logging host | https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/esm/command/esm-cr-book/esm-cr-a1.html"
+  - "Cisco IOS XE 17.17.x — Configuring System Message Logs | https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/17-17/configuration_guide/sys_mgmt/b_1717_sys_mgmt_9600_cg/configuring_system_message_logs.html"
+false_positives:
+  - Variante de sintaxis dependiente de plataforma que todavía no esté reconocida.
+exceptions: []
+enabled: true

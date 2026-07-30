@@ -149,15 +149,18 @@ def test_result_preserves_evidence_execution_id_and_matching_hashes():
     assert result.analysis_result.sha256 == evidence.sha256
 
 
-def test_integrated_flow_executes_all_three_pilot_rules():
+def test_integrated_flow_executes_all_seven_running_config_rules():
     result = analyze_collected_running_config(FakeCollector((_evidence(),)))
 
-    assert len(result.analysis_result.evaluations) == 3
-    assert len(result.analysis_result.findings) == 3
-    assert all(
-        evaluation.status is RuleStatus.FAIL
-        for evaluation in result.analysis_result.evaluations
-    )
+    assert len(result.analysis_result.evaluations) == 7
+    assert len(result.analysis_result.findings) == 5
+    assert {finding.rule_id for finding in result.analysis_result.findings} == {
+        "IOS-ADM-001",
+        "IOS-SRV-001",
+        "IOS-AUTH-001",
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    }
 
 
 def test_rules_receive_analysis_context_and_never_collector(monkeypatch):

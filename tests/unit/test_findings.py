@@ -7,7 +7,8 @@ from ios_auditor.services.analyzer import analyze_file
 def test_findings_are_created_only_from_fail(tmp_path):
     path = tmp_path / "running.cfg"
     path.write_text(
-        "enable secret <FAKE>\nip http server\n"
+        "enable secret <FAKE>\nip http server\nip ssh version 2\n"
+        "ntp server 192.0.2.10\nlogging host 192.0.2.20\n"
         "line vty 0 4\n transport input ssh\n",
         encoding="utf-8",
     )
