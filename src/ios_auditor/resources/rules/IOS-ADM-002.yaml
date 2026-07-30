@@ -1,0 +1,19 @@
+id: IOS-ADM-002
+version: "1.0.0"
+name: SSH versión 1 habilitada
+category: administración remota
+description: Verifica que la configuración declare explícitamente SSH versión 2 y no habilite SSH versión 1.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: SSH versión 1 utiliza un protocolo heredado con protecciones insuficientes.
+recommendation: Configurar explícitamente 'ip ssh version 2' y retirar SSH versión 1.
+references:
+  - "Cisco IOS XE 17.x — Secure Shell Version 2 Support | https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/sec-vpn/b-security-vpn/m_sec-secure-shell-v2-0.html"
+false_positives:
+  - Configuración parcial que omite la directiva efectiva de versión SSH.
+exceptions: []
+enabled: true

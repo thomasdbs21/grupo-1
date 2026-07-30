@@ -1,0 +1,19 @@
+id: IOS-NTP-001
+version: "1.0.0"
+name: Servidor NTP no configurado
+category: NTP
+description: Verifica que exista al menos un servidor NTP activo en la configuración.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: La ausencia de sincronización horaria dificulta correlacionar eventos y conservar trazabilidad temporal.
+recommendation: Configurar al menos un servidor NTP autorizado conforme a la política de red.
+references:
+  - "Cisco IOS XE 17.x — Network Time Protocol | https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_bsm-time-calendar-set.html"
+false_positives:
+  - Sincronización provista por un mecanismo de plataforma no representado mediante 'ntp server'.
+exceptions: []
+enabled: true

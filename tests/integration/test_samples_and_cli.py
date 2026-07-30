@@ -13,23 +13,35 @@ ROOT = Path(__file__).resolve().parents[2]
 SAMPLES = ROOT / "samples"
 
 
-def test_incorrect_sample_has_exactly_three_findings():
+def test_incorrect_sample_preserves_three_pilot_findings_and_adds_missing_controls():
     result = analyze_file(SAMPLES / "running_config_incorrecta.cfg")
-    assert len(result.evaluations) == 3
-    assert len(result.findings) == 3
-    assert all(item.status is RuleStatus.FAIL for item in result.evaluations)
+    assert len(result.evaluations) == 7
+    assert len(result.findings) == 5
+    assert {item.rule_id for item in result.findings} == {
+        "IOS-ADM-001",
+        "IOS-SRV-001",
+        "IOS-AUTH-001",
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    }
 
 
-def test_correct_sample_has_no_findings_and_all_pass():
+def test_correct_historical_sample_reports_new_missing_controls():
     result = analyze_file(SAMPLES / "running_config_correcta.cfg")
-    assert len(result.findings) == 0
-    assert all(item.status is RuleStatus.PASS for item in result.evaluations)
+    assert len(result.evaluations) == 7
+    assert {item.rule_id for item in result.findings} == {
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    }
 
 
-def test_incomplete_sample_has_no_false_findings():
+def test_incomplete_sample_preserves_non_evaluated_and_not_applicable_states():
     result = analyze_file(SAMPLES / "running_config_incompleta.cfg")
     statuses = {item.rule_id: item.status for item in result.evaluations}
-    assert len(result.findings) == 0
+    assert {item.rule_id for item in result.findings} == {
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    }
     assert statuses["IOS-ADM-001"] is RuleStatus.NOT_EVALUATED
     assert statuses["IOS-AUTH-001"] is RuleStatus.NOT_APPLICABLE
 
@@ -52,7 +64,7 @@ def test_cli_outputs_valid_json():
 
     assert completed.returncode == 0
     output = json.loads(completed.stdout)
-    assert len(output["findings"]) == 3
+    assert len(output["findings"]) == 5
 
 
 def test_cli_returns_nonzero_for_invalid_input():

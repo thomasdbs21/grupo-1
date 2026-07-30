@@ -158,11 +158,11 @@ Criterios de cierre cumplidos:
 - La validación real inicial recopiló cuatro comandos autorizados en una sesión y cerró la conexión.
 - La validación integrada del 14 de julio de 2026 obtuvo tres evaluaciones, cero findings y `VALIDACION_INTEGRADA_OK`.
 
-Limitaciones pendientes:
+Limitaciones al cierre del Incremento 4:
 
 - Solo `show running-config` está integrado con el analizador determinista.
 - Al cierre del Incremento 4, los otros comandos `show` todavía no se estructuraban mediante TextFSM; esta limitación fue abordada en el Incremento 5.
-- FastAPI no expone conexiones SSH.
+- FastAPI no exponía conexiones SSH; esta limitación fue abordada en el Incremento 7.
 - No existe persistencia PostgreSQL para ejecuciones o evidencias.
 - No existe integración SSH con inteligencia artificial.
 - `evidence_id` y `analysis_id` persistentes quedan para incrementos posteriores.
@@ -193,18 +193,18 @@ Criterios de cierre cumplidos:
 - La validación real con CSR1000v IOS XE 16.9.5 en VirtualBox produjo tres evidencias, un `execution_id`, hashes correctos, tres modelos, una interfaz evaluable, cero inconsistencias, `IOS-IF-001` en `PASS`, sesión cerrada y `VALIDACION_TEXTFSM_OK`.
 - La implementación se registró en `0ca7cf3`, Pull Request #4, y se integró mediante el merge `b7be551`.
 
-Limitaciones pendientes:
+Limitaciones al cierre del Incremento 5:
 
 - Solo tres comandos `show` tienen parsing estructurado.
 - Existe una sola regla operacional.
 - El servicio procesa una evidencia por llamada.
-- FastAPI no procesa resultados operacionales.
+- FastAPI no procesaba resultados operacionales; esta limitación fue abordada por los Incrementos 6 y 7.
 - No existe persistencia ni integración operacional con inteligencia artificial.
 - Las plantillas se validaron únicamente con las variantes disponibles.
 
 ## 9. Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-**Estado:** COMPLETADO FUNCIONALMENTE.
+**Estado:** COMPLETADO.
 
 **Objetivo:** construir un servicio que produzca una auditoría integral, inmutable y trazable de un dispositivo a partir de una única sesión SSH de solo lectura.
 
@@ -283,7 +283,89 @@ Justificación del orden:
 
 Este incremento se realizó antes de PostgreSQL para estabilizar primero el contrato que representa una auditoría completa. La persistencia posterior podrá diseñarse sobre dispositivos, ejecuciones, evidencias, evaluaciones y `findings` ya definidos.
 
-## 10. Persistencia futura — etapa por decidir
+## 10. Incremento 7 — API segura de análisis integral
+
+**Estado:** COMPLETADO Y FUSIONADO.
+
+Incluye:
+
+- Endpoint `POST /api/v1/device-analyses` para invocar el flujo integral existente.
+- Solicitud tipada con credenciales transitorias y validación estricta.
+- Transformación explícita a una respuesta tipada y sanitizada.
+- Exclusión de credenciales, host, configuraciones completas, salidas originales y contextos operacionales completos.
+- Mapeo controlado de errores públicos.
+- Compatibilidad con una sesión SSH de solo lectura, cuatro comandos autorizados, cuatro evidencias y tres contextos operacionales.
+- Conservación de las cuatro evaluaciones deterministas existentes y derivación de `findings` únicamente desde `FAIL`.
+- 265 pruebas aprobadas al cierre.
+
+El incremento se cerró y fusionó mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`.
+
+## 11. Incremento 8 — Ampliación controlada del catálogo determinista de running-config
+
+**Estado:** COMPLETADO.
+
+**Objetivo:** aumentar de cuatro a ocho las reglas del análisis integral mediante cuatro reglas nuevas de `running-config`, reutilizando `AnalysisContext`, `RuleRegistry` y los flujos actuales sin incorporar nuevas fuentes ni dependencias.
+
+Reglas aprobadas:
+
+| ID | Nombre | Severidad | Fuente |
+|---|---|---|---|
+| `IOS-ADM-002` | SSH versión 1 habilitada | `HIGH` | `running-config` |
+| `IOS-SRV-002` | Servicios TCP/UDP pequeños habilitados | `MEDIUM` | `running-config` |
+| `IOS-NTP-001` | Servidor NTP no configurado | `MEDIUM` | `running-config` |
+| `IOS-LOG-001` | Servidor Syslog no configurado | `MEDIUM` | `running-config` |
+
+Alcance implementado:
+
+- Cuatro clases Python y cuatro archivos YAML.
+- Ampliación del `RuleRegistry` de `running-config`.
+- Evidencia mínima y sanitizada.
+- Pruebas unitarias y de integración.
+- Compatibilidad con la CLI, la API de archivos y la API integral sin cambios en el endpoint.
+- Validación real de solo lectura.
+
+Decisiones conservadas:
+
+- Las reglas reciben únicamente `AnalysisContext` inmutable y nunca credenciales.
+- Ninguna regla accede a SSH, Netmiko, base de datos, FastAPI o inteligencia artificial.
+- Todas las evaluaciones se conservan; solamente `FAIL` genera `findings`.
+- Las excepciones inesperadas se representan mediante `ERROR`.
+- La lógica permanece en Python y los metadatos declarativos en YAML.
+- La evidencia es la mínima necesaria y no expone direcciones, hostnames, claves ni parámetros sensibles.
+
+Fuera del alcance:
+
+- Nuevos comandos `show`, cambios en Netmiko o SSH y nuevas plantillas TextFSM.
+- PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes e inteligencia artificial.
+- GNS3, nuevas imágenes Cisco y cambios en dispositivos.
+- Reglas OSPF, SNMP, consola o nomenclatura.
+
+Criterios de cierre cumplidos:
+
+- Las cuatro reglas nuevas respetan exactamente los contratos oficiales del catálogo.
+- El análisis integral ejecuta ocho reglas sin cambiar el endpoint.
+- Los resultados conservan todas las evaluaciones y solo los `FAIL` producen `findings`.
+- Las evidencias de las reglas nuevas son mínimas y sanitizadas.
+- Las excepciones inesperadas producen `ERROR`, no resultados técnicos falsos.
+- Las pruebas anteriores y las nuevas quedan aprobadas sin conexiones reales.
+- La validación manual utilizó exclusivamente el flujo de solo lectura.
+
+Resultado del incremento:
+
+- `RuleRegistry` contiene siete reglas de `running-config` en orden determinista y el flujo integral agrega `IOS-IF-001` como octava evaluación.
+- Las pruebas iniciales dirigidas obtuvieron 34 aprobaciones; las revisiones individuales obtuvieron 15, 16, 16 y 14 aprobaciones.
+- Las ejecuciones superpuestas de reglas, metadatos y registro obtuvieron 63 aprobaciones; servicios, CLI y orquestaciones simuladas, 68; contratos y API, 88.
+- La suite completa obtuvo 314 pruebas aprobadas antes y después del commit de implementación, con cero fallos, omisiones, resultados esperadamente fallidos y warnings.
+- La validación real sanitizada produjo una conexión, una desconexión, cuatro comandos, cuatro evidencias válidas, tres contextos operacionales y ocho evaluaciones.
+- Los estados reales fueron cuatro `PASS`, dos `FAIL`, un `NOT_APPLICABLE`, un `NOT_EVALUATED` y cero `ERROR`.
+- `IOS-NTP-001` e `IOS-LOG-001` produjeron los dos findings reales, ambos `MEDIUM`; ningún estado distinto de `FAIL` produjo hallazgos.
+- La validación no reveló credenciales, configuración completa, salidas, direcciones de interfaces, contextos operacionales completos ni destinos NTP o Syslog.
+
+Los grupos parciales corresponden a ejecuciones superpuestas y no se suman. El total oficial es 314 pruebas.
+
+PostgreSQL y cualquier etapa posterior permanecen pendientes de evaluación y aprobación.
+
+## 12. Persistencia futura — etapa por decidir
 
 Incluye:
 
@@ -294,7 +376,7 @@ Incluye:
 - Historial de análisis.
 - Almacenamiento de todas las evaluaciones y únicamente hallazgos derivados de `FAIL`.
 
-## 11. Interfaz Streamlit futura — etapa por decidir
+## 13. Interfaz Streamlit futura — etapa por decidir
 
 Incluye:
 
@@ -305,7 +387,7 @@ Incluye:
 - Recomendaciones técnicas validadas.
 - Historial de análisis.
 
-## 12. Reportes futuros — etapa por decidir
+## 14. Reportes futuros — etapa por decidir
 
 Incluye:
 
@@ -316,7 +398,7 @@ Incluye:
 - Resumen por severidad.
 - Trazabilidad entre ejecución, evidencia, evaluación y hallazgo.
 
-## 13. Inteligencia artificial opcional — etapa por decidir
+## 15. Inteligencia artificial opcional — etapa por decidir
 
 Incluye:
 
@@ -331,7 +413,7 @@ Incluye:
 
 La IA no creará reglas, hallazgos ni evidencias y no cambiará estados o severidades.
 
-## 14. Catálogo MVP y validación ampliada — etapa por decidir
+## 16. Catálogo MVP y validación ampliada — etapa por decidir
 
 Incluye:
 
@@ -345,7 +427,7 @@ Incluye:
 - Medición del tiempo de análisis.
 - Evidencias reproducibles para el informe del proyecto.
 
-## 15. Estrategia de Git
+## 17. Estrategia de Git
 
 - Mantener una rama `main` estable.
 - Crear commits por incremento o cambio coherente.
@@ -362,7 +444,7 @@ Incluye:
 
 No se define todavía un flujo complejo con múltiples ramas.
 
-## 16. Definición de terminado
+## 18. Definición de terminado
 
 Una tarea se considera terminada cuando:
 
@@ -379,7 +461,7 @@ Una tarea se considera terminada cuando:
 
 Cuando una tarea solicite explícitamente no realizar commit o push, dichos pasos quedarán pendientes y deberán informarse; la tarea documental podrá considerarse completada en su alcance local, pero no respaldada todavía.
 
-## 17. Riesgos del desarrollo
+## 19. Riesgos del desarrollo
 
 | Riesgo | Mitigación breve |
 |---|---|
@@ -395,8 +477,8 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 | Falta de tiempo | Priorizar reglas demostrables y criterios esenciales del MVP. |
 | Pérdida de reproducibilidad | Versionar código, metadatos, ejemplos y documentación; registrar el entorno. |
 
-## 18. Próxima acción oficial
+## 20. Próxima acción oficial
 
-El **Incremento 6 — Orquestación multifuente y análisis integral del dispositivo** está funcionalmente completado. Su cierre se documenta en `docs/registro-incremento-6-analisis-integral-dispositivo.md`.
+Los Incrementos 6, 7 y 8 están completados. El cierre del Incremento 7 fue fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`. El Incremento 8 amplió el catálogo integral hasta ocho reglas y su suite alcanzó 314 pruebas aprobadas.
 
-No se declara automáticamente cuál será el Incremento 7. PostgreSQL, Streamlit, reportes, inteligencia artificial, ampliación del catálogo y demás alternativas posteriores permanecen pendientes de evaluación y aprobación.
+La próxima etapa no está aprobada ni numerada. PostgreSQL, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores permanecen pendientes de evaluación.

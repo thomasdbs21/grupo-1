@@ -473,7 +473,7 @@ def test_real_pure_flow_executes_existing_parsers_and_rules():
     result = analyze_validated_evidence_batch(batch)
 
     assert result.execution_id == batch.execution_id
-    assert len(result.configuration_evaluations) == 3
+    assert len(result.configuration_evaluations) == 7
     assert len(result.operational_results) == 3
     assert tuple(context.command for context in result.operational_results) == (
         "show version",
@@ -483,7 +483,7 @@ def test_real_pure_flow_executes_existing_parsers_and_rules():
     assert len(result.operational_evaluations) == 1
     assert result.operational_evaluations[0].rule_id == "IOS-IF-001"
     assert result.operational_evaluations[0].status is RuleStatus.FAIL
-    assert len(result.configuration_findings) == 0
+    assert len(result.configuration_findings) == 2
     assert len(result.operational_findings) == 1
-    assert len(result.evaluations) == 4
-    assert len(result.findings) == 1
+    assert len(result.evaluations) == 8
+    assert len(result.findings) == 3

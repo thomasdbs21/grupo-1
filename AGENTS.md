@@ -100,7 +100,7 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 ### Plataforma del laboratorio
 
 - Sistema anfitrión: Windows 11.
-- Plataforma utilizada en las validaciones reales de los Incrementos 4 y 5: VirtualBox con CSR1000v IOS XE 16.9.5.
+- Plataforma utilizada en las validaciones reales de los Incrementos 4 a 8: VirtualBox con CSR1000v IOS XE 16.9.5.
 - GNS3, GNS3 VM, IOSv e IOSvL2 permanecen como ampliación futura opcional, condicionada a disponer legalmente de imágenes autorizadas; no deben describirse como ya utilizados.
 - Ubuntu Server permanece pendiente como futuro servidor del asistente.
 
@@ -111,7 +111,7 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 - Parsing de `running-config`: `ciscoconfparse2`, mediante la clase `CiscoConfParse`.
 - Parsing implementado de los comandos `show` soportados: TextFSM mediante plantillas propias.
 - Conexión SSH implementada: Netmiko, exclusivamente para recopilación de solo lectura mediante lista blanca.
-- API implementada para archivos locales: FastAPI y Uvicorn; todavía no expone conexiones SSH ni resultados operacionales.
+- API implementada: FastAPI y Uvicorn para archivos locales y para el análisis integral de dispositivos mediante el endpoint `POST /api/v1/device-analyses`.
 - Validación de modelos: Pydantic.
 - Base de datos futura: PostgreSQL.
 - ORM futuro: SQLAlchemy.
@@ -129,11 +129,14 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 - Los Incrementos 0 a 3 están completados: preparación del repositorio, analizador offline de `running-config`, reglas piloto, CLI, metadatos YAML, registro de reglas y API FastAPI para archivos locales.
 - El Incremento 4 está completado: recolector Netmiko de solo lectura e integración de `show running-config` con el analizador existente.
 - El Incremento 5 está completado: TextFSM para `show version`, `show ip interface brief` y `show ip ssh`, `OperationalContext` inmutable, validación operacional e `IOS-IF-001`.
-- La suite vigente al cierre del Incremento 5 contiene 124 pruebas; ese incremento agregó 28 pruebas.
-- La validación real sanitizada de los Incrementos 4 y 5 se efectuó contra un CSR1000v IOS XE 16.9.5 en VirtualBox.
+- El Incremento 6 está completado: orquestación multifuente en una sesión SSH, cuatro evidencias con un `execution_id` común, tres contextos operacionales y `FullDeviceAnalysisResult` inmutable.
+- El Incremento 7 está completado y fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`: expone `POST /api/v1/device-analyses` con contratos tipados, respuesta sanitizada y errores públicos controlados.
+- El Incremento 8 está completado: incorporó `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001` al `RuleRegistry` de `running-config`, sin cambiar fuentes, comandos ni dependencias.
+- La suite vigente al cierre del Incremento 8 contiene 314 pruebas aprobadas.
+- La validación real sanitizada de los Incrementos 4 a 8 se efectuó contra un CSR1000v IOS XE 16.9.5 en VirtualBox.
 - PostgreSQL, SQLAlchemy, Alembic, Streamlit y la pasarela de inteligencia artificial continúan pendientes.
-- El servicio operacional procesa actualmente una `CommandEvidence` por llamada.
-- Los análisis de `running-config` y de comandos `show` permanecen separados y aún no existe un resultado integral de auditoría de dispositivo.
+- El análisis integral conserva exactamente cuatro `CommandEvidence`, tres `OperationalContext`, las evaluaciones completas y los hallazgos derivados únicamente de `FAIL`.
+- Existen actualmente ocho reglas deterministas: siete de `running-config` en `RuleRegistry` e `IOS-IF-001` sobre su contexto operacional.
 
 ---
 
@@ -196,12 +199,12 @@ El contexto deberá ser inmutable durante la evaluación de las reglas.
 
 Las reglas no deberán analizar directamente conexiones SSH ni interactuar con dispositivos.
 
-En la implementación actual existen dos contratos separados:
+En la implementación actual existen dos contratos de contexto separados:
 
-- `AnalysisContext`, construido con CiscoConfParse para las tres reglas de `running-config` registradas en `RuleRegistry`.
-- `OperationalContext`, construido con TextFSM para datos estructurados de un comando `show`; `IOS-IF-001` se carga y ejecuta separadamente sobre el contexto correspondiente.
+- `AnalysisContext`, construido con CiscoConfParse para las siete reglas de `running-config` registradas en `RuleRegistry`.
+- `OperationalContext`, construido con TextFSM para datos estructurados de un comando `show`; se construyen tres contextos operacionales en el flujo integral e `IOS-IF-001` se ejecuta una vez sobre el contexto correspondiente.
 
-Ninguno de estos contextos concede a las reglas acceso a Netmiko, SSH, credenciales, base de datos o inteligencia artificial. Su orquestación en una auditoría integral pertenece al Incremento 6 aprobado y todavía no está implementada.
+Ninguno de estos contextos concede a las reglas acceso a Netmiko, SSH, credenciales, base de datos, FastAPI o inteligencia artificial. El Incremento 6 implementó su orquestación en una auditoría integral sin unificar ni acoplar los contratos de reglas.
 
 ---
 
@@ -575,13 +578,13 @@ En la definición original del Incremento 1 quedaron fuera:
 - Redis.
 - Alta disponibilidad.
 
-SSH, Netmiko, FastAPI, Uvicorn, TextFSM y los tres comandos `show` soportados fueron incorporados posteriormente en los Incrementos 3, 4 y 5. PostgreSQL, SQLAlchemy, Alembic, Streamlit, inteligencia artificial, reportes PDF, autenticación de usuarios, el catálogo ampliado y los demás componentes enumerados continúan pendientes. GNS3 sigue siendo una opción futura, no una plataforma ya utilizada.
+SSH, Netmiko, FastAPI, Uvicorn, TextFSM, los tres comandos `show` soportados y la primera ampliación controlada del catálogo fueron incorporados posteriormente en los Incrementos 3 a 8. PostgreSQL, SQLAlchemy, Alembic, Streamlit, inteligencia artificial, reportes PDF, autenticación de usuarios, el catálogo MVP completo y los demás componentes enumerados continúan pendientes. GNS3 sigue siendo una opción futura, no una plataforma ya utilizada.
 
 ---
 
 ## 21. Plan incremental
 
-### Incrementos 0 a 5 — completados
+### Incrementos 0 a 8 — completados
 
 - Incremento 0: preparación del repositorio.
 - Incremento 1: analizador offline de `running-config`, CiscoConfParse, tres reglas piloto, CLI, JSON y pytest.
@@ -592,11 +595,25 @@ SSH, Netmiko, FastAPI, Uvicorn, TextFSM y los tres comandos `show` soportados fu
 
 ### Incremento 6 — Orquestación multifuente y análisis integral del dispositivo
 
-**Estado:** APROBADO COMO PRÓXIMA ETAPA; NO IMPLEMENTADO.
+**Estado:** COMPLETADO.
 
-Construirá un servicio que, mediante una única sesión SSH de solo lectura, recopile exactamente los cuatro comandos autorizados, produzca una `CommandEvidence` por comando con un mismo `execution_id`, reutilice los flujos actuales de CiscoConfParse y TextFSM, ejecute las tres reglas de configuración e `IOS-IF-001`, y entregue un resultado agregado, inmutable y trazable. Deberá conservar todas las evaluaciones y derivar hallazgos únicamente de resultados `FAIL`.
+Implementó un servicio que, mediante una única sesión SSH de solo lectura, recopila exactamente los cuatro comandos autorizados, produce una `CommandEvidence` por comando con un mismo `execution_id`, reutiliza los flujos de CiscoConfParse y TextFSM, ejecuta las tres reglas de configuración e `IOS-IF-001`, y entrega un resultado agregado, inmutable y trazable.
 
-Este incremento se realizará antes de PostgreSQL para estabilizar primero el contrato de una auditoría completa. La persistencia, Streamlit, los reportes, la inteligencia artificial, la ampliación de reglas y las plataformas adicionales permanecen pendientes de evaluación y no reciben todavía una numeración oficial posterior.
+### Incremento 7 — API segura de análisis integral
+
+**Estado:** COMPLETADO Y FUSIONADO.
+
+Expone el análisis integral mediante `POST /api/v1/device-analyses`, recibe credenciales únicamente como datos transitorios, controla errores públicos y devuelve un DTO tipado y sanitizado sin credenciales, configuración completa ni salidas originales. Se cerró con 265 pruebas aprobadas y se fusionó mediante la Pull Request #8 en `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`.
+
+### Incremento 8 — Ampliación controlada del catálogo determinista de running-config
+
+**Estado:** COMPLETADO.
+
+Agregó `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001` mediante lógica Python y metadatos YAML. Las siete reglas de configuración reciben exclusivamente `AnalysisContext` inmutable y `IOS-IF-001` conserva `OperationalContext`. El análisis integral ejecuta ocho reglas en orden determinista, conserva todas las evaluaciones y produce hallazgos solo desde `FAIL`.
+
+El cierre obtuvo 314 pruebas aprobadas y una validación real sanitizada de solo lectura con una sesión, cuatro comandos autorizados, cuatro evidencias, tres contextos operacionales, ocho evaluaciones y dos findings derivados exactamente de `FAIL`. No se modificaron el endpoint, SSH, TextFSM, las dependencias, la persistencia, la interfaz, los reportes ni la inteligencia artificial.
+
+Las etapas posteriores al Incremento 8 deberán evaluarse y aprobarse antes de recibir alcance o numeración oficial.
 
 ---
 

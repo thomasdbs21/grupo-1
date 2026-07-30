@@ -18,7 +18,10 @@ def test_analysis_from_memory_hashes_exact_received_bytes():
     result = analyze_bytes(raw, source_name="running.cfg")
 
     assert result.sha256 == hashlib.sha256(raw).hexdigest()
-    assert len(result.findings) == 0
+    assert {finding.rule_id for finding in result.findings} == {
+        "IOS-NTP-001",
+        "IOS-LOG-001",
+    }
 
 
 def test_analysis_from_memory_accepts_utf8_bom():
