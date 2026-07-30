@@ -124,7 +124,7 @@ Los siguientes componentes permanecen pendientes de incrementos posteriores:
 - Las respuestas no incluyen rutas absolutas, configuraciones completas ni secretos sin redactar.
 - Cada análisis síncrono completado recibe un UUID y se guarda temporalmente en memoria.
 - El repositorio es seguro para concurrencia básica, conserva como máximo 100 análisis y elimina el más antiguo al superar el límite.
-- El almacenamiento se pierde al reiniciar; su posible reemplazo mediante PostgreSQL permanece pendiente de planificación.
+- El almacenamiento de análisis de archivos se pierde al reiniciar y no será reemplazado por el Incremento 9.
 - Solo existe el estado de ejecución `COMPLETED`; no se implementan tareas pendientes, workers ni colas.
 
 ## Decisiones sobre la API de análisis integral
@@ -329,13 +329,41 @@ Las sintaxis de destino Syslog implementadas son la moderna `logging host <desti
 - Los dos findings correspondieron exactamente a `IOS-NTP-001` e `IOS-LOG-001`, ambos con severidad `MEDIUM`.
 - La validación confirmó que NTP y Syslog no revelaron destinos, y que el resumen no expuso credenciales, configuraciones completas, salidas ni contextos operacionales completos.
 
-PostgreSQL y cualquier etapa posterior permanecen pendientes de evaluación y aprobación. Las cuatro reglas cuentan con referencias oficiales incorporadas al catálogo y a sus metadatos.
+Las cuatro reglas cuentan con referencias oficiales incorporadas al catálogo y a sus metadatos.
+
+## Incremento 9 — Persistencia relacional del análisis integral
+
+**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+
+Decisiones oficiales:
+
+- Se selecciona el corte B: esquema, migración inicial, puerto, adaptador SQLAlchemy y servicio programático de escritura y consulta.
+- PostgreSQL será la base oficial y Alembic la única fuente de evolución del esquema.
+- Dominio, reglas, parsers y collectors permanecerán independientes de SQLAlchemy.
+- SQLAlchemy utilizará sesiones síncronas porque Netmiko, `collect_and_analyze_device()` y los servicios actuales son síncronos, el incremento no integra FastAPI y no existen colas ni trabajos asíncronos. `AsyncSession` queda fuera del alcance y una evolución asíncrona requerirá una decisión arquitectónica posterior.
+- Se persistirá y reconstruirá `PersistedDeviceAnalysis`, no `FullDeviceAnalysisResult`.
+- El servicio recibirá un `DeviceIdentity` obligatorio; el alias no se inferirá desde host, IP, hostname, hash o plataforma y la coincidencia exacta del alias asociará ejecuciones al mismo dispositivo.
+- `analysis_id` será generado por aplicación; `execution_id` provendrá del resultado integral. Ambos serán únicos y consultables.
+- Cada análisis se guardará en una sola transacción con rollback total.
+- Se conservarán las cuatro evidencias por comando, fecha UTC y SHA-256, sin `raw_output`, `normalized_output`, host ni configuración completa.
+- Los fragmentos se relacionarán mediante clave foránea y fuente oficial de la regla; el hash canónico no demostrará pertenencia literal al `raw_output` ausente.
+- `IOS-IF-001` conservará evidencia genérica sin nombre ni pseudónimo de interfaz.
+- Se conservarán todas las evaluaciones en orden y un finding exclusivamente por cada `FAIL`.
+- `AnalysisSnapshotBuilder` obtendrá versión y riesgo mediante un resolver de metadatos y los copiará como snapshot; el adaptador no consultará `RuleRegistry` ni YAML.
+- `origin` será el valor controlado `INTEGRAL_DEVICE_ANALYSIS`; no se almacenará `status` porque solo se aceptarán resultados completos.
+- La URL PostgreSQL será configuración externa y los errores no revelarán URL, credenciales ni parámetros SQL.
+- Las pruebas de infraestructura requerirán PostgreSQL real; SQLite no sustituirá la validación oficial.
+- La versión o rango de SQLAlchemy, la provisión de PostgreSQL de pruebas, el driver y su distribución y el pool de producción siguen pendientes de aprobación.
+- El endpoint integral, los endpoints históricos y el repositorio en memoria de análisis de archivos no cambiarán en este incremento.
+
+La especificación completa está en [definicion-incremento-9-persistencia-relacional.md](definicion-incremento-9-persistencia-relacional.md).
 
 ## Decisiones pendientes
 
 Las siguientes decisiones deberán concretarse cuando se planifiquen los incrementos correspondientes:
 
-- El esquema físico definitivo de PostgreSQL y las relaciones entre evaluaciones, hallazgos y evidencias.
+- La integración HTTP de la persistencia, su política de reintentos y la exposición de `analysis_id`.
+- Retención, eliminación, respaldo, cifrado adicional y operación productiva de PostgreSQL.
 - La evolución del contrato más allá de `/api/v1`.
 - La eventual ampliación controlada de la lista blanca para incrementos posteriores.
 - La ampliación de plantillas TextFSM y la estrategia para nuevas variantes y comandos `show`.

@@ -113,9 +113,9 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 - Conexión SSH implementada: Netmiko, exclusivamente para recopilación de solo lectura mediante lista blanca.
 - API implementada: FastAPI y Uvicorn para archivos locales y para el análisis integral de dispositivos mediante el endpoint `POST /api/v1/device-analyses`.
 - Validación de modelos: Pydantic.
-- Base de datos futura: PostgreSQL.
-- ORM futuro: SQLAlchemy.
-- Migraciones futuras: Alembic.
+- Base de datos aprobada para el Incremento 9: PostgreSQL.
+- ORM aprobado para el Incremento 9: SQLAlchemy con sesiones síncronas, aislado en infraestructura; `AsyncSession` queda fuera del alcance.
+- Migraciones aprobadas para el Incremento 9: Alembic.
 - Interfaz futura del MVP: Streamlit.
 - Metadatos de reglas: YAML.
 - Lógica de reglas: Python.
@@ -134,7 +134,8 @@ La inteligencia artificial no será la fuente original de los hallazgos.
 - El Incremento 8 está completado: incorporó `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001` al `RuleRegistry` de `running-config`, sin cambiar fuentes, comandos ni dependencias.
 - La suite vigente al cierre del Incremento 8 contiene 314 pruebas aprobadas.
 - La validación real sanitizada de los Incrementos 4 a 8 se efectuó contra un CSR1000v IOS XE 16.9.5 en VirtualBox.
-- PostgreSQL, SQLAlchemy, Alembic, Streamlit y la pasarela de inteligencia artificial continúan pendientes.
+- El Incremento 9 está aprobado y planificado, pero no implementado: incorporará la persistencia relacional programática y sanitizada del análisis integral mediante PostgreSQL, SQLAlchemy y Alembic, sin cambiar todavía los endpoints.
+- Streamlit y la pasarela de inteligencia artificial continúan pendientes.
 - El análisis integral conserva exactamente cuatro `CommandEvidence`, tres `OperationalContext`, las evaluaciones completas y los hallazgos derivados únicamente de `FAIL`.
 - Existen actualmente ocho reglas deterministas: siete de `running-config` en `RuleRegistry` e `IOS-IF-001` sobre su contexto operacional.
 
@@ -578,7 +579,7 @@ En la definición original del Incremento 1 quedaron fuera:
 - Redis.
 - Alta disponibilidad.
 
-SSH, Netmiko, FastAPI, Uvicorn, TextFSM, los tres comandos `show` soportados y la primera ampliación controlada del catálogo fueron incorporados posteriormente en los Incrementos 3 a 8. PostgreSQL, SQLAlchemy, Alembic, Streamlit, inteligencia artificial, reportes PDF, autenticación de usuarios, el catálogo MVP completo y los demás componentes enumerados continúan pendientes. GNS3 sigue siendo una opción futura, no una plataforma ya utilizada.
+SSH, Netmiko, FastAPI, Uvicorn, TextFSM, los tres comandos `show` soportados y la primera ampliación controlada del catálogo fueron incorporados posteriormente en los Incrementos 3 a 8. PostgreSQL, SQLAlchemy y Alembic están aprobados y planificados para el Incremento 9, pero aún no implementados. Streamlit, inteligencia artificial, reportes PDF, autenticación de usuarios, el catálogo MVP completo y los demás componentes enumerados continúan pendientes. GNS3 sigue siendo una opción futura, no una plataforma ya utilizada.
 
 ---
 
@@ -613,7 +614,17 @@ Agregó `IOS-ADM-002`, `IOS-SRV-002`, `IOS-NTP-001` e `IOS-LOG-001` mediante ló
 
 El cierre obtuvo 314 pruebas aprobadas y una validación real sanitizada de solo lectura con una sesión, cuatro comandos autorizados, cuatro evidencias, tres contextos operacionales, ocho evaluaciones y dos findings derivados exactamente de `FAIL`. No se modificaron el endpoint, SSH, TextFSM, las dependencias, la persistencia, la interfaz, los reportes ni la inteligencia artificial.
 
-Las etapas posteriores al Incremento 8 deberán evaluarse y aprobarse antes de recibir alcance o numeración oficial.
+### Incremento 9 — Persistencia relacional del análisis integral
+
+**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+
+El corte aprobado corresponde a esquema relacional, migración inicial, puerto de persistencia, adaptador SQLAlchemy con sesiones síncronas y servicio transaccional capaz de guardar y consultar por `analysis_id` o `execution_id` un `PersistedDeviceAnalysis` sanitizado. No se reconstruirá `FullDeviceAnalysisResult` y `AsyncSession` queda fuera del alcance.
+
+El servicio recibirá un `DeviceIdentity` obligatorio e independiente, cuyo alias lógico nunca se inferirá desde el host, una IP, hostname, hash o plataforma. No se persistirán credenciales, host de conexión, `raw_output`, `normalized_output`, configuraciones completas, contextos operacionales completos ni objetos Netmiko. El Incremento 9 conservará metadatos de las cuatro evidencias canónicas, snapshots históricos de todas las evaluaciones en orden y un finding únicamente por cada `FAIL`.
+
+La integración con `POST /api/v1/device-analyses`, los endpoints históricos, la sustitución del repositorio temporal de archivos, Streamlit, reportes e inteligencia artificial permanecen fuera del alcance. El rango de SQLAlchemy, la provisión de PostgreSQL de pruebas, la selección y distribución del driver y el pool de producción continúan pendientes de aprobación. La definición completa se encuentra en `docs/definicion-incremento-9-persistencia-relacional.md`.
+
+Las etapas posteriores al Incremento 9 deberán evaluarse y aprobarse antes de recibir alcance o numeración oficial.
 
 ---
 

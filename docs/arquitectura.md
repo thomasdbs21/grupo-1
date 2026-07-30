@@ -122,7 +122,7 @@ El resultado conserva cuatro evidencias, tres contextos operacionales y todas la
 - **Entrada:** archivos o salidas recopiladas.
 - **Salida:** `CommandEvidence` para recopilación y objetos `Evidence` para fragmentos utilizados por las reglas.
 - **Relación:** abastece parsers, contexto, evaluaciones, hallazgos y persistencia.
-- **Etapa:** evidencia local de archivos desde el primer incremento y `CommandEvidence` desde el Incremento 4; persistencia futura.
+- **Etapa:** evidencia local de archivos desde el primer incremento y `CommandEvidence` desde el Incremento 4; proyección persistente sanitizada planificada para el Incremento 9.
 
 ### 4.4 Parser de running-config con ciscoconfparse2
 
@@ -209,13 +209,17 @@ El `RuleRegistry` existente contiene siete reglas implementadas de `running-conf
 - **Relación:** consume `RuleEvaluation` y entrega resultados a salida, persistencia, API y reportes.
 - **Etapa:** primer incremento.
 
-### 4.12 Repositorio temporal y persistencia futura
+### 4.12 Repositorio temporal y persistencia relacional planificada
 
 - **Responsabilidad:** conservar temporalmente hasta 100 resultados asociados a UUID y eliminar el más antiguo al superar el límite.
 - **Entrada:** resultados sanitizados ya producidos por el analizador.
 - **Salida:** consultas por identificador durante la vida del proceso.
 - **Relación:** sirve a FastAPI sin ser accedido por las reglas; utiliza bloqueo para concurrencia básica y no escribe archivos.
-- **Etapa:** repositorio en memoria completado en el Incremento 3. La persistencia mediante PostgreSQL, SQLAlchemy y Alembic permanece como alternativa futura pendiente de planificación.
+- **Etapa:** repositorio en memoria completado en el Incremento 3. El Incremento 9 está aprobado y planificado para persistir programáticamente una proyección sanitizada del análisis integral mediante PostgreSQL, SQLAlchemy y Alembic; todavía no está implementado.
+
+El Incremento 9 mantendrá el puerto y los contratos persistentes en la capa de aplicación y el adaptador SQLAlchemy con sesiones síncronas en infraestructura. Esta decisión conserva el modelo síncrono de Netmiko, `collect_and_analyze_device()` y los servicios actuales; `AsyncSession` y una evolución asíncrona quedan fuera del alcance. `AnalysisSnapshotBuilder` recibirá `FullDeviceAnalysisResult`, un `DeviceIdentity` obligatorio y un resolver de metadatos; generará `analysis_id` y el `PersistedDeviceAnalysis` que el puerto almacenará en una transacción. El alias lógico nunca se inferirá desde datos de conexión.
+
+`FullDeviceAnalysisResult` no se serializará ni reconstruirá directamente. `PersistedDeviceAnalysis` conservará identidad lógica, ambos UUID, fechas, cuatro metadatos de evidencia, snapshots ordenados de todas las evaluaciones y findings exclusivamente desde `FAIL`. Excluirá credenciales, host, `raw_output`, `normalized_output`, configuración completa, rutas, contextos operacionales y objetos Netmiko. El endpoint integral y el repositorio temporal de archivos no cambiarán en este incremento.
 
 ### 4.13 FastAPI local
 
@@ -375,6 +379,8 @@ Las reglas:
 
 Los estados diferentes de `FAIL` permanecen registrados como evaluaciones, pero nunca generan un `Finding`.
 
+Para el Incremento 9, `Evidence` se separa físicamente en metadatos de `CommandEvidence` y fragmentos sanitizados relacionados con una evaluación mediante clave foránea y fuente oficial de la regla, no inferidos únicamente por hash. El SHA-256 continúa describiendo el `raw_output`; sin conservarlo no puede demostrarse después que un fragmento pertenecía literalmente a esa salida. `AnalysisRun` recibe un `analysis_id` persistente distinto del `execution_id`; `Finding` se relaciona uno a uno con una evaluación `FAIL`. La consulta reconstruye `PersistedDeviceAnalysis`, no los contextos ni las salidas completas.
+
 ## 9. Manejo de errores
 
 - **Ruta inexistente:** error de entrada antes de leer o analizar.
@@ -502,6 +508,8 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 ## 12. Decisiones pendientes
 
 - Método definitivo de almacenamiento de credenciales.
+- Integración de la persistencia con el endpoint integral y semántica HTTP ante fallos de base de datos.
+- Retención, borrado, respaldo y operación productiva de PostgreSQL.
 - Uso de un modelo local o una API externa de inteligencia artificial.
 - Ampliación y versionado de plantillas TextFSM para nuevas variantes y comandos.
 - Formato final de los reportes.

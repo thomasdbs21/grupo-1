@@ -363,18 +363,39 @@ Resultado del incremento:
 
 Los grupos parciales corresponden a ejecuciones superpuestas y no se suman. El total oficial es 314 pruebas.
 
-PostgreSQL y cualquier etapa posterior permanecen pendientes de evaluación y aprobación.
+El Incremento 9 queda aprobado y planificado en la definición documental correspondiente. Su implementación todavía no ha comenzado.
 
-## 12. Persistencia futura — etapa por decidir
+## 12. Incremento 9 — Persistencia relacional del análisis integral
+
+**Estado:** APROBADO Y PLANIFICADO; NO IMPLEMENTADO.
+
+**Objetivo:** persistir y consultar programáticamente una representación equivalente y sanitizada de un análisis integral completo, mediante una transacción PostgreSQL y sin cambiar todavía la API.
 
 Incluye:
 
 - PostgreSQL.
 - SQLAlchemy.
 - Alembic.
-- Entidades `AnalysisRun`, `Device`, `Evidence`, `RuleEvaluation` y `Finding`.
-- Historial de análisis.
-- Almacenamiento de todas las evaluaciones y únicamente hallazgos derivados de `FAIL`.
+- Sesiones SQLAlchemy síncronas; `AsyncSession` y la asincronía quedan fuera del alcance.
+- Puerto de persistencia independiente de SQLAlchemy.
+- Adaptador de infraestructura y migración inicial.
+- Entidades relacionales para dispositivo lógico, ejecución, evidencias de comando, evaluaciones, evidencias de regla y findings.
+- `DeviceIdentity` obligatorio con alias explícito no inferido desde datos de conexión.
+- `PersistedDeviceAnalysis` como representación histórica reconstruible, sin reconstruir `FullDeviceAnalysisResult`.
+- Consulta programática por `analysis_id` y `execution_id`.
+- Snapshots históricos de todas las evaluaciones y únicamente hallazgos derivados de `FAIL`.
+- Evidencia mínima y sanitizada, sin salidas ni configuración completa.
+- Pruebas unitarias y pruebas de integración con PostgreSQL real.
+
+Fuera del alcance:
+
+- cambios en `POST /api/v1/device-analyses`;
+- endpoints históricos;
+- reemplazo del repositorio temporal de análisis de archivos;
+- persistencia de credenciales, host, `raw_output`, `normalized_output` o contextos completos;
+- Streamlit, reportes e inteligencia artificial.
+
+La definición implementable y los criterios de aceptación se encuentran en [definicion-incremento-9-persistencia-relacional.md](definicion-incremento-9-persistencia-relacional.md).
 
 ## 13. Interfaz Streamlit futura — etapa por decidir
 
@@ -481,4 +502,6 @@ Cuando una tarea solicite explícitamente no realizar commit o push, dichos paso
 
 Los Incrementos 6, 7 y 8 están completados. El cierre del Incremento 7 fue fusionado mediante la Pull Request #8 y el merge commit `f405f57f46f2fc9e04b78ce529bfe974fa530f3d`. El Incremento 8 amplió el catálogo integral hasta ocho reglas y su suite alcanzó 314 pruebas aprobadas.
 
-La próxima etapa no está aprobada ni numerada. PostgreSQL, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores permanecen pendientes de evaluación.
+La próxima acción autorizable es implementar el Incremento 9 según su definición documental, pero requiere una orden separada, una rama propia y la aprobación previa del rango de SQLAlchemy, la provisión PostgreSQL de pruebas y la selección y distribución del driver. El pool de producción permanece sin definir.
+
+La integración HTTP, los endpoints históricos, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores no están aprobados ni numerados.

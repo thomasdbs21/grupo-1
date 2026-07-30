@@ -76,7 +76,7 @@ curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" `
 
 La API acepta `.cfg`, `.conf` y `.txt`, con un máximo de 2 MiB. Procesa UTF-8 y UTF-8 con BOM directamente en memoria: no confía en rutas del cliente, no escribe archivos subidos y no devuelve rutas absolutas ni la configuración completa.
 
-Los resultados se guardan temporalmente en memoria, con un máximo de 100 análisis. Al superar el límite se elimina el más antiguo. Los datos desaparecen al reiniciar el proceso; PostgreSQL reemplazará este repositorio en el Incremento 6.
+Los resultados de archivos se guardan temporalmente en memoria, con un máximo de 100 análisis. Al superar el límite se elimina el más antiguo y los datos desaparecen al reiniciar el proceso. Este repositorio no dispone todavía de persistencia durable.
 
 ## Ejecución de pruebas
 
@@ -124,4 +124,4 @@ Los archivos se cargan con `yaml.safe_load`, se validan contra campos obligatori
 
 ## Componentes futuros fuera de alcance
 
-SSH y Netmiko, TextFSM, PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes HTML/PDF e inteligencia artificial permanecen fuera de alcance.
+PostgreSQL, SQLAlchemy, Alembic, Streamlit, reportes HTML/PDF e inteligencia artificial no están implementados.
