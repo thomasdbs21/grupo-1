@@ -1,0 +1,20 @@
+id: IOS-AUTH-001
+version: "1.0.0"
+name: Enable password sin enable secret
+category: contraseñas y autenticación
+description: Verifica que no se dependa de enable password sin disponer de enable secret.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOSv
+risk: Enable password ofrece protección insuficiente para el acceso privilegiado.
+recommendation: Utilizar enable secret y retirar enable password.
+references:
+  - Cisco IOS Security Configuration Guide
+false_positives:
+  - Configuración parcial que omite el mecanismo de autenticación efectivo.
+exceptions:
+  - Plataforma que no utiliza este mecanismo y cuenta con autenticación alternativa validada.
+enabled: true

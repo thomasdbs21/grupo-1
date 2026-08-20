@@ -1,0 +1,20 @@
+id: IOS-ADM-001
+version: "1.0.0"
+name: Telnet permitido en líneas VTY
+category: administración remota
+description: Verifica que las líneas VTY no permitan administración mediante Telnet.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOSv
+risk: Telnet transmite la sesión de administración sin cifrado.
+recommendation: Restringir el acceso remoto a SSH mediante 'transport input ssh'.
+references:
+  - Cisco IOS Security Configuration Guide
+false_positives:
+  - Configuración parcial que no contiene todas las líneas VTY.
+exceptions:
+  - Excepción formal y temporal en un laboratorio completamente aislado.
+enabled: true

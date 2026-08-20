@@ -1,0 +1,19 @@
+id: IOS-SRV-002
+version: "1.0.0"
+name: Servicios TCP/UDP pequeños habilitados
+category: servicios innecesarios
+description: Verifica que los servicios TCP y UDP pequeños no estén habilitados.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Los servicios pequeños exponen funciones de red innecesarias y aumentan la superficie de ataque.
+recommendation: Deshabilitar los servicios TCP y UDP pequeños mediante sus formas negadas.
+references:
+  - "Cisco IOS XE 17.x — Performing Basic System Management | https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_bsm-basic-sys-manage-xe.html"
+false_positives:
+  - Necesidad operacional excepcional y formalmente aceptada en un entorno controlado.
+exceptions: []
+enabled: true

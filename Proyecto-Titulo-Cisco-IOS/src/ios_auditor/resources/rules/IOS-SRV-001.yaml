@@ -1,0 +1,20 @@
+id: IOS-SRV-001
+version: "1.0.0"
+name: Servidor HTTP sin cifrado habilitado
+category: servicios innecesarios
+description: Verifica que el servidor de administración HTTP sin cifrado no esté habilitado.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOSv
+risk: HTTP puede exponer información y credenciales de administración sin cifrado.
+recommendation: Deshabilitar HTTP si no es necesario y evaluar HTTPS cuando corresponda.
+references:
+  - Cisco IOS HTTP Services Configuration Guide
+false_positives:
+  - Servicio requerido excepcionalmente dentro de una red aislada y compensada.
+exceptions:
+  - Necesidad operacional documentada y aceptada formalmente.
+enabled: true

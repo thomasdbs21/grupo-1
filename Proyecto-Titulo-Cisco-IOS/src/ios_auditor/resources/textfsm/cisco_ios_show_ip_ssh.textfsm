@@ -1,0 +1,8 @@
+Value Required STATE (Enabled|Disabled)
+Value VERSION (\S+)
+Value AUTH_TIMEOUT (\d+)
+Value AUTH_RETRIES (\d+)
+
+Start
+  ^SSH ${STATE}(?: - version ${VERSION})?\s*$$
+  ^Authentication timeout:\s+${AUTH_TIMEOUT}\s+secs;\s+Authentication retries:\s+${AUTH_RETRIES}\s*$$
