@@ -507,7 +507,7 @@ La respuesta no contenía `input`, `ctx`, host, usuario, contraseña ni el cuerp
 
 ## 32. Validación real por SSH
 
-Según la evidencia de ejecución proporcionada para este cierre, la prueba real se efectuó contra la dirección privada `192.168.56.105`. Esta dirección pertenece exclusivamente a un laboratorio aislado y reproducible destinado al proyecto de título de Duoc UC; no identifica un servicio público.
+La validación real se efectuó contra un destino IPv4 privado autorizado del laboratorio, dentro de un entorno aislado y reproducible destinado al proyecto de título de Duoc UC.
 
 Se comprobó:
 
@@ -517,7 +517,7 @@ Se comprobó:
 - solicitud válida al endpoint local;
 - conexión SSH real mediante Netmiko;
 - respuesta HTTP 200;
-- `execution_id` `492c0c6a-1713-412a-b674-e5c97db38a52`;
+- `execution_id` válido y común a las cuatro evidencias;
 - cuatro evidencias recopiladas;
 - tres contextos operacionales;
 - cuatro reglas evaluadas;
@@ -572,26 +572,18 @@ Para el informe debe distinguirse entre el contenido transmitido y su representa
 | OpenAPI seguro | `response_model` y schemas | `test_openapi_declares_safe_device_analysis_contract` |
 | Compatibilidad anterior | rutas preexistentes | `tests/integration/test_api.py` |
 
-## 36. Matriz de las 14 evidencias visuales
+## 36. Evidencias visuales previstas
 
-Las imágenes no se encuentran versionadas en el repositorio. Los siguientes marcadores indican dónde deberán incorporarse posteriormente, después de revisar que las capturas no contengan secretos.
+Las imágenes no se encuentran versionadas en el repositorio. Para su eventual incorporación al informe técnico deberán revisarse nuevamente y mantenerse libres de secretos y datos reales del laboratorio. Las 14 evidencias previstas se organizan en cuatro grupos:
 
-| Figura | Evidencia | Marcador y pie aprobado |
-|---:|---|---|
-| 1 | Rama, commit y árbol limpio | **[INSERTAR FIGURA 1 AQUÍ]** — Estado limpio y sincronizado de la rama funcional del Incremento 7. |
-| 2 | Suite completa | **[INSERTAR FIGURA 2 AQUÍ]** — Ejecución satisfactoria de las 265 pruebas automatizadas después de incorporar el endpoint de análisis integral. |
-| 3 | Pruebas del endpoint | **[INSERTAR FIGURA 3 AQUÍ]** — Ejecución satisfactoria de las 31 pruebas específicas del endpoint seguro `POST /api/v1/device-analyses`. |
-| 4 | Respuesta segura y extensibilidad | **[INSERTAR FIGURA 4 AQUÍ]** — Validación automatizada de la respuesta segura, la transformación controlada y la compatibilidad con futuras evaluaciones. |
-| 5 | Validación 422 | **[INSERTAR FIGURA 5 AQUÍ]** — Validación de la respuesta HTTP 422 sanitizada y del rechazo de parámetros no autorizados por el endpoint. |
-| 6 | Mapeo de errores | **[INSERTAR FIGURA 6 AQUÍ]** — Comprobación del mapeo controlado y sanitizado de errores del análisis a los estados HTTP 500, 502 y 504. |
-| 7 | Flujo simulado de solo lectura | **[INSERTAR FIGURA 7 AQUÍ]** — Verificación mediante conexión simulada del flujo integral de solo lectura, la ausencia de operaciones de configuración y el tratamiento seguro de credenciales. |
-| 8 | Swagger | **[INSERTAR FIGURA 8 AQUÍ]** — Exposición local del endpoint seguro de análisis integral mediante la documentación OpenAPI de FastAPI. |
-| 9 | Respuesta 422 real local | **[INSERTAR FIGURA 9 AQUÍ]** — Respuesta HTTP 422 sanitizada ante una solicitud inválida, sin exposición de parámetros de conexión ni valores proporcionados por el cliente. |
-| 10 | Cierre local | **[INSERTAR FIGURA 10 AQUÍ]** — Detención controlada del servidor local, liberación del puerto 8000 y conservación del repositorio limpio y sincronizado. |
-| 11 | Disponibilidad SSH | **[INSERTAR FIGURA 11 AQUÍ]** — Comprobación de disponibilidad del servicio SSH de la CSR1000v antes del análisis integral mediante la API. |
-| 12 | Inicio controlado real | **[INSERTAR FIGURA 12 AQUÍ]** — Inicio controlado de la API del Incremento 7 mediante Uvicorn, restringida a la interfaz local. |
-| 13 | Flujo real extremo a extremo | **[INSERTAR FIGURA 13 AQUÍ]** — Validación real extremo a extremo mediante API, Netmiko y SSH, con recopilación de cuatro comandos autorizados y entrega de resultados sanitizados. |
-| 14 | Cierre real | **[INSERTAR FIGURA 14 AQUÍ]** — Finalización controlada de la validación real, liberación del puerto local y conservación del repositorio limpio y sincronizado. |
+| Grupo | Evidencias comprendidas |
+|---|---|
+| Estado del repositorio | Rama, commit y árbol limpio; cierre de la validación local; cierre de la validación real. |
+| Pruebas automatizadas | Suite completa; 31 pruebas del endpoint; respuesta segura y extensibilidad; validación 422; mapeo de errores; flujo simulado de solo lectura. |
+| API local | Publicación en Swagger; respuesta 422 local sanitizada; inicio controlado mediante Uvicorn en loopback. |
+| Validación de red | Disponibilidad del servicio SSH; flujo real extremo a extremo mediante FastAPI, Netmiko y SSH. |
+
+En conjunto, estas evidencias documentan el inicio, las comprobaciones automatizadas y reales, la sanitización de respuestas y el cierre controlado de los procesos utilizados.
 
 ## 37. Riesgos mitigados
 
@@ -626,26 +618,12 @@ Las imágenes no se encuentran versionadas en el repositorio. Los siguientes mar
 
 ## 39. Decisiones técnicas oficiales del incremento
 
-1. El endpoint oficial es `POST /api/v1/device-analyses`.
-2. La operación es síncrona y devuelve 200 al completar el análisis.
-3. La solicitud contiene exclusivamente host, puerto, usuario y contraseña.
-4. La contraseña utiliza `SecretStr` y se revela solo en el límite del servicio.
-5. La factory real se obtiene mediante una dependencia reemplazable.
-6. El endpoint invoca una vez el servicio integral existente.
-7. Los comandos no se reciben desde el cliente.
-8. La respuesta utiliza `FullDeviceAnalysisResponse`.
-9. El resultado de dominio no se serializa genéricamente.
-10. Cada evidencia pública expone solo comando, fecha y SHA-256 de la salida original.
-11. Todas las evaluaciones válidas se conservan.
-12. Solo `FAIL` produce findings.
-13. El 422 es genérico y no refleja entradas.
-14. Los errores atribuibles al dispositivo se traducen a 502.
-15. Los timeouts se traducen a 504.
-16. Las invariantes y errores inesperados se traducen a 500.
-17. Los detalles internos no se devuelven ni se registran completos.
-18. El flujo permanece exclusivamente de lectura.
-19. La API se restringe operacionalmente a loopback en esta etapa.
-20. La inteligencia artificial no interviene en decisiones técnicas.
+- `POST /api/v1/device-analyses` es un endpoint síncrono que devuelve HTTP 200 al completar el análisis. Su solicitud admite únicamente host, puerto, usuario y contraseña; los comandos permanecen bajo control interno.
+- La contraseña utiliza `SecretStr`, la fábrica de conexión es reemplazable y el endpoint invoca una sola vez el servicio integral existente.
+- `FullDeviceAnalysisResponse` se construye mediante un mapeo explícito: expone metadatos mínimos de evidencia, conserva todas las evaluaciones y deriva findings únicamente desde `FAIL`.
+- Las respuestas de error son constantes y sanitizadas: 422 para solicitudes inválidas, 502 para fallos atribuibles al dispositivo, 504 para timeout y 500 para invariantes o errores inesperados.
+- El flujo permanece exclusivamente de lectura, se restringió a loopback durante esta etapa y no incorpora inteligencia artificial en las decisiones técnicas.
+- La separación entre API, servicios, infraestructura y reglas se conserva. El detalle general de estas decisiones también se mantiene en [decisiones-tecnicas.md](decisiones-tecnicas.md).
 
 ## 40. Relación con la arquitectura general
 
@@ -655,25 +633,11 @@ La API no modifica la dirección de dependencias: las reglas siguen sin acceso a
 
 ## 41. Aporte al proyecto de título y al perfil de Ingeniería en Conectividad y Redes
 
-El Incremento 7 demuestra una integración completa entre redes, desarrollo seguro y validación técnica. El estudiante no solo establece una sesión SSH, sino que diseña una cadena auditable desde la adquisición de información hasta una respuesta HTTP tipada.
-
-Para el perfil de Ingeniería en Conectividad y Redes, el incremento aporta:
-
-- automatización segura de inspección de dispositivos;
-- comprensión de protocolos y controles de administración remota;
-- validación de integridad mediante SHA-256;
-- separación entre estado de red, parsing y diagnóstico;
-- diseño de listas blancas y principio de mínimo privilegio;
-- uso de APIs para integrar capacidades de auditoría;
-- pruebas reproducibles sin depender continuamente del laboratorio;
-- documentación de evidencia técnica y trazabilidad;
-- tratamiento responsable de credenciales y datos operacionales.
+El Incremento 7 integra competencias de administración remota segura, automatización de redes y diseño de APIs. La cadena desde la recopilación SSH hasta la respuesta HTTP permite demostrar separación entre estado operacional, parsing y diagnóstico, además de controles de mínimo privilegio, integridad, trazabilidad y tratamiento responsable de credenciales. Las pruebas reproducibles complementan la validación controlada del laboratorio sin sustituirla.
 
 ## 42. Conclusión
 
-El Incremento 7 expone de forma controlada el análisis integral construido previamente. La solución utiliza una solicitud mínima, una dependencia SSH reemplazable, un servicio único, un transformador explícito y respuestas de error constantes. La API conserva las cuatro evidencias por metadatos, las cuatro evaluaciones del catálogo actual y la relación estricta entre `FAIL` y findings, sin devolver configuraciones o parámetros de conexión.
-
-Las 265 pruebas, las 31 pruebas específicas, la validación local de 422 y la validación real reportada con HTTP 200 sustentan el cierre funcional. Swagger demuestra el contrato publicado; la prueba real independiente demuestra la cadena FastAPI–Netmiko–SSH. Ambas evidencias se mantienen claramente separadas.
+El Incremento 7 dejó disponible una frontera HTTP tipada y sanitizada para el análisis integral, sin duplicar la orquestación ni exponer configuraciones o parámetros de conexión. Las pruebas automatizadas, la inspección local del contrato y la validación real extremo a extremo sustentan el cierre y conservan separadas la comprobación de software y la evidencia del laboratorio.
 
 ## 43. Próximo incremento recomendado
 

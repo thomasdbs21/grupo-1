@@ -443,7 +443,7 @@ Estos eventos no representan defectos funcionales del motor. Hubo exactamente un
 | Contextos operacionales | 3 |
 | Evaluaciones | 8 |
 | Findings | 2 |
-| `execution_id` | `348d6910-405e-4e8b-ad26-19e0801af32c` |
+| `execution_id` | Válido y común a las cuatro evidencias |
 
 Los comandos registrados, exactamente en este orden, fueron:
 
@@ -527,12 +527,12 @@ No se efectuó una comparación invasiva del estado de la CSR1000v antes y despu
 
 ## 30. Evidencias gráficas externas
 
-Las imágenes no se encuentran versionadas. El usuario conserva externamente capturas sanitizadas para el futuro informe técnico.
+Las capturas sanitizadas se conservan fuera del repositorio para su eventual incorporación al informe técnico.
 
-| Evidencia | Marcador y pie propuesto |
+| Evidencia | Descripción prevista |
 |---|---|
-| Precheck sanitizado | **[INSERTAR FIGURA AQUÍ]** — Figura X. Comprobación sanitizada de conectividad ICMP y disponibilidad del servicio SSH de la CSR1000v. Fuente: elaboración propia. |
-| Resumen integral | **[INSERTAR FIGURA AQUÍ]** — Figura X. Resumen sanitizado de la validación integral real del Incremento 8. Fuente: elaboración propia. |
+| Precheck sanitizado | Comprobación sanitizada de conectividad ICMP y disponibilidad del servicio SSH de la CSR1000v. |
+| Resumen integral | Resumen sanitizado de la validación integral real del Incremento 8. |
 
 Antes de incorporarlas al informe deberá verificarse nuevamente que no contengan direcciones, credenciales, hostnames, configuraciones ni salidas completas.
 
@@ -575,11 +575,7 @@ La combinación de pruebas sintéticas y una validación real única permite sep
 
 ## 34. Conclusión
 
-El Incremento 8 quedó implementado, probado y validado. El `RuleRegistry` contiene siete reglas de `running-config`; el análisis integral conserva `IOS-IF-001` como octava regla sobre su contexto operacional. La suite oficial alcanzó 314 pruebas sin fallos, omisiones, resultados esperadamente fallidos ni warnings.
-
-La validación real utilizó una sesión, cuatro comandos, cuatro evidencias y tres contextos operacionales. Produjo ocho evaluaciones y dos findings derivados exactamente de los dos estados `FAIL`. La sanitización impidió revelar credenciales, configuraciones, salidas y destinos NTP o Syslog.
-
-La ampliación no modificó la arquitectura, la lista blanca, los parsers, los endpoints, las dependencias ni el dispositivo.
+El Incremento 8 demostró que el catálogo determinista puede ampliarse sobre los contratos existentes sin alterar la arquitectura, la lista blanca, los parsers, los endpoints ni las dependencias. Las reglas nuevas conservaron la separación de contextos, la evidencia mínima y la correspondencia exclusiva entre `FAIL` y findings, mientras que la validación de solo lectura confirmó su integración sin modificar el dispositivo.
 
 ## 35. Próxima etapa
 
