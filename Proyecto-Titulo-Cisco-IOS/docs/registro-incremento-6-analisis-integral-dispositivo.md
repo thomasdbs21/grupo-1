@@ -260,9 +260,11 @@ El incremento demuestra una cadena técnica completa desde adquisición controla
 
 También estabiliza el contrato sobre el que podrán diseñarse persistencia, visualización y reportes, evitando definir almacenamiento antes de conocer la forma completa de una auditoría.
 
-## 25. Próxima etapa
+## 25. Cierre y próxima etapa
 
-El Incremento 6 queda funcionalmente completado. No se declara automáticamente un Incremento 7. PostgreSQL, Streamlit, reportes, ampliación del catálogo, nuevos endpoints e inteligencia artificial continúan como alternativas pendientes de evaluación y aprobación formal.
+El Incremento 6 quedó funcionalmente completado con un contrato integral inmutable, validación estricta de cuatro evidencias, reutilización de los analizadores existentes, cuatro reglas deterministas y una integración SSH de una sola sesión. Las 197 pruebas y la validación manual sanitizada confirmaron el flujo, su trazabilidad y las garantías de solo lectura sin exponer información sensible.
+
+Al momento del cierre no se declaró automáticamente un Incremento 7. PostgreSQL, Streamlit, reportes, ampliación del catálogo, nuevos endpoints e inteligencia artificial continuaban como alternativas pendientes de evaluación y aprobación formal.
 
 ## 26. Glosario
 
@@ -276,7 +278,3 @@ El Incremento 6 queda funcionalmente completado. No se declara automáticamente 
 - **Finding:** hallazgo creado exclusivamente desde una evaluación `FAIL`.
 - **SHA-256:** función criptográfica usada para comprobar que la salida original no cambió.
 - **Solo lectura:** operación que consulta el dispositivo sin entrar al modo de configuración ni aplicar cambios.
-
-## 27. Conclusión técnica
-
-El Incremento 6 queda funcionalmente cerrado con un contrato integral inmutable, validación estricta de cuatro evidencias, reutilización de los analizadores existentes, cuatro reglas deterministas y una integración SSH de una sola sesión. Las 197 pruebas y la validación manual sanitizada confirmaron el flujo, su trazabilidad y las garantías de solo lectura sin exponer información sensible.
