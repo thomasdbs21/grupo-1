@@ -1,0 +1,20 @@
+id: IOS-DOC-001
+version: "1.0.0"
+name: Hostname genérico o ausente
+category: Documentación y nomenclatura
+description: Control estático acotado de running-config; contrato en docs/registro-expansion-reglas-evaluacion-2.md.
+default_severity: LOW
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: La ausencia de identificación explícita dificulta inventario y trazabilidad.
+recommendation: Asignar un hostname explícito no genérico según la nomenclatura del proyecto.
+references:
+  - "Cisco — referencia de sintaxis y mecanismos | https://www.cisco.com/c/en/us/td/docs/ios/fundamentals/command/reference/cf_book.pdf"
+  - "Cisco Catalyst — hostname predeterminado Switch | https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3850/software/release/16-12/configuration_guide/sys_mgmt/b_1612_sys_mgmt_3850_cg/administering_the_device.html"
+false_positives:
+  - "Router y Switch son el conjunto genérico mínimo; no se impone una longitud mínima."
+exceptions: []
+enabled: true

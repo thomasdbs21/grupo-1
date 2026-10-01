@@ -10,9 +10,15 @@ from ios_auditor.domain.models import (
     ShowIpInterfaceBriefData,
     ShowIpSshData,
     ShowVersionData,
+    MultiSourceContext,
 )
+from ios_auditor.domain.operational_sources import (
+    ShowInterfacesData, ShowAccessListsData, ShowNtpAssociationsData,
+    ShowIpOspfNeighborData,
+)
+from ios_auditor.rules.evaluation2_operational import get_expanded_operational_rules
 from ios_auditor.rules import get_interface_operational_rule
-from ios_auditor.services.analyzer import analyze_bytes
+from ios_auditor.services.analyzer import analyze_bytes, load_context_from_bytes, _evaluate_rule
 from ios_auditor.services.evidence_batch import ValidatedEvidenceBatch
 from ios_auditor.services.operational_analysis import parse_collected_show_evidence
 from ios_auditor.services.rule_results import findings_from_evaluations
@@ -24,6 +30,10 @@ _OPERATIONAL_COMMAND_MODELS = (
     ("show version", ShowVersionData),
     ("show ip interface brief", ShowIpInterfaceBriefData),
     ("show ip ssh", ShowIpSshData),
+    ("show interfaces", ShowInterfacesData),
+    ("show access-lists", ShowAccessListsData),
+    ("show ntp associations", ShowNtpAssociationsData),
+    ("show ip ospf neighbor", ShowIpOspfNeighborData),
 )
 
 
@@ -64,7 +74,14 @@ def analyze_validated_evidence_batch(
         raise FullDeviceAnalysisContractError(
             "La regla operacional produjo una evaluación incompatible."
         )
-    operational_evaluations = (operational_evaluation,)
+    configuration_context = load_context_from_bytes(
+        running_config_evidence.raw_output.encode("utf-8"),
+        source_name=_RUNNING_CONFIG_SOURCE,
+    )
+    multi_context = MultiSourceContext(configuration_context, operational_results)
+    operational_evaluations = (operational_evaluation,) + tuple(
+        _evaluate_rule(rule, multi_context) for rule in get_expanded_operational_rules()
+    )
     operational_findings = findings_from_evaluations(operational_evaluations)
 
     return FullDeviceAnalysisResult(
@@ -92,6 +109,8 @@ def _parse_operational_evidence(
     command: str,
     expected_model: type[
         ShowVersionData | ShowIpInterfaceBriefData | ShowIpSshData
+        | ShowInterfacesData | ShowAccessListsData | ShowNtpAssociationsData
+        | ShowIpOspfNeighborData
     ],
 ) -> OperationalContext:
     evidence = batch.evidence_for(command)

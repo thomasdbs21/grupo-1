@@ -1,0 +1,20 @@
+id: IOS-SNMP-001
+version: "1.0.0"
+name: Comunidad SNMP insegura o predeterminada
+category: SNMP
+description: Control estático acotado de running-config; contrato en docs/registro-expansion-reglas-evaluacion-2.md.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Comunidades predeterminadas o RW pueden facilitar consulta o modificación no autorizada.
+recommendation: Retirar comunidades predeterminadas y RW conforme a la política; evaluar SNMPv3 y controles de acceso.
+references:
+  - "Cisco — referencia de sintaxis y mecanismos | https://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/7282-12.html"
+  - "Cisco IOS — snmp-server community, modo RO predeterminado | https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/snmp/command/nm-snmp-cr-book/nm-snmp-cr-s2.html"
+false_positives:
+  - "RW puede ser una necesidad excepcional autorizada; el corte no implementa gestión de excepciones."
+exceptions: []
+enabled: true

@@ -1,0 +1,2 @@
+Extended IP access list ACL-SINTETICA
+    10 deny ip any any

@@ -15,8 +15,11 @@ def test_findings_are_created_only_from_fail(tmp_path):
 
     result = analyze_file(path)
 
-    assert len(result.findings) == 1
-    assert result.findings[0].rule_id == "IOS-SRV-001"
+    assert [finding.rule_id for finding in result.findings] == ["IOS-SRV-001", "IOS-DOC-001"]
+    assert [finding.rule_id for finding in result.findings] == [
+        evaluation.rule_id for evaluation in result.evaluations
+        if evaluation.status is RuleStatus.FAIL
+    ]
     assert all(
         evaluation.status is RuleStatus.FAIL
         for evaluation in result.evaluations

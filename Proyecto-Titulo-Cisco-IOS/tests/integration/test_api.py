@@ -64,6 +64,13 @@ def test_rules_lists_only_enabled_rules(client):
         "IOS-SRV-002",
         "IOS-NTP-001",
         "IOS-LOG-001",
+        "IOS-AUTH-002",
+        "IOS-ACL-001",
+        "IOS-OSPF-001",
+        "IOS-SNMP-001",
+        "IOS-DOC-001",
+        "IOS-AUTH-003",
+        "IOS-ADM-003",
     ]
     assert "expected_id" not in response.text
 
@@ -91,6 +98,13 @@ def test_rules_excludes_disabled_rule(repository):
         "IOS-SRV-002",
         "IOS-NTP-001",
         "IOS-LOG-001",
+        "IOS-AUTH-002",
+        "IOS-ACL-001",
+        "IOS-OSPF-001",
+        "IOS-SNMP-001",
+        "IOS-DOC-001",
+        "IOS-AUTH-003",
+        "IOS-ADM-003",
     ]
 
 
@@ -104,12 +118,13 @@ def test_post_incorrect_configuration(client):
 
     assert response.status_code == 201
     assert body["status"] == "COMPLETED"
-    assert body["total_evaluations"] == 7
+    assert body["total_evaluations"] == 14
     assert body["total_findings"] == 5
     assert body["status_summary"] == {
         "FAIL": 5,
-        "NOT_EVALUATED": 1,
-        "PASS": 1,
+        "NOT_EVALUATED": 3,
+        "NOT_APPLICABLE": 4,
+        "PASS": 2,
     }
 
 
@@ -122,11 +137,12 @@ def test_post_correct_configuration(client):
     body = response.json()
 
     assert response.status_code == 201
-    assert body["total_evaluations"] == 7
+    assert body["total_evaluations"] == 14
     assert body["total_findings"] == 2
     assert body["status_summary"] == {
-        "PASS": 4,
-        "NOT_EVALUATED": 1,
+        "PASS": 5,
+        "NOT_EVALUATED": 3,
+        "NOT_APPLICABLE": 4,
         "FAIL": 2,
     }
 
@@ -146,7 +162,7 @@ def test_analysis_can_be_retrieved_with_evaluations_and_findings(client):
     assert complete.status_code == 200
     assert complete.json() == created
     assert evaluations.status_code == 200
-    assert len(evaluations.json()) == 7
+    assert len(evaluations.json()) == 14
     assert findings.status_code == 200
     assert len(findings.json()) == 5
 

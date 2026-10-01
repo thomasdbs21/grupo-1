@@ -1,0 +1,21 @@
+id: IOS-INT-002
+version: 1.0.0
+name: "Descripción ausente en interfaz activa"
+category: "Interfaces"
+description: "Descripción ausente en interfaz activa; contrato acotado en registro-expansion-operacional-evaluacion-2.md."
+default_severity: LOW
+required_sources:
+  - running-config
+  - show ip interface brief
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: "Una interfaz activa sin descripción dificulta el diagnóstico."
+recommendation: "Documentar las interfaces activas según la política local."
+references:
+  - https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html
+false_positives:
+  - "La descripción puede no ser obligatoria en laboratorios."
+exceptions:
+  - Revisión humana de excepciones; no se infieren automáticamente.
+enabled: true

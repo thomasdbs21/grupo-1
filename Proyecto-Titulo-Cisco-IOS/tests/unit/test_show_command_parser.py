@@ -110,6 +110,10 @@ def test_supported_mapping_is_exact_and_immutable():
         "show version",
         "show ip interface brief",
         "show ip ssh",
+        "show interfaces",
+        "show access-lists",
+        "show ntp associations",
+        "show ip ospf neighbor",
     }
     with pytest.raises(TypeError):
         SUPPORTED_SHOW_COMMANDS["show clock"] = "other.textfsm"

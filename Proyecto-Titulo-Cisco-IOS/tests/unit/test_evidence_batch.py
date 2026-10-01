@@ -74,7 +74,7 @@ def test_valid_batch_uses_the_current_authorized_commands():
 
 def test_out_of_order_batch_is_canonically_ordered_and_preserves_identity():
     evidences = _valid_evidences()
-    shuffled = (evidences[2], evidences[0], evidences[3], evidences[1])
+    shuffled = (evidences[2], evidences[0], evidences[3], evidences[1], *evidences[4:])
 
     batch = validate_evidence_batch(shuffled)
 
@@ -162,14 +162,14 @@ def test_additional_command_is_rejected_without_reflecting_it():
     assert unknown not in str(captured.value)
 
 
-def test_fewer_than_four_evidences_are_rejected_by_cardinality():
+def test_fewer_than_eight_evidences_are_rejected_by_cardinality():
     with pytest.raises(EvidenceBatchValidationError) as captured:
         validate_evidence_batch(_valid_evidences()[:2])
 
     assert captured.value.code == "TOO_FEW_EVIDENCES"
 
 
-def test_more_than_four_evidences_are_rejected():
+def test_more_than_eight_evidences_are_rejected():
     evidences = _valid_evidences()
 
     with pytest.raises(EvidenceBatchValidationError) as captured:
@@ -320,7 +320,7 @@ def test_error_messages_do_not_disclose_evidence_or_device_data():
 
 def test_validation_accepts_current_collector_evidence_semantics():
     execution_id = uuid4()
-    raw_outputs = ("alpha\r\n", "beta\r", "gamma\n", "delta")
+    raw_outputs = ("alpha\r\n", "beta\r", "gamma\n", "delta") * 2
     evidences = tuple(
         _evidence(command, execution_id=execution_id, raw_output=raw_output)
         for command, raw_output in zip(

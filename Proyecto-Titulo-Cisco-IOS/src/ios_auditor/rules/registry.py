@@ -7,12 +7,20 @@ from pathlib import Path
 
 from ios_auditor.domain import RuleMetadata
 from ios_auditor.rules.base import Rule
+from ios_auditor.rules.evaluation2 import (
+    ConsoleAuthenticationRule,
+    GlobalAclPermitRule,
+    OspfAuthenticationRule,
+    SnmpCommunityRule,
+    HostnameRule,
+)
 from ios_auditor.rules.increment8 import (
     NtpServerRule,
     RemoteSyslogServerRule,
     SmallServersRule,
     SshVersionRule,
 )
+from ios_auditor.rules.evaluation2_additional import LocalUserPasswordRule, AdministrativeTimeoutRule
 from ios_auditor.rules.metadata import MetadataError, load_metadata_files
 from ios_auditor.rules.pilot import EnablePasswordRule, HttpServerRule, TelnetVtyRule
 
@@ -25,6 +33,13 @@ OFFICIAL_RULE_FILES = (
     "IOS-SRV-002.yaml",
     "IOS-NTP-001.yaml",
     "IOS-LOG-001.yaml",
+    "IOS-AUTH-002.yaml",
+    "IOS-ACL-001.yaml",
+    "IOS-OSPF-001.yaml",
+    "IOS-SNMP-001.yaml",
+    "IOS-DOC-001.yaml",
+    "IOS-AUTH-003.yaml",
+    "IOS-ADM-003.yaml",
 )
 RULE_TYPES = (
     TelnetVtyRule,
@@ -34,6 +49,13 @@ RULE_TYPES = (
     SmallServersRule,
     NtpServerRule,
     RemoteSyslogServerRule,
+    ConsoleAuthenticationRule,
+    GlobalAclPermitRule,
+    OspfAuthenticationRule,
+    SnmpCommunityRule,
+    HostnameRule,
+    LocalUserPasswordRule,
+    AdministrativeTimeoutRule,
 )
 
 

@@ -22,6 +22,10 @@ ALLOWED_COMMANDS = frozenset(
         "show version",
         "show ip interface brief",
         "show ip ssh",
+        "show interfaces",
+        "show access-lists",
+        "show ntp associations",
+        "show ip ospf neighbor",
     }
 )
 

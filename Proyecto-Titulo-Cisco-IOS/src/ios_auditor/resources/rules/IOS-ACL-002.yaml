@@ -1,0 +1,21 @@
+id: IOS-ACL-002
+version: 1.0.0
+name: "ACL definida pero no aplicada"
+category: "ACL"
+description: "ACL definida pero no aplicada; contrato acotado en registro-expansion-operacional-evaluacion-2.md."
+default_severity: MEDIUM
+required_sources:
+  - running-config
+  - show access-lists
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: "Una ACL sin consumidor reconocido puede representar un control inefectivo."
+recommendation: "Revisar la necesidad y aplicación configurada de la ACL, sin cambios automáticos."
+references:
+  - https://www.cisco.com/c/en/us/support/docs/security/ios-firewall/23602-confaccesslists.html
+false_positives:
+  - "Una ACL puede estar preparada para una aplicación futura."
+exceptions:
+  - Revisión humana de excepciones; no se infieren automáticamente.
+enabled: true

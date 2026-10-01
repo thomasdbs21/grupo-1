@@ -1,0 +1,20 @@
+id: IOS-NTP-002
+version: 1.0.0
+name: "Asociación NTP no sincronizada"
+category: "NTP"
+description: "Asociación NTP no sincronizada; contrato acotado en registro-expansion-operacional-evaluacion-2.md."
+default_severity: MEDIUM
+required_sources:
+  - show ntp associations
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: "La falta de sincronización perjudica la correlación temporal."
+recommendation: "Revisar conectividad, fuente y estado NTP manualmente."
+references:
+  - https://www.cisco.com/c/en/us/td/docs/routers/asr920/configuration/guide/timing/17-1-1/b-timing-sync-xe-17-1-asr920/m_bsm-ntp-asr920.html
+false_positives:
+  - "La captura puede ocurrir durante convergencia NTP."
+exceptions:
+  - Revisión humana de excepciones; no se infieren automáticamente.
+enabled: true

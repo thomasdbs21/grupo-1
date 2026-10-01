@@ -149,10 +149,10 @@ def test_result_preserves_evidence_execution_id_and_matching_hashes():
     assert result.analysis_result.sha256 == evidence.sha256
 
 
-def test_integrated_flow_executes_all_seven_running_config_rules():
+def test_integrated_flow_executes_all_twelve_running_config_rules():
     result = analyze_collected_running_config(FakeCollector((_evidence(),)))
 
-    assert len(result.analysis_result.evaluations) == 7
+    assert len(result.analysis_result.evaluations) == 14
     assert len(result.analysis_result.findings) == 5
     assert {finding.rule_id for finding in result.analysis_result.findings} == {
         "IOS-ADM-001",

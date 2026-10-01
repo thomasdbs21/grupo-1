@@ -16,6 +16,10 @@ CANONICAL_EVIDENCE_COMMANDS = (
     "show version",
     "show ip interface brief",
     "show ip ssh",
+    "show interfaces",
+    "show access-lists",
+    "show ntp associations",
+    "show ip ospf neighbor",
 )
 
 _CANONICAL_COMMAND_SET = frozenset(CANONICAL_EVIDENCE_COMMANDS)
@@ -63,7 +67,7 @@ class ValidatedEvidenceBatch:
 def validate_evidence_batch(
     evidences: Iterable[CommandEvidence],
 ) -> ValidatedEvidenceBatch:
-    """Valida y ordena las cuatro evidencias de una auditoría integral."""
+    """Valida y ordena todas las evidencias canónicas del análisis integral."""
 
     try:
         evidence_tuple = tuple(evidences)

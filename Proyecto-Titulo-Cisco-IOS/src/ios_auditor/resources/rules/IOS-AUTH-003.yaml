@@ -1,0 +1,20 @@
+id: IOS-AUTH-003
+version: 1.0.0
+name: Usuario local protegido con password en vez de secret
+category: Contraseñas y autenticación
+description: Control de mecanismo local explícito; no certifica fortaleza del hash ni uso efectivo de AAA.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: El mecanismo password puede ofrecer menor protección que secret.
+recommendation: Revisar compatibilidad y migrar manualmente a username secret según la política local; no publicar valores ni aplicar cambios automáticamente.
+references:
+  - https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-t2.html
+false_positives:
+  - CHAP u otros usos heredados pueden requerir password; requieren revisión humana.
+exceptions:
+  - Directivas repetidas para la misma identidad y opciones no soportadas producen NOT_EVALUATED.
+enabled: true

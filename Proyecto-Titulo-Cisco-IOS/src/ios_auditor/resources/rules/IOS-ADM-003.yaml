@@ -1,0 +1,20 @@
+id: IOS-ADM-003
+version: 1.0.0
+name: Timeout de sesión administrativa explícitamente deshabilitado
+category: Administración remota
+description: Control de exec-timeout explícito en VTY y consola; ausencia no implica FAIL ni certifica el valor efectivo.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Una sesión abandonada sin timeout puede permanecer accesible.
+recommendation: Definir manualmente un timeout no nulo conforme a la política local; no se impone un límite universal ni se modifica el dispositivo.
+references:
+  - https://www.cisco.com/c/en/us/td/docs/ios/fundamentals/command/reference/cf_book/cf_d1.html
+false_positives:
+  - Una consola de laboratorio puede tener una excepción explícita de operación.
+exceptions:
+  - Ausencia, no/default exec-timeout, directivas repetidas y rangos solapados producen NOT_EVALUATED.
+enabled: true
