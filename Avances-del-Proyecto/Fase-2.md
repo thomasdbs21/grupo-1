@@ -66,4 +66,21 @@ La interfaz, los reportes y el asistente conversacional de IA permanecen como et
 - [Registro técnico del Incremento 8: pruebas automatizadas y validación real](../Proyecto-Titulo-Cisco-IOS/docs/registro-incremento-8-expansion-reglas-deterministas.md).
 - [Definición del Incremento 9: persistencia planificada, no implementada](../Proyecto-Titulo-Cisco-IOS/docs/definicion-incremento-9-persistencia-relacional.md).
 
+## Seguimiento al 12 de octubre de 2026
+
+La [presentación de Evaluación 2 del 6 de octubre](../Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pptx) fue realizada como Evaluación 2 y mostró la ampliación disponible en [feature/evaluacion-2-validacion](https://github.com/thomasdbs21/grupo-1/tree/feature/evaluacion-2-validacion), commit `d3d05ca`: 21 reglas de auditoría, ocho comandos y una campaña sintética histórica de 63/63 coincidencias. La suite de esa rama se ejecutó nuevamente y obtuvo `703 passed, 1 warning in 9.67s`. La campaña y la validación manual real mostradas en la presentación son evidencias históricas; no se repitió SSH en esta preparación.
+
+La ampliación no está fusionada en `main`, que conserva ocho reglas de auditoría y cuatro comandos. Su suite actual obtuvo `314 passed, 1 warning in 7.77s`. Persistencia, interfaz, reportes e IA explicativa continúan pendientes. Las cifras de la presentación no deben atribuirse al código de main. El [PDF de la presentación del 06/10](../Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pdf) facilita su revisión.
+
+La retroalimentación docente solicitó diferenciar mejor el auditor de las herramientas orientadas a aplicar configuraciones. El equipo refuerza el alcance de solo lectura, la trazabilidad de la evidencia y el motor determinista como núcleo. Esta precisión mantiene el objetivo general y la metodología incremental declarados en Fase 1.
+
+| Entregable | Autoría |
+|---|---|
+| [Diario de Reflexión Fase 2](../Entregables-APT/Fase-2/Grupales/2.1_APT122_DiarioReflexionFase2.docx) | Equipo completo |
+| [Guía de Desarrollo APT](../Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) | Equipo completo |
+| [Autoevaluación de Axl Urrutia](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/2.2_APT122_AutoevaluacionAvance_Fase2_Axl_Urrutia.docx) | Individual; los otros integrantes completan la propia |
+| [Especificaciones de presentación futura](../Entregables-APT/Fase-2/Referencias/Especificaciones_Presentacion_Avance_Fase2.docx) | Referencia docente sin modificaciones |
+
+Los originales de los tres instrumentos se conservan en [Plantillas](../Entregables-APT/Fase-2/Referencias/Plantillas/). El [registro de auditoría](Auditoria-2026-10-13.md) contiene el contraste de versiones, las evidencias y las validaciones actuales.
+
 [Volver al índice de avances](README.md)

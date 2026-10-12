@@ -263,15 +263,24 @@ curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" `
 
 La carga acepta `.cfg`, `.conf` y `.txt` hasta 2 MiB, procesa el contenido en memoria y no escribe los archivos recibidos. PostgreSQL, Docker, WSL y las dependencias de persistencia no son necesarios para las capacidades implementadas.
 
+## Corte de versiones para la auditoría académica
+
+Las capacidades y las ocho reglas de auditoría descritas en este README corresponden a `main`. La ampliación de Evaluación 2 está en [feature/evaluacion-2-validacion](https://github.com/thomasdbs21/grupo-1/tree/feature/evaluacion-2-validacion), commit `d3d05ca`, pendiente de fusión. Esa rama contiene 14 reglas de configuración y 7 reglas operacionales, ocho evidencias y siete contextos operacionales. Su catálogo y sus registros deben consultarse en esa misma rama.
+
+NetAudit separa la detección técnica de la explicación: el motor determinista evalúa evidencia verificable y la IA futura apoyará la interpretación de resultados. La retroalimentación docente motivó hacer más explícita esta separación y el alcance de solo lectura.
+
+La [presentación del 6 de octubre](../Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pptx) corresponde a la versión ampliada. El [registro de auditoría](../Avances-del-Proyecto/Auditoria-2026-10-13.md) identifica qué se verificó en cada versión.
+
 ## Pruebas
 
 La suite se ejecuta con:
 
 ```powershell
-python -m pytest
+$env:PYTHONUTF8 = '1'
+python -m pytest -q
 ```
 
-Las pruebas automatizadas usan dobles, mocks y datos sintéticos para los flujos SSH; no necesitan conexión a un dispositivo real. **Al cierre del Incremento 8, la suite completa alcanzó 314 pruebas aprobadas.** Esta cifra no corresponde a una implementación del Incremento 9.
+Las pruebas automatizadas usan dobles, mocks y datos sintéticos para los flujos SSH; no necesitan conexión a un dispositivo real. **Al cierre del Incremento 8, la suite completa alcanzó 314 pruebas aprobadas.** Esta cifra no corresponde a una implementación del Incremento 9. La ejecución del 12/10/2026 sobre main obtuvo `314 passed, 1 warning in 7.77s`; el warning es externo (Starlette/AnyIO). La rama de Evaluación 2 obtuvo `703 passed, 1 warning in 9.67s`.
 
 ## Estado del desarrollo
 
