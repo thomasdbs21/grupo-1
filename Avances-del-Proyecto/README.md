@@ -7,7 +7,7 @@ Este directorio reúne el seguimiento académico del Proyecto de Título NetAudi
 | Documento | Contenido | Estado |
 |---|---|---|
 | [Fase 1](Fase-1.md) | Definición del problema, arquitectura, laboratorio y desarrollo hasta el Incremento 8 | Documentada |
-| [Fase 2](Fase-2.md) | Espacio preparado para los avances y entregables de la segunda fase | Pendiente |
+| [Fase 2](Fase-2.md) | Presentaciones del 22/09 y 06/10, reflexión, guía de desarrollo y autoevaluación de Axl | En desarrollo |
 | [Fase 3](Fase-3.md) | Espacio preparado para el cierre y los entregables de la tercera fase | Pendiente |
 | [Historial Git](historial-git.md) | Registro cronológico de los commits reales y explicación de su aporte | Actualizado |
 
