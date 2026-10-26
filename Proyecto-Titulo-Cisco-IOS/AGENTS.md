@@ -712,6 +712,8 @@ Las secciones anteriores conservan los hitos históricos de main; este alcance e
 se detalla en `docs/registro-integracion-ia.md`. No implementa persistencia relacional.
 IA no decide cumplimiento, modifica severidad/estado/evidencia, crea Findings, abre SSH ni
 accede a collectors. Solo se aceptan referencias a Findings reales del backend. La IA está
-desactivada por defecto; la inferencia real aún no está validada por timeout del catálogo.
+desactivada por defecto; la inferencia real se validó posteriormente con Google AI Studio y
+`gemini/gemini-3.5-flash-lite`. El [cierre documental del 26 de octubre](docs/registro-validacion-final-ia.md)
+fija el baseline funcional previo al refinamiento UI/UX; conserva los cortes históricos anteriores.
 La carpeta local `Entregables-APT/Fase-2/Evaluacion-2/` permanece intacta y excluida del stage.
 No se autoriza push, PR ni merge a main en esta tarea.

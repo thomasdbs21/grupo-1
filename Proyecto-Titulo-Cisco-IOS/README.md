@@ -5,12 +5,15 @@
 En `feature/ai-explainer-ui` se integró Evaluación 2: 21 reglas y ocho comandos.
 Se añadió la capa explicativa opcional, contexto sanitizado en memoria, endpoints de IA
 y un MVP Streamlit que solo consume FastAPI. El motor determinista permanece independiente.
-La llamada real al proveedor todavía no está confirmada: OmniRoute responde salud, pero su
-catálogo `/v1/models` agota el tiempo de espera. La IA está desactivada por defecto y el modelo
-queda sin configurar. Estas capacidades locales no se atribuyen a main.
+La inferencia real quedó validada el 25 de octubre de 2026 mediante Google AI Studio y
+`gemini/gemini-3.5-flash-lite`: 3/3 llamadas, explicación de 17 Findings, conversación,
+contrato Pydantic e invariantes preservados. El cierre documental del 26 de octubre fija
+el baseline anterior al refinamiento visual. La IA sigue desactivada por defecto en el código;
+su activación usa configuración local sin secretos versionados. Estas capacidades no se atribuyen a main.
 
 - [Arquitectura, configuración, arranque, pruebas y límites](docs/registro-integracion-ia.md).
-- [Spike real de OmniRoute y bloqueo observado](docs/registro-spike-omniroute.md).
+- [Validación final y baseline del MVP funcional](docs/registro-validacion-final-ia.md).
+- [Spike de OmniRoute: diagnóstico histórico y resolución](docs/registro-spike-omniroute.md).
 - [Demo de cinco minutos](docs/guion-demo-fase-2.md).
 - [Capturas que debe tomar manualmente el estudiante](docs/evidencias-ai/README.md).
 
@@ -402,7 +405,7 @@ GNS3 permanece como ampliación futura opcional y no debe interpretarse como una
 - Solo ocho comandos SSH están autorizados; siete salidas `show` tienen parsing TextFSM acotado.
 - El repositorio temporal de la API de archivos conserva como máximo 100 resultados en memoria y pierde su contenido al reiniciar.
 - La persistencia PostgreSQL y la integración con los endpoints actuales todavía no están implementadas.
-- La interfaz final, el chatbot, los reportes y la explicación mediante IA continúan pendientes.
+- La interfaz básica y la conversación explicativa sobre Findings están validadas en esta rama. El refinamiento visual, los reportes y el alcance multiusuario continúan pendientes.
 - El sistema no modifica dispositivos ni aplica recomendaciones automáticamente.
 - La herramienta apoya al profesional de redes; la revisión y aplicación de cambios siguen bajo su responsabilidad.
 
@@ -410,4 +413,4 @@ GNS3 permanece como ampliación futura opcional y no debe interpretarse como una
 
 **Proyecto de Título — Ingeniería en Conectividad y Redes — Duoc UC.**
 
-La conectividad y las redes constituyen el eje del proyecto. El desarrollo de software estructura la automatización, la ciberseguridad orienta los controles y la futura IA facilitará la explicación de resultados determinados previamente por las reglas.
+La conectividad y las redes constituyen el eje del proyecto. El desarrollo de software estructura la automatización, la ciberseguridad orienta los controles y la IA validada en esta rama explica resultados determinados previamente por las reglas.

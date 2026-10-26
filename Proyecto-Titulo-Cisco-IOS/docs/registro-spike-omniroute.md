@@ -1,6 +1,10 @@
-# Spike local de OmniRoute
+# Spike local de OmniRoute: diagnóstico histórico y cierre
 
-Fecha de revisión: 25 de octubre de 2026. Endpoint previsto y probado: `http://127.0.0.1:20128/v1`.
+Diagnóstico inicial: 25 de octubre de 2026. Cierre documental: 26 de octubre de 2026. Endpoint previsto y probado: `http://127.0.0.1:20128/v1`.
+
+El bloqueo descrito en el corte inicial fue superado para la inferencia usando el catálogo del proveedor y un modelo concreto. La [validación final](registro-validacion-final-ia.md) confirma Google AI Studio y Gemini 3.5 Flash-Lite; las observaciones siguientes se conservan como historial.
+
+## Corte inicial anterior a la validación real
 
 La instalación existente informa versión **3.8.50**. Al comenzar no había servicio escuchando: `GET /v1/models` produjo `ConnectError`. Se realizó un arranque temporal de la instalación existente, con `HOSTNAME=127.0.0.1`, `PORT=20128` y su directorio de datos ya configurado. No se instalaron proveedores, no se modificó su configuración y no se extrajeron cookies, sesiones ni claves. El runtime cargó su propio archivo de entorno; NetAudit solo lee variables de su proceso.
 
@@ -31,6 +35,22 @@ $env:DATA_DIR = 'C:\Users\Gamer\Desktop\OmniRoute-Test\data'
 
 Ese comando logró abrir el listener local durante la revisión, pero no resolvió el timeout del catálogo. No recrear el archivo de entorno ni reemplazar la clave de cifrado de la instalación.
 
-Primero resolver `GET http://127.0.0.1:20128/v1/models`. Si requiere Bearer, usar únicamente una variable de entorno existente y no imprimirla. Elegir un ID concreto disponible y gratuito: preferir Gemini 3.8 Flash oficial/gratuito solo si realmente aparece; después otro modelo gratuito estable; usar un proveedor free/no-key como alternativa. No contratar servicios ni usar cuentas/sesiones web como sustituto.
+## Resolución comprobada
 
-Validar manualmente `POST /v1/chat/completions` con «Responde únicamente: NETAUDIT_AI_OK» y luego un JSON simple. Solo después configurar `NETAUDIT_AI_MODEL` y activar NetAudit. Mantener su clave, si hace falta, en `NETAUDIT_AI_API_KEY`, nunca en Git ni capturas. El test live es optativo y está fuera de la suite normal; ver el registro de integración.
+No se depende de `/v1/models`: la consulta administrativa específica del proveedor identificó
+`gemini-3.5-flash-lite` y el registro instalado confirmó el ID `gemini/gemini-3.5-flash-lite`.
+La llamada directa a Google devolvió `NETAUDIT_AI_OK`, HTTP 200, en 1,701 s. Con la
+configuración final, OmniRoute lo devolvió en 1,731 s y las repeticiones secuenciales tardaron
+1,877 / 1,560 / 1,557 s, todas por el proveedor oficial `gemini` y sin caché de respuesta.
+
+El thinking predeterminado de la pasarela consumía el presupuesto de salida. Desactivarlo
+mediante `reasoning_effort=none` produjo 400. La solución validada fue una regla de configuración
+limitada a la clave NetAudit: presupuesto de razonamiento 128, conservando proveedor y modelo.
+No se actualizó OmniRoute 3.8.50 ni se modificó código. No se ejecutaron otros modelos al
+funcionar Gemini 3.5 Flash-Lite.
+
+La explicación integral de 17 Findings y la conversación fueron reales, sus JSON pasaron
+Pydantic y la caída controlada conservó el análisis. Véanse el [registro final](registro-validacion-final-ia.md)
+y los [resultados sanitizados](evidencias-ai/validacion-gemini.json). La salud HTTP por sí sola
+sigue sin demostrar inferencia. La prueba live optativa de pytest no fue necesaria para esta
+validación y no se presenta como ejecutada.

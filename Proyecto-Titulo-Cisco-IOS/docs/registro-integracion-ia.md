@@ -1,6 +1,10 @@
 # Integración local de la explicación IA y la interfaz
 
-Fecha: 25 de octubre de 2026. Rama: `feature/ai-explainer-ui`. Este trabajo es local y no cambia el estado de main.
+Implementación: 25 de octubre de 2026. Cierre documental: 26 de octubre de 2026. Rama: `feature/ai-explainer-ui`. Este trabajo es local y no cambia el estado de main.
+
+La inferencia real, conversación y resiliencia ya están validadas; ver el
+[registro final del baseline](registro-validacion-final-ia.md) y la
+[evidencia sanitizada](evidencias-ai/validacion-gemini.json). El MVP Streamlit conserva su diseño básico.
 
 ## Objetivo y base verificada
 
@@ -62,7 +66,7 @@ El cliente usa solo `POST /v1/chat/completions`, modelo concreto, sin streaming 
 
 ## Configuración e inicio
 
-Las variables están descritas en `.env.example`, sin secretos. No se carga automáticamente un `.env`: definir variables en la terminal que inicia FastAPI. La IA está desactivada por defecto; base URL `http://127.0.0.1:20128/v1`, timeout 15 s y máximo un retry. El modelo queda vacío hasta verificar uno real. `httpx>=0.28,<0.29` pasa a runtime. Streamlit está en el extra `ui`; se instaló en el entorno virtual existente (versión observada 1.66.1). El proyecto configura Streamlit solo en loopback, carga máxima de 2 MiB y sin telemetría de uso.
+Las variables están descritas en `.env.example`, sin secretos. No se carga automáticamente un `.env`: definir variables en la terminal que inicia FastAPI. La IA está desactivada por defecto; base URL `http://127.0.0.1:20128/v1`, timeout 15 s y máximo un retry. El modelo queda vacío por defecto; el ID verificado para esta rama es `gemini/gemini-3.5-flash-lite`. `httpx>=0.28,<0.29` pasa a runtime. Streamlit está en el extra `ui`; se instaló en el entorno virtual existente (versión observada 1.66.1). El proyecto configura Streamlit solo en loopback, carga máxima de 2 MiB y sin telemetría de uso.
 
 Desde `C:\Users\Gamer\Desktop\grupo-1\Proyecto-Titulo-Cisco-IOS`, terminal API:
 
@@ -78,7 +82,23 @@ Terminal UI, mismo directorio:
 .\.venv\Scripts\python.exe -m streamlit run apps/streamlit/app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
-Abrir `http://127.0.0.1:8501`. Para usar IA, primero resolver el [spike de OmniRoute](registro-spike-omniroute.md), definir el ID concreto confirmado en `NETAUDIT_AI_MODEL`, la clave por entorno solo si el gateway la exige, y `NETAUDIT_AI_ENABLED=true`. Reiniciar FastAPI en esa terminal. No cambiar a un servicio de pago como sustituto.
+Abrir `http://127.0.0.1:8501`. Para usar la configuración validada, definir en el proceso de FastAPI:
+
+```powershell
+$env:NETAUDIT_AI_ENABLED = 'true'
+$env:NETAUDIT_AI_BASE_URL = 'http://127.0.0.1:20128/v1'
+$env:NETAUDIT_AI_MODEL = 'gemini/gemini-3.5-flash-lite'
+$env:NETAUDIT_AI_TIMEOUT_SECONDS = '30'
+$env:NETAUDIT_AI_MAX_RETRIES = '0'
+# NETAUDIT_AI_API_KEY debe provenir del almacén local; no incluir su valor en scripts o Git.
+```
+
+La clave se mantiene fuera del repositorio. `.env` sigue ignorado y `.env.example` contiene
+solo valores de ejemplo sin credenciales. La configuración local validada de OmniRoute limita
+la clave NetAudit a Google AI Studio y al modelo indicado, sin autorresolución y con presupuesto
+de razonamiento de 128 tokens; ver [diagnóstico y ajuste](registro-validacion-final-ia.md#configuración-local-validada).
+No es necesario resolver `/v1/models` para seleccionar este modelo: se verificó el catálogo
+administrativo específico del proveedor. La aplicación no carga automáticamente archivos de entorno.
 
 ## Pruebas y evidencia
 
@@ -92,13 +112,20 @@ $env:NETAUDIT_RUN_LIVE_AI_TESTS = '1'
 .\.venv\Scripts\python.exe -m pytest tests_live/test_ai_live.py -q
 ```
 
-Durante esta implementación no se ejecutó esa prueba live: no había modelo confirmado. No hubo SSH real. Una prueba HTTP real del backend cargó la muestra sintética insegura: 14 evaluaciones, 12 Findings, creación HTTP 201 y error AI_DISABLED 503; la posterior consulta del análisis fue idéntica. FastAPI y Streamlit respondieron a sus checks de salud y se inspeccionó la pantalla inicial de la UI. Los procesos temporales de verificación se detienen al cerrar la revisión.
+Durante el corte inicial de implementación no se ejecutó ese test live opcional: aún no había modelo confirmado. La validación posterior sí realizó llamadas reales mediante FastAPI y Streamlit AppTest, registradas en el documento de cierre; no se atribuye esa ejecución al archivo optativo de pytest. No hubo SSH real. Una prueba HTTP real del backend cargó la muestra sintética insegura: 14 evaluaciones, 12 Findings, creación HTTP 201 y error AI_DISABLED 503; la posterior consulta del análisis fue idéntica. FastAPI y Streamlit respondieron a sus checks de salud y se inspeccionó la pantalla inicial de la UI. Los procesos temporales de verificación se detienen al cerrar la revisión.
 
-El [guion](guion-demo-fase-2.md) y la [lista de capturas manuales](evidencias-ai/README.md) separan la demo determinista reproducible de la explicación real aún no verificada.
+El [guion](guion-demo-fase-2.md) y la [lista de capturas manuales](evidencias-ai/README.md) separan la demo determinista reproducible, la inferencia real ya validada y las capturas externas del MVP anterior al refinamiento visual.
 
 ## Límites y próximos pasos
 
-El gateway responde HTTP, pero `/v1/models` agota 20 s; no se seleccionó modelo ni se confirmó inferencia o JSON reales. No se presenta la capa explicativa como validada de extremo a extremo contra un proveedor. Falta corregir el catálogo, repetir dos llamadas mínimas, ejecutar el live optativo y revisar la prosa obtenida con muestras sintéticas. No hay autenticación de usuarios ni autorización multiusuario: API/UI son un MVP local en loopback. No exponerlas a una red compartida. Los procesos mantienen sus contextos solo en memoria; con varios workers cada proceso tiene su propio repositorio, por lo que este MVP se ejecuta con un worker.
+El bloqueo histórico de `/v1/models` dejó de impedir la validación: el catálogo del proveedor
+y la inferencia real confirmaron Gemini 3.5 Flash-Lite. Las tres pruebas secuenciales fueron
+correctas y las dos respuestas integrales pasaron Pydantic. La prosa sigue requiriendo revisión
+humana; el sanitizador puede acortar frases que contienen referencias a credenciales.
+No hay autenticación ni autorización multiusuario: la configuración versionada de API/UI
+mantiene loopback. La prueba desde un segundo PC por Radmin fue reportada por el estudiante;
+no implica un despliegue productivo ni cambia esa configuración. Los contextos solo viven en
+memoria; el MVP se ejecuta con un worker. El refinamiento UI/UX corresponde a un incremento posterior.
 
 Persistencia PostgreSQL, interfaz multiusuario, reportes finales e integración de otros proveedores quedan fuera de este cambio. No se hizo push, PR ni merge a main. La carpeta local `Entregables-APT/Fase-2/Evaluacion-2/` se preserva y se excluye del stage.
 

@@ -569,4 +569,8 @@ La rama `feature/ai-explainer-ui` incorpora la ampliación de Evaluación 2 y el
 sanitizado por analysis_id/execution_id -> contrato de explicación cerrado -> cliente HTTP
 OmniRoute. Streamlit solo consulta FastAPI. No hay acceso desde IA a SSH ni a collectors.
 La salida generada es separada e inmutable respecto del análisis. No se implementa persistencia
-relacional. El proveedor real sigue pendiente de validación por timeout del catálogo local.
+relacional. La validación real posterior confirmó Google AI Studio con
+`gemini/gemini-3.5-flash-lite`, explicación y conversación sobre 17 Findings, contrato
+Pydantic e invariantes preservados. La indisponibilidad de IA mantiene el análisis disponible.
+El [registro de cierre](registro-validacion-final-ia.md) separa la inferencia real de las
+evidencias sintéticas del escenario integral y conserva el MVP básico sin cambios visuales.

@@ -381,5 +381,8 @@ dependencia runtime para el cliente HTTP acotado y Streamlit se ofrece como extr
 El repositorio de explicación es temporal en memoria, independiente del resultado determinista.
 La entrada solo proviene de Findings del backend; las respuestas no admiten cambios de estado,
 severidad ni evidencia. No se añaden herramientas, MCP, A2A, Responses API, auto-routing ni
-streaming de tokens. La IA permanece desactivada por defecto y la inferencia real continúa
-pendiente del spike. Este alcance no implementa el Incremento 9 de persistencia.
+streaming de tokens. La IA permanece desactivada por defecto; Google AI Studio y
+`gemini/gemini-3.5-flash-lite` quedaron validados mediante inferencia real. Para la clave
+local de NetAudit se configuró en OmniRoute un presupuesto de razonamiento de 128 tokens,
+sin cambiar código ni contratos. El [registro de cierre](registro-validacion-final-ia.md)
+conserva la evidencia y las limitaciones. Este alcance no implementa el Incremento 9 de persistencia.
