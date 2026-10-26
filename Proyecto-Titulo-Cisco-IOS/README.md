@@ -1,5 +1,13 @@
 # Auditor de Configuraciones Cisco IOS/IOS XE
 
+## Refinamiento UX/UI de Fase 2
+
+La rama `feature/ui-ux-refinement`, basada en `e0b7c0f`, conserva el incremento IA ya
+integrado y refina únicamente la presentación Streamlit: temas nativos, dashboard,
+filtros, estados observables y exportaciones sanitizadas. Es un incremento de Fase 2,
+pendiente de revisión visual y sin publicación. Ver el [registro técnico](docs/registro-refinamiento-ux-ui-fase2.md).
+El apartado siguiente conserva el contexto histórico de la implementación de IA.
+
 ## Rama local de integración de IA e interfaz
 
 En `feature/ai-explainer-ui` se integró Evaluación 2: 21 reglas y ocho comandos.

@@ -5,3 +5,33 @@ maxUploadSize = 2
 
 [browser]
 gatherUsageStats = false
+
+# Fase 2: dos temas nativos. Se conserva toda la configuración de red.
+[theme]
+font = "sans-serif"
+showSidebarBorder = true
+
+[theme.light]
+primaryColor = "#2364DD"
+backgroundColor = "#F5F7FB"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#17243A"
+borderColor = "#D9E2EF"
+
+[theme.light.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#EEF2F8"
+
+[theme.dark]
+primaryColor = "#6AA9FF"
+backgroundColor = "#0D1523"
+secondaryBackgroundColor = "#162235"
+textColor = "#E4ECF6"
+borderColor = "#2C3D55"
+
+[theme.dark.sidebar]
+backgroundColor = "#111C2D"
+secondaryBackgroundColor = "#1B2A42"
+
+[client]
+showErrorDetails = 'none'
