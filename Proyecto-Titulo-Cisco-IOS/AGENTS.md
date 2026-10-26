@@ -702,3 +702,16 @@ Las decisiones más detalladas deberán mantenerse en:
     docs/plan-incremental.md
 
 Si existe una contradicción entre una instrucción puntual y las restricciones de seguridad de este archivo, deberá detenerse la implementación y solicitar aclaración antes de continuar.
+
+## 25. Alcance autorizado de la rama local de IA e interfaz
+
+El 25 de octubre de 2026 se autorizó `feature/ai-explainer-ui`: integra Evaluación 2
+(21 reglas y ocho comandos), una capa explicativa opcional mediante OmniRoute, contexto
+sanitizado en memoria, endpoints de explicación y Streamlit que solo habla con FastAPI.
+Las secciones anteriores conservan los hitos históricos de main; este alcance específico
+se detalla en `docs/registro-integracion-ia.md`. No implementa persistencia relacional.
+IA no decide cumplimiento, modifica severidad/estado/evidencia, crea Findings, abre SSH ni
+accede a collectors. Solo se aceptan referencias a Findings reales del backend. La IA está
+desactivada por defecto; la inferencia real aún no está validada por timeout del catálogo.
+La carpeta local `Entregables-APT/Fase-2/Evaluacion-2/` permanece intacta y excluida del stage.
+No se autoriza push, PR ni merge a main en esta tarea.

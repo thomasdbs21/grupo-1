@@ -561,3 +561,12 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Necesidad y tecnología de procesamiento en segundo plano.
 - Política de retención de evidencias.
 - Selección definitiva de las reglas que entrarán al MVP.
+
+## Integración explicativa local del 25 de octubre de 2026
+
+La rama `feature/ai-explainer-ui` incorpora la ampliación de Evaluación 2 y el
+[flujo de explicación](registro-integracion-ia.md): Findings deterministas -> snapshot
+sanitizado por analysis_id/execution_id -> contrato de explicación cerrado -> cliente HTTP
+OmniRoute. Streamlit solo consulta FastAPI. No hay acceso desde IA a SSH ni a collectors.
+La salida generada es separada e inmutable respecto del análisis. No se implementa persistencia
+relacional. El proveedor real sigue pendiente de validación por timeout del catálogo local.

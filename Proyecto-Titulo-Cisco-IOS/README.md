@@ -1,5 +1,23 @@
 # Auditor de Configuraciones Cisco IOS/IOS XE
 
+## Rama local de integración de IA e interfaz
+
+En `feature/ai-explainer-ui` se integró Evaluación 2: 21 reglas y ocho comandos.
+Se añadió la capa explicativa opcional, contexto sanitizado en memoria, endpoints de IA
+y un MVP Streamlit que solo consume FastAPI. El motor determinista permanece independiente.
+La llamada real al proveedor todavía no está confirmada: OmniRoute responde salud, pero su
+catálogo `/v1/models` agota el tiempo de espera. La IA está desactivada por defecto y el modelo
+queda sin configurar. Estas capacidades locales no se atribuyen a main.
+
+- [Arquitectura, configuración, arranque, pruebas y límites](docs/registro-integracion-ia.md).
+- [Spike real de OmniRoute y bloqueo observado](docs/registro-spike-omniroute.md).
+- [Demo de cinco minutos](docs/guion-demo-fase-2.md).
+- [Capturas que debe tomar manualmente el estudiante](docs/evidencias-ai/README.md).
+
+La ejecución normal de pytest no usa modelos ni dispositivos reales. Los documentos anteriores
+conservan sus cortes históricos; para el alcance de esta rama usar el registro de integración.
+
+
 Sistema de auditoría técnica que analiza configuraciones y estado operacional de dispositivos Cisco IOS e IOS XE. Utiliza reglas deterministas para detectar errores, inconsistencias, riesgos y malas prácticas, conserva evidencia trazable y genera evaluaciones y recomendaciones sin modificar los dispositivos.
 
 El principio central del proyecto es simple: **las reglas deterministas realizan la auditoría técnica; la inteligencia artificial futura explicará sus resultados**.

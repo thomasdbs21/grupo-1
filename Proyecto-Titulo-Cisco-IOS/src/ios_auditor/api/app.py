@@ -12,9 +12,14 @@ from fastapi.responses import JSONResponse
 from ios_auditor import __version__
 from ios_auditor.api.dependencies import (
     get_analysis_repository,
+    get_ai_context_repository,
     get_connection_factory,
     get_rule_registry,
 )
+from ios_auditor.ai.errors import AIError
+from ios_auditor.ai.repository import AIContextRepository
+from ios_auditor.ai.service import build_context
+from ios_auditor.api.ai_routes import router as ai_router
 from ios_auditor.api.errors import ApiError
 from ios_auditor.api.full_device_serialization import (
     FullDeviceResponseContractError,
@@ -79,6 +84,23 @@ app = FastAPI(
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
     payload = ErrorResponse(error={"code": code, "message": message})
     return JSONResponse(status_code=status_code, content=payload.model_dump(mode="json"))
+
+
+app.include_router(ai_router)
+
+
+@app.exception_handler(AIError)
+async def ai_error_handler(_request: Request, exc: AIError) -> JSONResponse:
+    logger.warning("ai_unavailable code=%s", exc.code.value)
+    return _error_response(exc.status_code, exc.code.value, exc.message)
+
+
+def _register_ai_context(reference, findings, repository: AIContextRepository) -> None:
+    try:
+        repository.put(build_context(reference, findings))
+    except Exception:
+        # Frontera opcional explícita: un fallo del snapshot IA nunca invalida el análisis.
+        logger.warning("ai_context_registration_failed")
 
 
 @app.exception_handler(ApiError)
@@ -213,6 +235,7 @@ def list_rules(
 def create_device_analysis(
     request: DeviceAnalysisRequest,
     connection_factory: ConnectionFactory = Depends(get_connection_factory),
+    ai_repository: AIContextRepository = Depends(get_ai_context_repository),
 ) -> FullDeviceAnalysisResponse:
     try:
         result = collect_and_analyze_device(
@@ -222,7 +245,9 @@ def create_device_analysis(
             password=request.password.get_secret_value(),
             connection_factory=connection_factory,
         )
-        return to_full_device_analysis_response(result)
+        response = to_full_device_analysis_response(result)
+        _register_ai_context(result.execution_id, result.findings, ai_repository)
+        return response
     except CollectorTimeoutError:
         raise ApiError(
             504,
@@ -260,6 +285,7 @@ async def create_analysis(
     file: UploadFile = File(...),
     repository: InMemoryAnalysisRepository = Depends(get_analysis_repository),
     registry: RuleRegistry = Depends(get_rule_registry),
+    ai_repository: AIContextRepository = Depends(get_ai_context_repository),
 ) -> AnalysisCreatedResponse:
     source_name = _sanitize_filename(file.filename)
     try:
@@ -282,6 +308,7 @@ async def create_analysis(
         ) from exc
 
     stored = repository.create(source_name=source_name, result=result)
+    _register_ai_context(stored.analysis_id, result.findings, ai_repository)
     logger.info(
         "analysis_completed analysis_id=%s source_name=%s evaluations=%s findings=%s",
         stored.analysis_id,
