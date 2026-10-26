@@ -15,7 +15,7 @@ SAMPLES = ROOT / "samples"
 
 def test_incorrect_sample_preserves_three_pilot_findings_and_adds_missing_controls():
     result = analyze_file(SAMPLES / "running_config_incorrecta.cfg")
-    assert len(result.evaluations) == 7
+    assert len(result.evaluations) == 14
     assert len(result.findings) == 5
     assert {item.rule_id for item in result.findings} == {
         "IOS-ADM-001",
@@ -28,7 +28,7 @@ def test_incorrect_sample_preserves_three_pilot_findings_and_adds_missing_contro
 
 def test_correct_historical_sample_reports_new_missing_controls():
     result = analyze_file(SAMPLES / "running_config_correcta.cfg")
-    assert len(result.evaluations) == 7
+    assert len(result.evaluations) == 14
     assert {item.rule_id for item in result.findings} == {
         "IOS-NTP-001",
         "IOS-LOG-001",

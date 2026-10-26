@@ -1,0 +1,10 @@
+GigabitEthernet1 is up, line protocol is up
+  20000 packets input, 1000000 bytes, 0 no buffer
+  0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
+  20000 packets output, 1000000 bytes, 0 underruns
+  0 output errors, 0 collisions, 0 interface resets
+GigabitEthernet2 is administratively down, line protocol is down
+  0 packets input, 0 bytes, 0 no buffer
+  0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
+  0 packets output, 0 bytes, 0 underruns
+  0 output errors, 0 collisions, 0 interface resets

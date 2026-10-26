@@ -1,0 +1,22 @@
+id: IOS-INT-001
+version: 1.0.0
+name: Interfaz no utilizada sin shutdown
+category: Interfaces
+description: Política acotada de sin uso declarado con description NETAUDIT_UNUSED, down/down, cero paquetes y no shutdown explícito; down/down solo no demuestra abandono.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+  - show interfaces
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Un puerto físico declarado sin uso pero habilitado puede permitir una conexión no prevista.
+recommendation: Revisar inventario y vigencia de la declaración sin uso antes de deshabilitar manualmente un puerto; nunca aplicar cambios automáticamente.
+references:
+  - https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html
+false_positives:
+  - Una descripción desactualizada o contadores reiniciados requieren revisión humana; el marcador es una política del prototipo, no una semántica Cisco.
+exceptions:
+  - Interfaces virtuales y subinterfaces conocidas quedan fuera del alcance.
+  - Sin declaración exacta, contadores o correlación suficiente se devuelve NOT_EVALUATED.
+enabled: true

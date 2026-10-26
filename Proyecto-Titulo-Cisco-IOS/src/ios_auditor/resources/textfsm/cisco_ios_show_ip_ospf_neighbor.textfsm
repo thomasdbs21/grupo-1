@@ -1,0 +1,20 @@
+Value HEADER (Neighbor)
+Value NEIGHBOR (\d+\.\d+\.\d+\.\d+)
+Value PRIORITY (\d+)
+Value STATE (FULL|2WAY|DOWN|ATTEMPT|INIT|EXSTART|EXCHANGE|LOADING)
+Value ROLE (DR|BDR|DROTHER|-)
+Value DEAD_TIME (\S+)
+Value ADDRESS (\d+\.\d+\.\d+\.\d+)
+Value INTERFACE (\S+)
+
+Start
+  ^${HEADER} ID\s+Pri\s+State\s+Dead Time\s+Address\s+Interface\s*$$ -> Record Table
+  ^\s*$$
+  ^. -> Error
+
+Table
+  ^${NEIGHBOR}\s+${PRIORITY}\s+${STATE}/\s*${ROLE}\s+${DEAD_TIME}\s+${ADDRESS}\s+${INTERFACE}\s*$$ -> Record
+  ^\s*$$
+  ^. -> Error
+
+EOF

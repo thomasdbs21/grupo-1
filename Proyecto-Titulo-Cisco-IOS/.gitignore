@@ -42,3 +42,6 @@ Desktop.ini
 # Logs
 *.log
 logs/
+
+# Secretos locales de Streamlit (solo se versiona config.toml sin secretos)
+.streamlit/secrets.toml

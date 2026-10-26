@@ -372,3 +372,17 @@ Las siguientes decisiones deberán concretarse cuando se planifiquen los increme
 - El diseño definitivo de la interfaz Streamlit.
 
 Estas decisiones pendientes no amplían el alcance del Incremento 6 y deberán documentarse antes de implementar cada componente futuro.
+
+## Aprobación específica: rama de IA e interfaz, 25 de octubre de 2026
+
+El alcance autorizado en `feature/ai-explainer-ui` integra Evaluación 2 (21 reglas, ocho
+comandos) y añade explicación opcional y Streamlit sin atribuirlos a main. httpx pasa a
+dependencia runtime para el cliente HTTP acotado y Streamlit se ofrece como extra `ui`.
+El repositorio de explicación es temporal en memoria, independiente del resultado determinista.
+La entrada solo proviene de Findings del backend; las respuestas no admiten cambios de estado,
+severidad ni evidencia. No se añaden herramientas, MCP, A2A, Responses API, auto-routing ni
+streaming de tokens. La IA permanece desactivada por defecto; Google AI Studio y
+`gemini/gemini-3.5-flash-lite` quedaron validados mediante inferencia real. Para la clave
+local de NetAudit se configuró en OmniRoute un presupuesto de razonamiento de 128 tokens,
+sin cambiar código ni contratos. El [registro de cierre](registro-validacion-final-ia.md)
+conserva la evidencia y las limitaciones. Este alcance no implementa el Incremento 9 de persistencia.

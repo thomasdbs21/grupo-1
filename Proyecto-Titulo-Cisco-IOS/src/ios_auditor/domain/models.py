@@ -6,6 +6,11 @@ from enum import StrEnum
 from typing import TypeAlias
 from uuid import UUID
 
+from ios_auditor.domain.operational_sources import (
+    ShowAccessListsData, ShowInterfacesData, ShowIpOspfNeighborData,
+    ShowNtpAssociationsData,
+)
+
 
 class Severity(StrEnum):
     INFO = "INFO"
@@ -109,6 +114,8 @@ class ShowIpSshData:
 
 ShowCommandData: TypeAlias = (
     ShowVersionData | ShowIpInterfaceBriefData | ShowIpSshData
+    | ShowInterfacesData | ShowAccessListsData | ShowNtpAssociationsData
+    | ShowIpOspfNeighborData
 )
 
 
@@ -120,6 +127,25 @@ class OperationalContext:
     collected_at: datetime
     sha256: str
     data: ShowCommandData
+
+
+@dataclass(frozen=True, slots=True)
+class MultiSourceContext:
+    configuration: AnalysisContext
+    operational: tuple[OperationalContext, ...]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.configuration, AnalysisContext):
+            raise TypeError("El contexto de configuración es incompatible.")
+        if not isinstance(self.operational, tuple) or not all(
+            isinstance(item, OperationalContext) for item in self.operational
+        ):
+            raise TypeError("Los contextos operacionales requieren una tupla válida.")
+        commands = tuple(item.command for item in self.operational)
+        if len(commands) != len(set(commands)):
+            raise ValueError("No se admiten fuentes operacionales duplicadas.")
+        if len({item.execution_id for item in self.operational}) > 1:
+            raise ValueError("Las fuentes requieren una ejecución común.")
 
 
 @dataclass(frozen=True, slots=True)

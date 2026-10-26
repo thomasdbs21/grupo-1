@@ -1,0 +1,19 @@
+id: IOS-OSPF-001
+version: "1.0.0"
+name: Autenticación OSPF ausente
+category: OSPF
+description: Control estático acotado de running-config; contrato en docs/registro-expansion-reglas-evaluacion-2.md.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: La ausencia de autenticación en una interfaz OSPF aplicable facilita mensajes de enrutamiento no autenticados.
+recommendation: Configurar autenticación OSPF coherente entre vecinos según la plataforma y política; revisar las claves sin divulgarlas.
+references:
+  - "Cisco — referencia de sintaxis y mecanismos | https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/m_ospf-a1.html"
+false_positives:
+  - "Solo se evalúan interfaces IPv4 vinculadas directamente al proceso; no se verifica autenticación operacional."
+exceptions: []
+enabled: true

@@ -31,7 +31,7 @@ Entrada de archivo                                [PRIMER INCREMENTO]
 o recopilación SSH de solo lectura                [INCREMENTO 4]
             |
             v
-Cuatro CommandEvidence con execution_id común     [INCREMENTO 6]
+Ocho CommandEvidence con execution_id común       [EVALUACIÓN 2]
             |
             v
 Validación obligatoria del lote                    [INCREMENTO 6]
@@ -45,7 +45,8 @@ Normalización                                     [PRIMER INCREMENTO]
             |
             v
 Contexto inmutable                                [PRIMER INCREMENTO]
-  AnalysisContext + tres OperationalContext       [INCREMENTO 6]
+  AnalysisContext + siete OperationalContext      [EVALUACIÓN 2]
+  MultiSourceContext para correlación             [EVALUACIÓN 2]
             |
             v
 Carga YAML segura y registros de reglas           [INCREMENTOS 2 Y 5]
@@ -94,7 +95,7 @@ alta disponibilidad y soporte para más plataformas. [FUTURO]
 - **Relación:** `NetmikoCollector` valida todos los comandos antes de conectar, reutiliza una sesión y la cierra mediante `disconnect()`.
 - **Etapa:** completado en el Incremento 4.
 
-La lista blanca actual contiene `show running-config`, `show version`, `show ip interface brief` y `show ip ssh`. La autorización es exacta: pipes, argumentos adicionales, punto y coma y saltos de línea se rechazan. El recolector no utiliza métodos de configuración.
+La lista blanca actual contiene `show running-config`, `show version`, `show ip interface brief`, `show ip ssh`, `show interfaces`, `show access-lists`, `show ntp associations` y `show ip ospf neighbor`. La ampliación fue autorizada explícitamente para implementación y pruebas offline de la Evaluación 2. Pipes, argumentos adicionales, punto y coma y saltos de línea se rechazan; el recolector no utiliza métodos de configuración.
 
 ### 4.2.1 Orquestador de análisis recopilado
 
@@ -108,13 +109,13 @@ El orquestador no almacena el recolector ni credenciales. Tampoco contiene parsi
 
 ### 4.2.2 Orquestación integral multifuente
 
-- **Responsabilidad:** recopilar y analizar las cuatro fuentes canónicas en una sola sesión SSH de solo lectura.
+- **Responsabilidad:** recopilar y analizar las ocho fuentes canónicas en una sola sesión SSH de solo lectura.
 - **Entrada:** un `NetmikoCollector` configurado con datos transitorios de conexión.
 - **Salida:** `FullDeviceAnalysisResult` inmutable y trazable.
-- **Relación:** `collect_and_analyze_device()` obtiene cuatro `CommandEvidence` con un `execution_id` común, valida obligatoriamente el lote y reutiliza los análisis de `running-config` y comandos `show`.
-- **Etapa:** completado en el Incremento 6.
+- **Relación:** `collect_and_analyze_device()` obtiene ocho `CommandEvidence` con un `execution_id` común, valida obligatoriamente el lote y reutiliza los análisis de `running-config` y comandos `show`.
+- **Etapa:** completado inicialmente en el Incremento 6 con cuatro fuentes; ampliado offline para la Evaluación 2.
 
-El resultado conserva cuatro evidencias, tres contextos operacionales y todas las evaluaciones. Solo las evaluaciones `FAIL` producen `findings`; las reglas nunca reciben el recolector ni las credenciales.
+El resultado actual conserva ocho evidencias, siete contextos operacionales y todas las evaluaciones. `MultiSourceContext` combina configuración y contextos sin acceso a infraestructura. Catorce reglas de configuración y siete operacionales/multifuente producen veintiuna evaluaciones con los registros habilitados; la cantidad se deriva de las colecciones, no se fija en el dominio. Solo `FAIL` produce findings.
 
 ### 4.3 Gestión de evidencia
 
@@ -136,11 +137,11 @@ El resultado conserva cuatro evidencias, tres contextos operacionales y todas la
 
 - **Responsabilidad:** transformar salidas de comandos `show` en registros estructurados.
 - **Entrada:** comando normalizado, salida normalizada y plantilla TextFSM propia correspondiente.
-- **Salida:** `ShowVersionData`, `ShowIpInterfaceBriefData` o `ShowIpSshData`, o un error seguro y explícito.
+- **Salida:** modelos inmutables para versión, brief, SSH, contadores de interfaces, presencia ACL, asociaciones NTP y vecinos OSPF; errores seguros o formato nuevo explícitamente no reconocido.
 - **Relación:** `parse_show_command()` utiliza un mapeo inmutable, carga recursos empaquetados y no accede a SSH.
 - **Etapa:** completado en el Incremento 5.
 
-TextFSM procesa exclusivamente `show version`, `show ip interface brief` y `show ip ssh`. `show running-config` continúa siendo responsabilidad de `ciscoconfparse2` y `CiscoConfParse`.
+TextFSM procesa siete comandos operacionales; `show running-config` continúa siendo responsabilidad de `ciscoconfparse2` y `CiscoConfParse`. Las cuatro plantillas nuevas tienen un subconjunto explícito: salida desconocida/incompleta no equivale a PASS. Se descartan destinos NTP y direcciones de vecinos al construir sus modelos.
 
 ### 4.6 Normalizador
 
@@ -183,7 +184,13 @@ Existen dos contextos separados:
 
 El YAML no contiene condiciones ni lógica de evaluación. La detección permanece exclusivamente en Python. El registro no descubre archivos arbitrarios: solo carga nombres previamente autorizados dentro de la carpeta de recursos.
 
-El `RuleRegistry` existente contiene siete reglas implementadas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto. El Incremento 8 amplió el primer registro con cuatro reglas sin modificar el contrato de `AnalysisContext` ni el endpoint integral.
+El `RuleRegistry` de configuración contiene catorce reglas implementadas de `running-config`. `IOS-IF-001` se carga mediante `get_interface_operational_rule()` y permanece separada para no mezclar contratos de contexto. La primera expansión estática de Evaluación 2 añadió cinco reglas; el corte actual agrega IOS-AUTH-003 e IOS-ADM-003 al final, sin alterar las doce posiciones previas. Los controles consultan una vista local acotada de raíz e indentación del contenido conservado; no es un parser general ni concede acceso a infraestructura.
+
+Las seis reglas que requieren `MultiSourceContext` también reutilizan `RuleRegistry`
+para validar metadatos, orden y habilitación, mediante un registro independiente.
+IOS-INT-001 se añade al final de ese registro porque necesita `show interfaces`;
+no se ejecuta con un contexto de configuración aislado. La separación real es
+14 + 7 = 21, no 15 + 6. No se hardcodea el total en dominio o serialización.
 
 ### 4.9 Motor de reglas
 
@@ -338,14 +345,15 @@ POST /api/v1/device-analyses
 collect_and_analyze_device()
         |
         v
-una sesión SSH / cuatro CommandEvidence
+una sesión SSH / ocho CommandEvidence
         |
         v
 ValidatedEvidenceBatch
         |
-        +--> AnalysisContext --> siete reglas running-config
+        +--> AnalysisContext --> catorce reglas running-config
         |
-        +--> tres OperationalContext --> IOS-IF-001
+        +--> siete OperationalContext --> IOS-IF-001
+        +--> MultiSourceContext --> seis controles multifuente
         |
         v
 FullDeviceAnalysisResult inmutable
@@ -482,6 +490,42 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Sin nuevos comandos, dependencias, cambios SSH, persistencia, interfaz, reportes ni inteligencia artificial.
 - 314 pruebas aprobadas y validación real sanitizada de solo lectura con una sesión, cuatro evidencias y ocho evaluaciones.
 
+### Primer corte estático de Evaluación 2 (histórico)
+
+- Cinco controles estáticos adicionales: consola, ACL IPv4 extendida, autenticación OSPFv2, comunidades SNMP y hostname.
+- Doce evaluaciones de configuración más IOS-IF-001; el agregado no fija una cantidad artificial.
+- Evidencia sintética sanitizada y estados no binarios ante ambigüedad.
+- Tres escenarios locales y flujo integral verificado con transporte simulado, sin nueva conexión real.
+- Contratos y resultados en [registro de expansión](registro-expansion-reglas-evaluacion-2.md); no se implementa persistencia ni se renumeran los incrementos históricos.
+
+### Primer corte operacional de Evaluación 2 (histórico)
+
+- Ocho consultas canónicas, siete parsers TextFSM y cinco reglas adicionales.
+- Doce reglas de configuración más seis operacionales/multifuente: dieciocho en total.
+- IOS-INT-002 correlaciona por nombre completo exacto; IOS-ACL-002 comprueba aplicación
+  configurada, no hits; IOS-NTP-002 utiliza sys.peer.
+- IOS-AVL-001 adopta MEDIUM y umbral histórico de muestra suficiente; no presume tasa
+  temporal. IOS-OSPF-002 no inventa FAIL sin vecinos esperados demostrables.
+- DTO integral conserva su estructura y sanitización; se actualizan solo los comandos
+  tipados y cardinalidad de evidencias. No se cambian rutas ni payloads de conexión.
+- Sin SSH real nuevo. [Contratos, fixtures y resultados](registro-expansion-operacional-evaluacion-2.md).
+- La definición histórica del Incremento 9 conserva cuatro metadatos de evidencia;
+  su futura compatibilidad con ocho deberá aprobarse antes de implementar persistencia.
+
+### Corte actual de Evaluación 2
+
+- Migración 4→8 auditada transversalmente antes de agregar reglas; resultados y
+  clasificación documental en [auditoría](auditoria-migracion-evidencias-evaluacion-2.md).
+- IOS-AUTH-003 e IOS-ADM-003 sobre configuración; IOS-INT-001 multifuente.
+- Ocho evidencias, siete contextos y 14 + 7 = 21 reglas habilitadas, agregación dinámica.
+- Contratos conservadores, campaña sintética y resultados verificables en
+  [registro actual](registro-controles-adicionales-evaluacion-2.md).
+- El responsable informó validación manual real en CSR1000v IOS XE 16.9.5 con
+  Paramiko 4.0.0: una sesión, ocho comandos, 21 evaluaciones y tres findings.
+  `paramiko>=4,<5` conserva compatibilidad con los KEX heredados del laboratorio,
+  sin modificar Netmiko, reglas ni router. [Obstáculo y resultado reportado](registro-controles-adicionales-evaluacion-2.md#compatibilidad-ssh-del-laboratorio-y-validación-manual-reportada).
+  No se ejecutó SSH real durante este ajuste; IA y persistencia no implementadas.
+
 ### MVP
 
 - Catálogo de 20 a 25 reglas.
@@ -517,3 +561,16 @@ Un error interno nunca debe convertirse silenciosamente en `PASS` ni en `FAIL`. 
 - Necesidad y tecnología de procesamiento en segundo plano.
 - Política de retención de evidencias.
 - Selección definitiva de las reglas que entrarán al MVP.
+
+## Integración explicativa local del 25 de octubre de 2026
+
+La rama `feature/ai-explainer-ui` incorpora la ampliación de Evaluación 2 y el
+[flujo de explicación](registro-integracion-ia.md): Findings deterministas -> snapshot
+sanitizado por analysis_id/execution_id -> contrato de explicación cerrado -> cliente HTTP
+OmniRoute. Streamlit solo consulta FastAPI. No hay acceso desde IA a SSH ni a collectors.
+La salida generada es separada e inmutable respecto del análisis. No se implementa persistencia
+relacional. La validación real posterior confirmó Google AI Studio con
+`gemini/gemini-3.5-flash-lite`, explicación y conversación sobre 17 Findings, contrato
+Pydantic e invariantes preservados. La indisponibilidad de IA mantiene el análisis disponible.
+El [registro de cierre](registro-validacion-final-ia.md) separa la inferencia real de las
+evidencias sintéticas del escenario integral y conserva el MVP básico sin cambios visuales.

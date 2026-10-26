@@ -1,0 +1,20 @@
+id: IOS-AVL-001
+version: 1.0.0
+name: "Contadores acumulados de errores elevados"
+category: "Disponibilidad"
+description: "Contadores acumulados de errores elevados; contrato acotado en registro-expansion-operacional-evaluacion-2.md."
+default_severity: MEDIUM
+required_sources:
+  - show interfaces
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: "Errores acumulados elevados justifican revisión, no prueban degradación actual."
+recommendation: "Revisar deltas temporales y causa de errores antes de actuar."
+references:
+  - https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html
+false_positives:
+  - "Los contadores pueden incluir incidentes históricos resueltos."
+exceptions:
+  - Revisión humana de excepciones; no se infieren automáticamente.
+enabled: true

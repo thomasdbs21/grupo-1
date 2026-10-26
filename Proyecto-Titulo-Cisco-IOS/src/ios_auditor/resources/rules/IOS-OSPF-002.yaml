@@ -1,0 +1,21 @@
+id: IOS-OSPF-002
+version: 1.0.0
+name: "Expectativa de vecinos OSPF no demostrable"
+category: "OSPF"
+description: "Expectativa de vecinos OSPF no demostrable; contrato acotado en registro-expansion-operacional-evaluacion-2.md."
+default_severity: HIGH
+required_sources:
+  - running-config
+  - show ip ospf neighbor
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: "La ausencia de una adyacencia esperada requiere inventario y contexto de topología."
+recommendation: "Comparar vecinos con inventario autorizado y observaciones temporales."
+references:
+  - https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html
+false_positives:
+  - "2WAY entre DROTHER puede ser normal; no se emite FAIL sin expectativa segura."
+exceptions:
+  - Revisión humana de excepciones; no se infieren automáticamente.
+enabled: true

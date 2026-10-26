@@ -46,6 +46,10 @@ RAW_OUTPUTS = {
     "show version": SHOW_VERSION,
     "show ip interface brief": SHOW_INTERFACES,
     "show ip ssh": SHOW_SSH,
+    "show interfaces": "GigabitEthernet1 is down, line protocol is down\n",
+    "show access-lists": "",
+    "show ntp associations": "address ref clock st when poll reach delay offset disp\n",
+    "show ip ospf neighbor": "Neighbor ID Pri State Dead Time Address Interface\n",
 }
 
 
@@ -108,7 +112,7 @@ def test_integral_collection_uses_one_session_and_forwards_one_validated_batch(
     validator.assert_called_once()
     evidences = validator.call_args.args[0]
     assert isinstance(evidences, tuple)
-    assert len(evidences) == 4
+    assert len(evidences) == 8
     assert all(isinstance(evidence, CommandEvidence) for evidence in evidences)
     assert tuple(evidence.command for evidence in evidences) == (
         CANONICAL_EVIDENCE_COMMANDS
@@ -160,7 +164,7 @@ def test_connection_creation_error_is_sanitized_and_opens_no_partial_flow(
     analyzer.assert_not_called()
 
 
-@pytest.mark.parametrize("failure_position", range(4))
+@pytest.mark.parametrize("failure_position", range(8))
 def test_each_command_failure_disconnects_without_partial_results(
     failure_position,
     monkeypatch,
@@ -324,17 +328,17 @@ def test_complete_simulated_flow_uses_real_validation_parsers_and_rules():
     result = _analyze(factory)
 
     assert isinstance(result, FullDeviceAnalysisResult)
-    assert len(result.evidences) == 4
+    assert len(result.evidences) == 8
     assert len({evidence.execution_id for evidence in result.evidences}) == 1
     assert result.execution_id is result.evidences[0].execution_id
-    assert len(result.configuration_evaluations) == 7
-    assert len(result.operational_results) == 3
-    assert len(result.operational_evaluations) == 1
+    assert len(result.configuration_evaluations) == 14
+    assert len(result.operational_results) == 7
+    assert len(result.operational_evaluations) == 7
     assert result.operational_evaluations[0].rule_id == "IOS-IF-001"
     assert result.operational_evaluations[0].status is RuleStatus.FAIL
-    assert len(result.configuration_findings) == 2
+    assert len(result.configuration_findings) == 3
     assert len(result.operational_findings) == 1
-    assert len(result.evaluations) == 8
-    assert len(result.findings) == 3
+    assert len(result.evaluations) == 21
+    assert len(result.findings) == 4
     factory.assert_called_once()
     connection.disconnect.assert_called_once_with()
