@@ -13,6 +13,14 @@ ROOT=Path(__file__).resolve().parents[2]
 APP=ROOT/'apps/streamlit/app.py'
 
 
+@pytest.fixture(autouse=True)
+def backend_health_without_network(monkeypatch):
+    monkeypatch.setattr(BackendClient, 'system_status', lambda _: {
+        'backend': True, 'engine': True,
+        'ai': {'enabled': True, 'gateway_reachable': True, 'model_configured': True}})
+
+
+
 def analysis():
     return dict(analysis_id=str(uuid4()),total_evaluations=14,total_findings=1,
         status_summary={'PASS':13,'FAIL':1},findings=[dict(rule_id='IOS-SRV-001',rule_name='HTTP',severity='HIGH',

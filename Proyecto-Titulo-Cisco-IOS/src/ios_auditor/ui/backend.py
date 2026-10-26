@@ -57,3 +57,26 @@ class BackendClient:
             raise BackendError("INVALID_ANALYSIS_ID") from None
         return self._request("POST", f"/api/v1/analyses/{reference}/ai-explanation",
                              json={"question": question} if question is not None else {})
+
+
+    def system_status(self) -> dict:
+        """Solo GET al backend existente; nunca infiere ni consulta al gateway directamente."""
+        result = {"backend": False, "engine": False, "ai": None}
+        try:
+            result["backend"] = self._request("GET", "/health", timeout=2).get("status") == "ok"
+        except BackendError:
+            return result
+        try:
+            with httpx.Client(timeout=2, transport=self.transport, trust_env=False,
+                              follow_redirects=False) as client:
+                response = client.get(self.base_url + "/api/v1/rules")
+                result["engine"] = response.status_code == 200 and isinstance(response.json(), list) and bool(response.json())
+        except (httpx.HTTPError, ValueError):
+            pass
+        try:
+            health = self._request("GET", "/api/v1/ai/health", timeout=4)
+            if all(isinstance(health.get(k), bool) for k in ("enabled", "gateway_reachable", "model_configured")):
+                result["ai"] = {k: health[k] for k in ("enabled", "gateway_reachable", "model_configured")}
+        except BackendError:
+            pass
+        return result
