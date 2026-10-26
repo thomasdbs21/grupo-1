@@ -112,13 +112,17 @@ eventos y registros.
 
 ## Operación de solo lectura
 
-La lista blanca admite exactamente estos cuatro comandos:
+La lista blanca aprobada para la Evaluación 2 admite exactamente ocho comandos:
 
 ```text
 show running-config
 show version
 show ip interface brief
 show ip ssh
+show interfaces
+show access-lists
+show ntp associations
+show ip ospf neighbor
 ```
 
 El recolector valida los comandos antes de abrir la conexión y utiliza `send_command()`. No expone `send_config_set()` ni `config_mode()`, no ejecuta `configure terminal`, no acepta comandos arbitrarios, no guarda configuraciones y no aplica recomendaciones automáticamente.
@@ -129,8 +133,8 @@ La solución mantiene responsabilidades separadas:
 
 1. **Recolección:** archivos locales o SSH de solo lectura mediante Netmiko.
 2. **Evidencia:** contenido original, datos normalizados, fecha UTC, `execution_id` y SHA-256.
-3. **Parsing:** CiscoConfParse para `running-config` y TextFSM para los tres comandos operacionales soportados.
-4. **Contextos:** `AnalysisContext` y `OperationalContext` inmutables.
+3. **Parsing:** CiscoConfParse para `running-config` y TextFSM para siete comandos operacionales.
+4. **Contextos:** `AnalysisContext`, `OperationalContext` y `MultiSourceContext` inmutables.
 5. **Reglas deterministas:** lógica Python y metadatos YAML.
 6. **Orquestación:** validación del lote y construcción de `FullDeviceAnalysisResult`.
 7. **API:** contratos FastAPI y Pydantic para archivos y análisis integrales.
@@ -173,13 +177,13 @@ El sistema puede:
 
 - analizar archivos locales `running-config` mediante CLI y FastAPI;
 - conectarse a un dispositivo mediante una sesión SSH de solo lectura;
-- ejecutar los cuatro comandos canónicos y crear cuatro `CommandEvidence`;
+- ejecutar los ocho comandos canónicos y crear ocho `CommandEvidence`;
 - agrupar las evidencias con un `execution_id` común y fechas UTC;
 - conservar salida original y normalizada y calcular SHA-256 para integridad;
 - analizar `running-config` mediante CiscoConfParse;
-- parsear `show version`, `show ip interface brief` y `show ip ssh` mediante TextFSM;
-- construir un `AnalysisContext` y tres `OperationalContext` inmutables;
-- ejecutar ocho evaluaciones en orden determinista y conservar todos sus estados;
+- parsear los siete comandos operacionales mediante TextFSM, con formatos nuevos desconocidos explícitamente no evaluables;
+- construir un `AnalysisContext`, siete `OperationalContext` y un `MultiSourceContext` inmutables;
+- ejecutar veintiuna evaluaciones con los registros actuales habilitados, en orden determinista, y conservar todos sus estados;
 - derivar findings únicamente desde `FAIL`;
 - construir un `FullDeviceAnalysisResult` inmutable;
 - exponer `POST /api/v1/device-analyses` con una respuesta pública sanitizada.
@@ -195,9 +199,41 @@ El sistema puede:
 | `IOS-SRV-002` | Servicios innecesarios | Detectar servicios TCP/UDP pequeños habilitados. |
 | `IOS-NTP-001` | NTP | Detectar que no existe un servidor NTP configurado. |
 | `IOS-LOG-001` | Syslog | Detectar que no existe un servidor Syslog configurado. |
+| `IOS-AUTH-002` | Autenticación | Detectar ausencia demostrable de autenticación de consola. |
+| `IOS-ACL-001` | ACL | Detectar un permiso IP global any-any explícito en ACL IPv4 extendidas. |
+| `IOS-OSPF-001` | OSPF | Detectar ausencia de autenticación con contexto de interfaz suficiente. |
+| `IOS-SNMP-001` | SNMP | Detectar comunidades predeterminadas o RW, sin revelar valores. |
+| `IOS-DOC-001` | Nomenclatura | Detectar hostname ausente o Router/Switch genérico. |
+| `IOS-AUTH-003` | Autenticación | Detectar usuario local evaluable con password en vez de secret, sin revelar valores. |
+| `IOS-ADM-003` | Administración remota | Detectar timeout administrativo explícitamente deshabilitado, no su ausencia. |
 | `IOS-IF-001` | Interfaces | Detectar una interfaz físicamente activa con protocolo de línea inactivo. |
+| `IOS-INT-002` | Interfaces | Detectar descripción ausente en una interfaz UP/UP correlacionable. |
+| `IOS-ACL-002` | ACL | Detectar ACL IPv4 concordante sin aplicación configurada reconocida. |
+| `IOS-NTP-002` | NTP | Comprobar sincronización según la tabla de asociaciones soportada. |
+| `IOS-AVL-001` | Disponibilidad | Alertar sobre contadores acumulados elevados, con umbral documentado. |
+| `IOS-OSPF-002` | OSPF | Evaluar estados observados sin inventar expectativas de vecinos ausentes. |
+| `IOS-INT-001` | Interfaces | Corroborar sin uso declarado mediante marcador explícito, no inferir abandono desde down/down. |
 
-Las primeras siete reglas reciben exclusivamente `AnalysisContext` de `running-config`. `IOS-IF-001` recibe el `OperationalContext` derivado de `show ip interface brief`. Los nombres, metadatos y criterios se documentan en [`docs/catalogo-reglas.md`](docs/catalogo-reglas.md).
+Las primeras catorce reglas reciben exclusivamente `AnalysisContext` de `running-config`. `IOS-IF-001` recibe el `OperationalContext` derivado de `show ip interface brief`. Los nombres, metadatos y criterios se documentan en [`docs/catalogo-reglas.md`](docs/catalogo-reglas.md). La expansión para la Evaluación 2 tiene [contratos y resultados propios](docs/registro-controles-adicionales-evaluacion-2.md), con sintaxis acotada y estados no binarios; no demuestra cobertura completa de Cisco IOS.
+
+Las otras seis reglas reciben `MultiSourceContext`. Su [contrato operacional](docs/registro-expansion-operacional-evaluacion-2.md)
+documenta umbrales y límites: IOS-AVL-001 es MEDIUM por evidencia histórica, no
+diagnóstico temporal; IOS-OSPF-002 usa NOT_EVALUATED sin una expectativa segura y
+no emite FAIL en este corte. La ampliación se validó primero OFFLINE. Posteriormente,
+el responsable informó una validación manual real contra CSR1000v IOS XE 16.9.5
+con Paramiko 4.0.0: una sesión, ocho comandos, 21 evaluaciones y tres findings.
+El [registro de compatibilidad](docs/registro-controles-adicionales-evaluacion-2.md#compatibilidad-ssh-del-laboratorio-y-validación-manual-reportada)
+distingue ese resultado de las pruebas sintéticas; no se repitió SSH en este ajuste.
+
+Campaña integral sintética para capturas, desde el directorio del proyecto:
+
+```powershell
+$env:PYTHONUTF8 = '1'
+.\.venv\Scripts\python.exe scripts/evaluacion_2/run_validation_scenarios.py --summary-only
+```
+
+Las fixtures operacionales son sintéticas y están etiquetadas como tales; no son
+salidas recopiladas de un router. La IA continúa pendiente para la Evaluación 3.
 
 ## Seguridad y privacidad
 
@@ -221,7 +257,7 @@ python -m uvicorn ios_auditor.api.app:app --host 127.0.0.1 --port 8000
 Rutas disponibles:
 
 - `GET /health`: estado y versión del servicio.
-- `GET /api/v1/rules`: catálogo habilitado.
+- `GET /api/v1/rules`: catálogo habilitado de `running-config` (catorce reglas); las operacionales se evalúan en el flujo integral.
 - `POST /api/v1/analyses`: análisis síncrono de un archivo.
 - `GET /api/v1/analyses/{analysis_id}`: resultado de un archivo analizado.
 - `GET /api/v1/analyses/{analysis_id}/evaluations`: evaluaciones del análisis.
@@ -241,6 +277,14 @@ python -m pip install -e ".[dev]"
 ```
 
 Si `python` no está disponible globalmente, puede utilizarse directamente `.\.venv\Scripts\python.exe` después de crear el entorno.
+
+`pyproject.toml` exige `paramiko>=4,<5`: Paramiko ya es una dependencia de Netmiko,
+y este límite evita instalar 5.x, que eliminó los KEX SHA-1 ofrecidos por el
+laboratorio CSR1000v IOS XE 16.9.5. La versión probada manualmente fue 4.0.0;
+no se certifican todas las versiones 4.x. Es una compatibilidad acotada con ese
+laboratorio heredado, no una recomendación de algoritmos para producción ni un
+cambio del router por NetAudit. Revisar el límite cuando se actualice el laboratorio;
+no constituye un bloqueo completo de versiones de todas las dependencias.
 
 Analizar un archivo y obtener JSON compacto:
 
@@ -329,13 +373,15 @@ GNS3 permanece como ampliación futura opcional y no debe interpretarse como una
 - [Decisiones técnicas](docs/decisiones-tecnicas.md)
 - [Plan incremental](docs/plan-incremental.md)
 - [Catálogo de reglas](docs/catalogo-reglas.md)
+- [Expansión y validación de la Evaluación 2](docs/registro-expansion-reglas-evaluacion-2.md)
+- [Expansión operacional de la Evaluación 2](docs/registro-expansion-operacional-evaluacion-2.md)
 - [Definición del Incremento 9](docs/definicion-incremento-9-persistencia-relacional.md)
 
 ## Alcance y limitaciones
 
 - El alcance inicial se limita a Cisco IOS e IOS XE y a un laboratorio controlado.
-- La cobertura actual es de ocho reglas y todavía no representa el catálogo completo previsto para el MVP.
-- Solo cuatro comandos SSH están autorizados y tres salidas `show` tienen parsing TextFSM.
+- La cobertura actual es de veintiuna reglas (catorce de configuración y siete operacionales/multifuente), no del catálogo completo previsto para el MVP.
+- Solo ocho comandos SSH están autorizados; siete salidas `show` tienen parsing TextFSM acotado.
 - El repositorio temporal de la API de archivos conserva como máximo 100 resultados en memoria y pierde su contenido al reiniciar.
 - La persistencia PostgreSQL y la integración con los endpoints actuales todavía no están implementadas.
 - La interfaz final, el chatbot, los reportes y la explicación mediante IA continúan pendientes.

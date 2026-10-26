@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from ios_auditor.domain import RuleStatus, Severity
+from ios_auditor.services.evidence_batch import CANONICAL_EVIDENCE_COMMANDS
 
 
 class ApiModel(BaseModel):
@@ -20,12 +21,7 @@ _RFC1918_NETWORKS = (
     IPv4Network("172.16.0.0/12"),
     IPv4Network("192.168.0.0/16"),
 )
-_CANONICAL_COMMANDS = (
-    "show running-config",
-    "show version",
-    "show ip interface brief",
-    "show ip ssh",
-)
+_CANONICAL_COMMANDS = CANONICAL_EVIDENCE_COMMANDS
 MAX_DEVICE_USERNAME_LENGTH = 128
 MAX_DEVICE_PASSWORD_LENGTH = 1024
 
@@ -129,6 +125,10 @@ CanonicalCommand = Literal[
     "show version",
     "show ip interface brief",
     "show ip ssh",
+    "show interfaces",
+    "show access-lists",
+    "show ntp associations",
+    "show ip ospf neighbor",
 ]
 
 

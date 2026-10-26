@@ -1,0 +1,19 @@
+id: IOS-ACL-001
+version: "1.0.0"
+name: ACL con permiso IP global any-any
+category: ACL
+description: Control estático acotado de running-config; contrato en docs/registro-expansion-reglas-evaluacion-2.md.
+default_severity: HIGH
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Una entrada permisiva general puede permitir tráfico no previsto por la política.
+recommendation: Revisar los permisos IP globales y restringirlos según la política de red.
+references:
+  - "Cisco — referencia de sintaxis y mecanismos | https://www.cisco.com/c/en/us/support/docs/security/ios-firewall/23602-confaccesslists.html"
+false_positives:
+  - "Un permiso final puede ser intencional; no se evalúan aplicación efectiva ni orden de alcance."
+exceptions: []
+enabled: true

@@ -35,6 +35,7 @@ from ios_auditor.services import (
 )
 import ios_auditor.services.full_device_analysis as service_module
 import ios_auditor.services.rule_results as rule_results_module
+from ios_auditor.parsers.operational_show import NEW_SHOW_MODELS
 from ios_auditor.services.rule_results import findings_from_evaluations
 
 
@@ -58,6 +59,10 @@ RAW_OUTPUTS = {
     "show version": SHOW_VERSION,
     "show ip interface brief": SHOW_INTERFACES,
     "show ip ssh": SHOW_SSH,
+    "show interfaces": "GigabitEthernet1 is down, line protocol is down\n",
+    "show access-lists": "",
+    "show ntp associations": "address ref clock st when poll reach delay offset disp\n",
+    "show ip ospf neighbor": "Neighbor ID Pri State Dead Time Address Interface\n",
 }
 
 
@@ -122,8 +127,10 @@ def _operational_context(evidence: CommandEvidence) -> OperationalContext:
         data = ShowVersionData("test-version", None, None, None)
     elif evidence.command == "show ip interface brief":
         data = ShowIpInterfaceBriefData(interfaces=())
-    else:
+    elif evidence.command == "show ip ssh":
         data = ShowIpSshData(True, "2.0", 120, 3)
+    else:
+        data = NEW_SHOW_MODELS[evidence.command](recognized=True)
     return OperationalContext(
         execution_id=evidence.execution_id,
         device_host=evidence.device_host,
@@ -211,12 +218,11 @@ def test_each_operational_evidence_is_parsed_once_without_crossing(wired_flow):
 
     wired_flow["parser"].assert_has_calls(
         [
-            call(batch.evidence_for("show version")),
-            call(batch.evidence_for("show ip interface brief")),
-            call(batch.evidence_for("show ip ssh")),
+            call(batch.evidence_for(command))
+            for command in CANONICAL_EVIDENCE_COMMANDS[1:]
         ]
     )
-    assert wired_flow["parser"].call_count == 3
+    assert wired_flow["parser"].call_count == 7
     assert all(
         parsed_evidence.command != "show running-config"
         for parsed_evidence, in (
@@ -473,17 +479,21 @@ def test_real_pure_flow_executes_existing_parsers_and_rules():
     result = analyze_validated_evidence_batch(batch)
 
     assert result.execution_id == batch.execution_id
-    assert len(result.configuration_evaluations) == 7
-    assert len(result.operational_results) == 3
+    assert len(result.configuration_evaluations) == 14
+    assert len(result.operational_results) == 7
     assert tuple(context.command for context in result.operational_results) == (
         "show version",
         "show ip interface brief",
         "show ip ssh",
+        "show interfaces",
+        "show access-lists",
+        "show ntp associations",
+        "show ip ospf neighbor",
     )
-    assert len(result.operational_evaluations) == 1
+    assert len(result.operational_evaluations) == 7
     assert result.operational_evaluations[0].rule_id == "IOS-IF-001"
     assert result.operational_evaluations[0].status is RuleStatus.FAIL
-    assert len(result.configuration_findings) == 2
+    assert len(result.configuration_findings) == 3
     assert len(result.operational_findings) == 1
-    assert len(result.evaluations) == 8
-    assert len(result.findings) == 3
+    assert len(result.evaluations) == 21
+    assert len(result.findings) == 4

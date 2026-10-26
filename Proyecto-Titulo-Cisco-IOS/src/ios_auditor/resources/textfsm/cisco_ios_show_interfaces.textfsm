@@ -1,0 +1,24 @@
+Value Required NAME (\S+)
+Value STATUS (up|down|administratively down|deleted)
+Value PROTOCOL (up|down)
+Value INPUT_PACKETS (\d+)
+Value INPUT_ERRORS (\d+)
+Value OUTPUT_PACKETS (\d+)
+Value OUTPUT_ERRORS (\d+)
+
+Start
+  ^${NAME} is ${STATUS}, line protocol is ${PROTOCOL}(?:\s+\([^)]*\))?\s*$$ -> Counters
+  ^\s*$$
+  ^. -> Error
+
+Counters
+  ^\S+ is .* -> Continue.Record
+  ^${NAME} is ${STATUS}, line protocol is ${PROTOCOL}(?:\s+\([^)]*\))?\s*$$ -> Counters
+  ^\s+${INPUT_PACKETS} packets input,.*$$
+  ^\s+${INPUT_ERRORS} input errors,.*$$
+  ^\s+${OUTPUT_PACKETS} packets output,.*$$
+  ^\s+${OUTPUT_ERRORS} output errors,.*$$
+  ^\s*$$
+  ^\s+.*(?:packets input|input errors|packets output|output errors).* -> Error
+  ^\s+.*
+  ^. -> Error

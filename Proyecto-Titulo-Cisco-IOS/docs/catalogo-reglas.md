@@ -209,20 +209,46 @@ Las siguientes reglas están implementadas. Utilizan exclusivamente `running-con
   - [Cisco IOS Embedded Syslog Manager Command Reference — logging host](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/esm/command/esm-cr-book/esm-cr-a1.html).
   - [Cisco IOS XE 17.17.x — Configuring System Message Logs](https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/17-17/configuration_guide/sys_mgmt/b_1717_sys_mgmt_9600_cg/configuring_system_message_logs.html).
 
+## Expansión implementada para la Evaluación 2
+
+Se implementan cinco reglas exclusivamente de `running-config`, sin nuevos
+comandos SSH. Los contratos, referencias y límites detallados están en
+[registro de expansión](registro-expansion-reglas-evaluacion-2.md).
+
+| ID | Severidad | FAIL demostrado | PASS | Estados no binarios |
+|---|---|---|---|---|
+| IOS-AUTH-002 | MEDIUM | Consola sin autenticación explícita o lista AAA exclusivamente none | Todas las consolas con login local respaldado por usuario secret, AAA local reconocido o password + login sin AAA | NOT_EVALUATED sin consola explícita, AAA externo, sintaxis incompleta o ambigua; no se infiere ausencia de hardware |
+| IOS-ACL-001 | HIGH | Permiso IP global any-any inequívoco en ACL IPv4 extendida nombrada o numerada 100–199/2000–2699 | ACL reconocidas sin ese permiso | NOT_APPLICABLE sin ACL del alcance; NOT_EVALUATED si está vacía o su sintaxis no se reconoce |
+| IOS-OSPF-001 | HIGH | Interfaz OSPFv2 activa, no pasiva, con IPv4 y vínculo explícito al proceso/área, sin autenticación o con null | Autenticación explícita simple/message-digest, de interfaz o heredada del área, y clave presente | NOT_APPLICABLE sin interfaz aplicable; NOT_EVALUATED con network, VRF, claves ausentes o contexto ambiguo |
+| IOS-SNMP-001 | HIGH | Comunidad public/private (política sin distinguir mayúsculas) o modo RW | Comunidades reconocidas RO explícito o predeterminado documentado, no predeterminadas en valor | NOT_APPLICABLE sin SNMP; NOT_EVALUATED con SNMPv3 o sintaxis fuera del subconjunto |
+| IOS-DOC-001 | LOW | Hostname ausente o Router/Switch, sin distinguir mayúsculas | Hostname explícito no genérico, incluidos nombres cortos | NOT_EVALUATED ante directiva incompleta o contradictoria |
+
+La evidencia es sintética: conserva fuente, hash y ubicación disponible, pero
+no copia valores de passwords, comunidades, claves, hostname, IP ni nombres ACL.
+Un FAIL demostrado prevalece sobre otra sección ambigua; únicamente FAIL genera
+Finding. No se certifica fortaleza criptográfica ni aplicación operacional.
+
+El orden de `RuleRegistry` conserva las siete posiciones previas y agrega:
+IOS-AUTH-002, IOS-ACL-001, IOS-OSPF-001, IOS-SNMP-001, IOS-DOC-001.
+Este corte estático incorporó 12 reglas de configuración. El flujo integral
+vigente incorpora además las seis operacionales/multifuente descritas abajo.
+
 ## 6. Catálogo previsto para el MVP
 
-Los identificadores, severidades y prioridades de las reglas futuras continúan preliminares. Las cuatro reglas implementadas en el Incremento 8 poseen contratos oficiales definidos en la sección anterior.
+Los identificadores, severidades y prioridades de las reglas futuras continúan preliminares. Las reglas implementadas en el Incremento 8 y la Evaluación 2 poseen contratos explícitos definidos arriba; el resto continúa pendiente.
 
 | ID provisional | Nombre | Categoría | Fuente requerida | Severidad preliminar | Prioridad MVP | Estado |
 |---|---|---|---|---|---|---|
 | IOS-ADM-001 | Telnet permitido en líneas VTY | Administración remota | `running-config` | HIGH | Alta | PILOTO |
 | IOS-ADM-002 | SSH versión 1 habilitada | Administración remota | `running-config` | HIGH | Alta | IMPLEMENTADA |
 | IOS-AUTH-001 | Enable password sin enable secret | Contraseñas y autenticación | `running-config` | HIGH | Alta | PILOTO |
-| IOS-AUTH-002 | Contraseña de consola ausente o no protegida | Contraseñas y autenticación | `running-config` | MEDIUM | Media | MVP |
+| IOS-AUTH-002 | Autenticación de consola ausente | Contraseñas y autenticación | `running-config` | MEDIUM | Media | IMPLEMENTADA |
+| IOS-AUTH-003 | Usuario local protegido con password en vez de secret | Contraseñas y autenticación | `running-config` | HIGH | Alta | IMPLEMENTADA: SUBCONJUNTO |
+| IOS-ADM-003 | Timeout administrativo explícitamente deshabilitado | Administración remota | `running-config` | MEDIUM | Media | IMPLEMENTADA: SUBCONJUNTO |
 | IOS-SRV-001 | Servidor HTTP sin cifrado habilitado | Servicios innecesarios | `running-config` | MEDIUM | Alta | PILOTO |
 | IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | Servicios innecesarios | `running-config` | MEDIUM | Media | IMPLEMENTADA |
-| IOS-INT-001 | Interfaz no utilizada sin shutdown | Interfaces | `running-config`, `show interfaces` | MEDIUM | Media | MVP |
-| IOS-INT-002 | Descripción ausente en interfaz activa | Interfaces | `running-config`, `show interfaces` | LOW | Baja | MVP |
+| IOS-INT-001 | Interfaz no utilizada sin shutdown | Interfaces | `running-config`, `show interfaces` | MEDIUM | Media | IMPLEMENTADA: SIN USO DECLARADO |
+| IOS-INT-002 | Descripción ausente en interfaz activa | Interfaces | `running-config`, `show ip interface brief` | LOW | Baja | IMPLEMENTADA |
 | IOS-VLAN-001 | VLAN 1 utilizada para acceso de usuarios | VLAN | `running-config`, `show vlan brief` | MEDIUM | Media | MVP |
 | IOS-VLAN-002 | VLAN sin nombre descriptivo | VLAN | `running-config`, `show vlan brief` | LOW | Baja | FUTURA |
 | IOS-TRUNK-001 | VLAN nativa predeterminada en trunk | Enlaces troncales | `running-config`, `show interfaces trunk` | MEDIUM | Alta | MVP |
@@ -230,16 +256,16 @@ Los identificadores, severidades y prioridades de las reglas futuras continúan 
 | IOS-STP-001 | PortFast ausente en puerto de acceso | Spanning Tree | `running-config`, `show spanning-tree` | MEDIUM | Media | MVP |
 | IOS-STP-002 | BPDU Guard ausente en puerto PortFast | Spanning Tree | `running-config`, `show spanning-tree` | HIGH | Alta | MVP |
 | IOS-IP-001 | Dirección IP duplicada en el contexto | Direccionamiento IP | Contexto de múltiples dispositivos | HIGH | Media | FUTURA |
-| IOS-ACL-001 | ACL con permiso any any | ACL | `running-config`, `show access-lists` | HIGH | Alta | MVP |
-| IOS-ACL-002 | ACL definida pero no aplicada | ACL | `running-config`, `show access-lists` | MEDIUM | Media | MVP |
-| IOS-OSPF-001 | Autenticación OSPF ausente | OSPF | `running-config` | HIGH | Alta | MVP |
-| IOS-OSPF-002 | Vecino OSPF esperado no establecido | OSPF | `show ip ospf neighbor` | HIGH | Media | FUTURA |
+| IOS-ACL-001 | ACL con permiso IP global any-any | ACL | `running-config` | HIGH | Alta | IMPLEMENTADA |
+| IOS-ACL-002 | ACL definida pero no aplicada | ACL | `running-config`, `show access-lists` | MEDIUM | Media | IMPLEMENTADA |
+| IOS-OSPF-001 | Autenticación OSPF ausente | OSPF | `running-config` | HIGH | Alta | IMPLEMENTADA |
+| IOS-OSPF-002 | Expectativa de vecinos OSPF no demostrable | OSPF | `running-config`, `show ip ospf neighbor` | HIGH | Media | IMPLEMENTADA CON LÍMITE: SIN FAIL |
 | IOS-NTP-001 | Servidor NTP no configurado | NTP | `running-config` | MEDIUM | Alta | IMPLEMENTADA |
-| IOS-NTP-002 | Asociación NTP no sincronizada | NTP | `show ntp associations` | MEDIUM | Media | FUTURA |
+| IOS-NTP-002 | Asociación NTP no sincronizada | NTP | `show ntp associations` | MEDIUM | Media | IMPLEMENTADA |
 | IOS-LOG-001 | Servidor Syslog no configurado | Syslog | `running-config` | MEDIUM | Alta | IMPLEMENTADA |
-| IOS-SNMP-001 | Comunidad SNMP insegura o predeterminada | SNMP | `running-config` | HIGH | Alta | MVP |
-| IOS-AVL-001 | Interfaz operativa con errores elevados | Disponibilidad | `show interfaces` | HIGH | Media | FUTURA |
-| IOS-DOC-001 | Hostname genérico o ausente | Documentación y nomenclatura | `running-config` | LOW | Baja | MVP |
+| IOS-SNMP-001 | Comunidad SNMP insegura o predeterminada | SNMP | `running-config` | HIGH | Alta | IMPLEMENTADA |
+| IOS-AVL-001 | Contadores acumulados de errores elevados | Disponibilidad | `show interfaces` | MEDIUM | Media | IMPLEMENTADA |
+| IOS-DOC-001 | Hostname genérico o ausente | Documentación y nomenclatura | `running-config` | LOW | Baja | IMPLEMENTADA |
 
 ## 7. Reglas basadas en running-config
 
@@ -260,7 +286,8 @@ Las reglas que dependan del estado operacional, de la aplicación efectiva de un
 
 ## 8. Reglas que requieren comandos show
 
-En incrementos futuros, algunas reglas necesitarán evidencia operacional:
+La Evaluación 2 incorpora interfaces, ACL, asociaciones NTP y vecinos OSPF.
+Los restantes comandos de esta lista siguen siendo futuros, no allowlisted:
 
 - `show interfaces`: estado, contadores de errores, uso real y disponibilidad de interfaces.
 - `show interfaces trunk`: trunks operativos, VLAN nativa y VLAN permitidas efectivas.
@@ -272,6 +299,35 @@ En incrementos futuros, algunas reglas necesitarán evidencia operacional:
 - `show logging`: estado y destinos efectivos de Syslog.
 
 Cuando una regla requiera una de estas fuentes y no esté disponible, deberá producir `NOT_EVALUATED`, no `PASS` ni `FAIL`.
+
+### Contrato operacional implementado para la Evaluación 2
+
+El [registro operacional](registro-expansion-operacional-evaluacion-2.md) fija
+PASS/FAIL/NOT_APPLICABLE/NOT_EVALUATED, fuentes, sanitización y límites para
+IOS-INT-002, IOS-ACL-002, IOS-NTP-002, IOS-AVL-001 e IOS-OSPF-002.
+Ese primer corte tuvo IOS-IF-001 seguido de esos cinco IDs, con 12 + 6 = 18.
+El corte actual conserva esas posiciones internas y añade IOS-AUTH-003 e
+IOS-ADM-003 al registro estático e IOS-INT-001 al registro multifuente: 14 + 7 = 21.
+AVL cambia del HIGH preliminar a MEDIUM por falta de intervalo temporal:
+alerta acumulada >1%, mínimo 10.000 observaciones y 100 errores por dirección.
+OSPF conserva HIGH como metadato preliminar, pero no genera FAIL ni Finding
+sin una expectativa demostrable. FULL y 2WAY/DROTHER son estados observados
+aceptados; los transitorios y tablas vacías con OSPF quedan NOT_EVALUATED.
+No se eliminan reglas anteriores ni se afirma cobertura completa de Cisco IOS.
+
+### Tres controles adicionales actuales
+
+| ID / severidad | PASS | FAIL | NOT_APPLICABLE / NOT_EVALUATED |
+|---|---|---|---|
+| IOS-INT-001 / MEDIUM | Puerto físico correlacionado UP/UP o administratively down/down, sin contradicción administrativa | Puerto físico declarado mediante description NETAUDIT_UNUSED, no shutdown explícito, down/down y cuatro contadores de paquetes/errores iguales a cero | NA solo tipos virtuales/subinterfaces conocidos; NE sin declaración, muestra, correlación o con discrepancias. down/down solo nunca implica FAIL. |
+| IOS-AUTH-003 / HIGH | Hay usuarios locales globales evaluables y todos usan secret | Al menos una identidad no ambigua usa password soportado | NA sin usuarios globales; NE opciones desconocidas, sintaxis incompleta o directivas repetidas para una misma identidad. Una infracción de otra identidad evaluable prevalece. |
+| IOS-ADM-003 / MEDIUM | Todas las líneas VTY/consola tienen exec-timeout explícito no nulo y reconocido | Una línea evaluable tiene exec-timeout 0 0 o equivalente 0 con segundos omitidos | NA sin líneas del alcance; NE ausencia, no/default exec-timeout, duplicados, solapamientos o sintaxis desconocida. Nunca FAIL por ausencia. |
+
+Los [contratos completos y referencias Cisco](registro-controles-adicionales-evaluacion-2.md)
+delimitan sintaxis, evidencia genérica y posibles falsos positivos. El marcador
+NETAUDIT_UNUSED es una política explícita del prototipo, no un comando o estándar
+Cisco ni evidencia automática de abandono. No se publica nombre de interfaz,
+usuario, contraseña, hash de secreto ni direcciones en sus evaluaciones.
 
 ## 9. Criterios para seleccionar reglas del MVP
 

@@ -67,6 +67,14 @@ RAW_OUTPUTS = {
 }
 
 
+RAW_OUTPUTS.update({
+    "show interfaces": "GigabitEthernet1 is down, line protocol is down\n",
+    "show access-lists": "",
+    "show ntp associations": "address ref clock st when poll reach delay offset disp\n",
+    "show ip ospf neighbor": "Neighbor ID Pri State Dead Time Address Interface\n",
+})
+
+
 @pytest.fixture
 def connection() -> MagicMock:
     connection = MagicMock()
@@ -164,18 +172,18 @@ def test_success_response_contains_only_authorized_integral_data(client):
         set(item) == {"command", "collected_at", "raw_output_sha256"}
         for item in body["evidences"]
     )
-    assert body["operational_context_count"] == 3
-    assert body["total_evaluations"] == 8
-    assert body["total_findings"] == 3
+    assert body["operational_context_count"] == 7
+    assert body["total_evaluations"] == 21
+    assert body["total_findings"] == 4
     assert len(body["rule_evaluations"]) == body["total_evaluations"]
     assert len(body["findings"]) == body["total_findings"]
     assert body["status_summary"] == {
         "PASS": 3,
-        "NOT_APPLICABLE": 1,
-        "NOT_EVALUATED": 1,
-        "FAIL": 3,
+        "NOT_APPLICABLE": 10,
+        "NOT_EVALUATED": 4,
+        "FAIL": 4,
     }
-    assert body["finding_severity_summary"] == {"MEDIUM": 3}
+    assert body["finding_severity_summary"] == {"MEDIUM": 3, "LOW": 1}
     serialized = response.text
     for forbidden in (
         SYNTHETIC_HOST,
@@ -388,10 +396,13 @@ def test_endpoint_preserves_future_additional_evaluations(client, monkeypatch):
     response = _post(client)
 
     assert response.status_code == 200
-    assert response.json()["total_evaluations"] == 9
-    assert response.json()["rule_evaluations"][-2]["rule_id"] == "IOS-FUTURE-001"
+    assert response.json()["total_evaluations"] == 22
+    assert response.json()["rule_evaluations"][-8]["rule_id"] == "IOS-FUTURE-001"
+    assert [item["rule_id"] for item in response.json()["rule_evaluations"][-7:]] == [
+        "IOS-IF-001", "IOS-INT-002", "IOS-ACL-002", "IOS-NTP-002", "IOS-AVL-001", "IOS-OSPF-002", "IOS-INT-001"
+    ]
     assert response.json()["status_summary"]["ERROR"] == 1
-    assert response.json()["total_findings"] == 3
+    assert response.json()["total_findings"] == 4
 
 
 def test_request_logging_never_contains_connection_parameters(client, caplog):

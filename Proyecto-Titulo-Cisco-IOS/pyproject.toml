@@ -12,6 +12,7 @@ dependencies = [
     "ciscoconfparse2>=0.8,<1",
     "fastapi>=0.115,<0.116",
     "netmiko>=4.7,<5",
+    "paramiko>=4,<5",
     "python-multipart>=0.0.20,<0.1",
     "PyYAML>=6,<7",
     "textfsm>=2.1,<3",

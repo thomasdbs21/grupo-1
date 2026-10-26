@@ -1,0 +1,10 @@
+Value Required NAME (\S+)
+Value KIND (Standard|Extended)
+
+Start
+  ^${KIND} IP access list ${NAME}\s*$$ -> Record
+  ^\s+(?:\d+\s+)?(?:permit|deny|remark)\s+.+$$
+  ^\s*$$
+  ^. -> Error
+
+EOF

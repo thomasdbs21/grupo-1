@@ -8,6 +8,8 @@ from typing import Callable
 
 import textfsm
 
+from ios_auditor.parsers.operational_show import NEW_SHOW_MODELS, build_operational_show
+
 from ios_auditor.domain.models import (
     InterfaceBriefEntry,
     InterfaceStatus,
@@ -24,6 +26,10 @@ SUPPORTED_SHOW_COMMANDS = MappingProxyType(
         "show version": "cisco_ios_show_version.textfsm",
         "show ip interface brief": "cisco_ios_show_ip_interface_brief.textfsm",
         "show ip ssh": "cisco_ios_show_ip_ssh.textfsm",
+        "show interfaces": "cisco_ios_show_interfaces.textfsm",
+        "show access-lists": "cisco_ios_show_access_lists.textfsm",
+        "show ntp associations": "cisco_ios_show_ntp_associations.textfsm",
+        "show ip ospf neighbor": "cisco_ios_show_ip_ospf_neighbor.textfsm",
     }
 )
 
@@ -198,6 +204,20 @@ def parse_show_command(command: str, raw_output: str) -> ShowCommandData:
     template_name = SUPPORTED_SHOW_COMMANDS.get(normalized_command)
     if template_name is None:
         raise UnsupportedShowCommandError("El comando show no está soportado.")
+    if normalized_command in NEW_SHOW_MODELS:
+        if not isinstance(raw_output, str):
+            return NEW_SHOW_MODELS[normalized_command]()
+        if not raw_output.strip():
+            # show access-lists is empty when no ACL exists; other empty
+            # outputs cannot establish absence of operational objects.
+            return NEW_SHOW_MODELS[normalized_command](
+                recognized=normalized_command == "show access-lists"
+            )
+        try:
+            rows = _parse_rows(template_name, normalize_show_output(raw_output))
+        except ShowOutputFormatError:
+            return NEW_SHOW_MODELS[normalized_command]()
+        return build_operational_show(normalized_command, rows)
     if not isinstance(raw_output, str) or not raw_output.strip():
         raise EmptyShowOutputError("La salida del comando show está vacía.")
 

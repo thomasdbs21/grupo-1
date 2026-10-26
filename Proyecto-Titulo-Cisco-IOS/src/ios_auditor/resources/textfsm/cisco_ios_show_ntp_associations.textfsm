@@ -1,0 +1,24 @@
+Value HEADER (address)
+Value MARK ([*#+x\-~]*)
+Value ADDRESS (\S+)
+Value REFERENCE (\S+)
+Value STRATUM (\d+)
+Value WHEN (\S+)
+Value POLL (\d+)
+Value REACH ([0-7]+)
+Value DELAY ([-+]?\d+(?:\.\d+)?)
+Value OFFSET ([-+]?\d+(?:\.\d+)?)
+Value DISP ([-+]?\d+(?:\.\d+)?)
+
+Start
+  ^\s*${HEADER}\s+ref clock\s+st\s+when\s+poll\s+reach\s+delay\s+offset\s+disp\s*$$ -> Record Table
+  ^\s*$$
+  ^. -> Error
+
+Table
+  ^\s*${MARK}\s*${ADDRESS}\s+${REFERENCE}\s+${STRATUM}\s+${WHEN}\s+${POLL}\s+${REACH}\s+${DELAY}\s+${OFFSET}\s+${DISP}\s*$$ -> Record
+  ^\s*\* (?:sys\.peer|master \(synced\)),.*$$
+  ^\s*$$
+  ^. -> Error
+
+EOF

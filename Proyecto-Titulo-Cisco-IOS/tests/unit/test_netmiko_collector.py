@@ -44,6 +44,10 @@ def test_allowed_commands_are_exactly_the_official_whitelist():
             "show version",
             "show ip interface brief",
             "show ip ssh",
+            "show interfaces",
+            "show access-lists",
+            "show ntp associations",
+            "show ip ospf neighbor",
         }
     )
 

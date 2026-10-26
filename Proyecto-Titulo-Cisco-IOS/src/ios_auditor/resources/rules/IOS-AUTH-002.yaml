@@ -1,0 +1,19 @@
+id: IOS-AUTH-002
+version: "1.0.0"
+name: Autenticación de consola ausente
+category: Contraseñas y autenticación
+description: Control estático acotado de running-config; contrato en docs/registro-expansion-reglas-evaluacion-2.md.
+default_severity: MEDIUM
+required_sources:
+  - running-config
+applicable_platforms:
+  - Cisco IOS
+  - Cisco IOS XE
+risk: Una consola sin autenticación permite acceso local no autorizado.
+recommendation: Configurar autenticación de consola explícita conforme a la política; revisar AAA y protección de credenciales.
+references:
+  - "Cisco — referencia de sintaxis y mecanismos | https://www.cisco.com/en/US/docs/ios-xml/ios/sec_usr_aaa/configuration/15-2mt/sec-cfg-authentifcn.html"
+false_positives:
+  - "AAA externo y mecanismos no reconocidos se clasifican como NOT_EVALUATED."
+exceptions: []
+enabled: true
