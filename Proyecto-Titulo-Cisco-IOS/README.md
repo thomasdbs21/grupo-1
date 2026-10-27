@@ -342,7 +342,7 @@ Las capacidades y las ocho reglas de auditoría descritas en este README corresp
 
 NetAudit separa la detección técnica de la explicación: el motor determinista evalúa evidencia verificable y la IA futura apoyará la interpretación de resultados. La retroalimentación docente motivó hacer más explícita esta separación y el alcance de solo lectura.
 
-La [presentación del 6 de octubre](../Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pptx) corresponde a la versión ampliada. El [registro de auditoría](../Avances-del-Proyecto/Auditoria-2026-10-13.md) identifica qué se verificó en cada versión.
+La [presentación del 6 de octubre](../Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pptx) corresponde a la versión ampliada. El [registro de auditoría](../Avances-del-Proyecto/Auditoria-2026-10-13.md) identifica qué se verificó en cada versión.
 
 ## Pruebas
 

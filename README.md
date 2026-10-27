@@ -63,7 +63,7 @@ grupo-1/
 | Definición, objetivos, metodología y Carta Gantt (páginas 5–6) | [Definición de Fase 1](Entregables-APT/Fase-1/Grupales/Grupo-1_Definicion_Proyecto_APT_Fase-1.pdf) |
 | Presentación de Fase 1 | [Presentación inicial](Entregables-APT/Fase-1/Grupales/Grupo-1_Presentacion_Proyecto_Fase-1.pptx) |
 | Presentación del 22/09/2026 | [Avance de Fase 2](Entregables-APT/Fase-2/Grupales/Grupo-1_Presentacion_Avance_Proyecto_Fase-2_22-09-2026.pdf) |
-| Presentación realizada del 06/10/2026 | [PDF](Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pdf) · [PPTX](Entregables-APT/Fase-2/Grupales/NetAudit_Evaluacion_2_APT_06-10-2026.pptx) |
+| Presentación realizada del 06/10/2026 | [PDF](Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pdf) · [PPTX](Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pptx) |
 | Diario de reflexión grupal | [2.1 grupal](Entregables-APT/Fase-2/Grupales/2.1_APT122_DiarioReflexionFase2.docx) |
 | Autoevaluación individual | [2.2 de Axl Urrutia](Entregables-APT/Fase-2/Individuales/Axl-Urrutia/2.2_APT122_AutoevaluacionAvance_Fase2_Axl_Urrutia.docx) |
 | Guía de desarrollo del proyecto | [2.4 grupal](Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) |
