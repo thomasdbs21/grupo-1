@@ -1,147 +1,96 @@
-# Auditor de Configuraciones Cisco IOS/IOS XE
+# NetAudit
 
-## Refinamiento UX/UI de Fase 2
+**Las reglas detectan. La evidencia demuestra. La IA explica.**
 
-La rama `feature/ui-ux-refinement`, basada en `e0b7c0f`, conserva el incremento IA ya
-integrado y refina únicamente la presentación Streamlit: temas nativos, dashboard,
-filtros, estados observables y exportaciones sanitizadas. Es un incremento de Fase 2,
-pendiente de revisión visual y sin publicación. Ver el [registro técnico](docs/registro-refinamiento-ux-ui-fase2.md).
-El apartado siguiente conserva el contexto histórico de la implementación de IA.
+NetAudit es un auditor/asistente de configuraciones Cisco IOS/IOS XE. Recolecta evidencia en modo de solo lectura y ejecuta reglas deterministas para detectar errores, inconsistencias, riesgos y malas prácticas. Opcionalmente utiliza IA para explicar los Findings que el motor ya generó.
 
-## Rama local de integración de IA e interfaz
+El administrador puede revisar el resultado, su evidencia y la recomendación técnica. NetAudit no modifica dispositivos ni aplica configuraciones automáticamente.
 
-En `feature/ai-explainer-ui` se integró Evaluación 2: 21 reglas y ocho comandos.
-Se añadió la capa explicativa opcional, contexto sanitizado en memoria, endpoints de IA
-y un MVP Streamlit que solo consume FastAPI. El motor determinista permanece independiente.
-La inferencia real quedó validada el 25 de octubre de 2026 mediante Google AI Studio y
-`gemini/gemini-3.5-flash-lite`: 3/3 llamadas, explicación de 17 Findings, conversación,
-contrato Pydantic e invariantes preservados. El cierre documental del 26 de octubre fija
-el baseline anterior al refinamiento visual. La IA sigue desactivada por defecto en el código;
-su activación usa configuración local sin secretos versionados. Estas capacidades no se atribuyen a main.
+## Estado actual
 
-- [Arquitectura, configuración, arranque, pruebas y límites](docs/registro-integracion-ia.md).
-- [Validación final y baseline del MVP funcional](docs/registro-validacion-final-ia.md).
-- [Spike de OmniRoute: diagnóstico histórico y resolución](docs/registro-spike-omniroute.md).
-- [Demo de cinco minutos](docs/guion-demo-fase-2.md).
-- [Capturas que debe tomar manualmente el estudiante](docs/evidencias-ai/README.md).
+Estado verificado sobre el código de `main` el **2 de noviembre de 2026**.
 
-La ejecución normal de pytest no usa modelos ni dispositivos reales. Los documentos anteriores
-conservan sus cortes históricos; para el alcance de esta rama usar el registro de integración.
+| Capacidad | Estado |
+|---|---|
+| Motor determinista y parsing de configuración y datos operacionales | Implementado |
+| Análisis de archivos locales | Implementado: 14 reglas de configuración |
+| Análisis integral de dispositivos por SSH de solo lectura | Implementado: 21 reglas, 8 evidencias y 7 contextos operacionales |
+| API FastAPI y contratos Pydantic | Implementado |
+| Interfaz Streamlit con dashboard, filtros, temas e indicadores | Implementado |
+| Explicación y conversación asistidas por IA | Implementadas y opcionales; desactivadas por defecto |
+| Sanitización, exportaciones JSON/CSV y continuidad sin IA | Implementadas |
+| Pruebas automatizadas y escenarios sintéticos | Implementados y verificados |
+| Validaciones finales y documentación de cierre | En curso |
 
+La persistencia relacional, el historial permanente, los reportes PDF del producto, la autenticación multiusuario y el soporte multifabricante **no están implementados**. La remediación automática queda fuera del alcance de operación de solo lectura. Estas capacidades no son requisitos para ejecutar el prototipo actual.
 
-Sistema de auditoría técnica que analiza configuraciones y estado operacional de dispositivos Cisco IOS e IOS XE. Utiliza reglas deterministas para detectar errores, inconsistencias, riesgos y malas prácticas, conserva evidencia trazable y genera evaluaciones y recomendaciones sin modificar los dispositivos.
+## Separación de responsabilidades
 
-El principio central del proyecto es simple: **las reglas deterministas realizan la auditoría técnica; la inteligencia artificial futura explicará sus resultados**.
+**El motor determinista** analiza los contextos, evalúa las reglas, determina sus estados, asigna la severidad definida por cada regla y genera Findings con evidencia y recomendaciones. Conserva todas las evaluaciones, incluidas las que no generan un hallazgo.
 
-## Descripción del proyecto
+**La IA** explica y ayuda a interpretar Findings existentes. No detecta Findings, no decide `PASS`/`FAIL`, no cambia `rule_id`, severidad, estado, evidencia ni resultados. No abre SSH, no ejecuta comandos, no tiene acceso a Netmiko ni al collector y no aplica configuraciones.
 
-El auditor recibe archivos locales `running-config` o recopila información mediante una única sesión SSH de solo lectura. La configuración se procesa con CiscoConfParse, las salidas operacionales soportadas se estructuran con TextFSM y las reglas trabajan exclusivamente sobre contextos normalizados e inmutables.
+La explicación es una salida separada. Si la IA no está disponible, los resultados deterministas continúan siendo válidos y la interfaz mantiene visibles los hallazgos y su evidencia.
 
-Es un Proyecto de Título de Ingeniería en Conectividad y Redes. El dominio principal es redes; la programación, la ciberseguridad y la inteligencia artificial actúan como disciplinas de apoyo para automatizar el análisis, proteger la información y facilitar la interpretación de resultados.
+## Arquitectura
 
-## Problema que aborda
-
-La revisión manual de configuraciones de red puede ser extensa, difícil de estandarizar y propensa a omisiones. Además, una configuración aislada no siempre permite comprender el estado operacional del equipo.
-
-El proyecto busca ofrecer resultados reproducibles y trazables al correlacionar configuración y datos operacionales mediante condiciones explícitas. Es una herramienta de apoyo: no sustituye el criterio ni la responsabilidad del profesional de redes.
-
-## Cómo funciona
-
-Flujo implementado actualmente:
-
-```text
-Dispositivo Cisco IOS/IOS XE
-             |
-             | SSH de solo lectura
-             v
-          Netmiko
-             |
-             v
-     Evidencias trazables
-             |
-             v
-          Validación
-             |
-       +-----+------------------+
-       |                        |
-       v                        v
- running-config            comandos show
- CiscoConfParse               TextFSM
-       |                        |
-       +-----------+------------+
-                   |
-                   v
-          Contextos inmutables
-                   |
-                   v
-          Reglas deterministas
-                   |
-             RuleEvaluation
-                   |
-             FAIL -> Finding
-                   |
-                   v
-          Resultado integral
-                   |
-                   v
-             FastAPI actual
+```mermaid
+flowchart TD
+    Cisco["Cisco IOS / IOS XE"] -->|SSH de solo lectura| Netmiko
+    Netmiko --> Evidence["CommandEvidence"]
+    Archivo["Archivo running-config"] --> Config["CiscoConfParse"]
+    Evidence -->|running-config| Config
+    Evidence -->|siete comandos operacionales| TextFSM
+    Config --> Contextos["Contextos normalizados e inmutables"]
+    TextFSM --> Contextos
+    Contextos --> Motor["Motor determinista"]
+    Motor --> Evaluaciones["RuleEvaluations"]
+    Evaluaciones -->|solo FAIL| Findings
+    Evaluaciones --> API["FastAPI"]
+    Findings --> API
+    API --> UI["Streamlit"]
+    Findings -.->|IA opcional| Snapshot["Snapshot mínimo sanitizado"]
+    Snapshot --> ServicioIA["Servicio explicativo del backend"]
+    ServicioIA --> OmniRoute
+    OmniRoute --> Gemini["Google AI Studio / Gemini 3.5 Flash-Lite"]
+    Gemini --> Validacion["Pydantic y verificación de rule_id en el backend"]
+    Validacion --> API
 ```
 
-Evolución prevista, separada del flujo ya implementado:
+La rama de IA comienza **después de los Findings**. Streamlit solo consume FastAPI: no se conecta directamente al proveedor ni al gateway. El backend prepara el contexto y valida la explicación antes de devolverla a la UI.
 
-```text
-Persistencia PostgreSQL (Incremento 9)
-                   |
-                   v
-          Interfaz de usuario
-                   |
-                   v
- Asistente conversacional con inteligencia artificial
-```
+El diseño detallado está en [Arquitectura](docs/arquitectura.md) y en el [registro de integración de IA](docs/registro-integracion-ia.md). Los registros conservan sus cortes históricos; las capacidades actuales se resumen en este README.
 
-## Diagnóstico determinista
+## Flujo determinista
 
-Cada regla produce una `RuleEvaluation` con uno de cinco estados:
+1. **Recolección:** se recibe un archivo o se consultan los ocho comandos autorizados en una sesión SSH.
+2. **Evidencia:** se conserva la información de origen y se comprueba su integridad y coherencia.
+3. **Parsing:** `ciscoconfparse2`, mediante la clase `CiscoConfParse`, procesa `running-config`; TextFSM procesa las salidas operacionales soportadas.
+4. **Normalización:** se construyen `AnalysisContext`, `OperationalContext` y, cuando corresponde, `MultiSourceContext` inmutables.
+5. **Reglas:** el motor ejecuta el catálogo habilitado en orden determinista.
+6. **Evaluaciones:** cada regla devuelve una `RuleEvaluation` con estado, severidad, mensaje, recomendación y evidencia.
+7. **Hallazgos:** únicamente una evaluación `FAIL` genera un `Finding`.
+8. **Presentación:** FastAPI expone los resultados y Streamlit permite revisarlos, filtrarlos y exportarlos.
 
 | Estado | Significado |
 |---|---|
 | `PASS` | La regla pudo evaluarse y la condición técnica se cumple. |
 | `FAIL` | La regla pudo evaluarse y detectó un incumplimiento o riesgo. |
-| `NOT_APPLICABLE` | La regla no corresponde al dispositivo o contexto analizado. |
-| `NOT_EVALUATED` | La información disponible no permite completar la evaluación. |
-| `ERROR` | Ocurrió un fallo inesperado durante la evaluación. |
+| `NOT_APPLICABLE` | La regla no corresponde al contexto analizado. |
+| `NOT_EVALUATED` | La evidencia disponible no permite completar la evaluación. |
+| `ERROR` | Ocurrió un error durante la evaluación. |
 
-Todas las evaluaciones se conservan. Un `Finding` se crea exclusivamente a partir de una evaluación `FAIL`; los demás estados nunca generan hallazgos. La misma entrada y el mismo contexto deben producir resultados técnicos equivalentes.
+Una regla no evaluada no equivale a `PASS`. Los estados distintos de `FAIL` se conservan en las evaluaciones y no generan Findings.
 
-## Inteligencia artificial
+### Catálogo actual
 
-El objetivo futuro incluye un asistente conversacional para consultar una auditoría en lenguaje natural. Podrá responder preguntas como:
+El análisis integral combina **21 reglas deterministas: 14 de configuración y 7 operacionales/multifuente**. El modo archivo ejecuta las 14 de configuración, porque no dispone de las salidas operacionales adicionales.
 
-- ¿Por qué esta configuración fue marcada como riesgosa?
-- ¿Qué significa este finding?
-- ¿Qué debería revisar el administrador?
-- ¿Cuáles son los hallazgos más importantes?
-- ¿Puedes explicar este problema en términos más sencillos?
+Las condiciones, recomendaciones, referencias y límites se encuentran en el [catálogo de reglas](docs/catalogo-reglas.md) y el [registro de ampliación del catálogo integral](docs/registro-controles-adicionales-evaluacion-2.md). Las reglas utilizan lógica Python y metadatos YAML; la IA no sustituye su evaluación.
 
-La IA podrá explicar, resumir y contextualizar hallazgos, así como presentar recomendaciones técnicas ya validadas. No podrá decidir estados `PASS` o `FAIL`, inventar findings, cambiar severidades, evidencia o recomendaciones, ejecutar comandos ni modificar dispositivos.
+### Comandos autorizados
 
-Ejemplo conceptual:
-
-```text
-Regla determinista:
-IOS-NTP-001 -> FAIL
-
-Asistente futuro:
-La auditoría determinista detectó que no se comprobó un servidor NTP válido.
-Esto puede dificultar la sincronización horaria y la correlación temporal de
-eventos y registros.
-```
-
-`IOS-NTP-001` produce el diagnóstico; la IA únicamente explica el resultado existente. La auditoría seguirá funcionando aunque la IA no esté disponible.
-
-## Operación de solo lectura
-
-La lista blanca aprobada para la Evaluación 2 admite exactamente ocho comandos:
+El análisis integral utiliza exactamente estas ocho consultas, verificadas en la lista blanca del collector y en `CANONICAL_EVIDENCE_COMMANDS`:
 
 ```text
 show running-config
@@ -154,271 +103,278 @@ show ntp associations
 show ip ospf neighbor
 ```
 
-El recolector valida los comandos antes de abrir la conexión y utiliza `send_command()`. No expone `send_config_set()` ni `config_mode()`, no ejecuta `configure terminal`, no acepta comandos arbitrarios, no guarda configuraciones y no aplica recomendaciones automáticamente.
+Son comandos de lectura. El collector valida la lista antes de conectarse y usa `send_command()`. No acepta comandos arbitrarios, no ingresa al modo de configuración ni guarda cambios en el dispositivo.
 
-## Arquitectura
+### Evidencia y trazabilidad
 
-La solución mantiene responsabilidades separadas:
+Cada `CommandEvidence` conserva internamente el origen del dispositivo, comando, timestamp UTC, `execution_id`, salida original, salida normalizada y hash SHA-256. Las ocho evidencias de una ejecución comparten su identificador y se validan antes del análisis integral.
 
-1. **Recolección:** archivos locales o SSH de solo lectura mediante Netmiko.
-2. **Evidencia:** contenido original, datos normalizados, fecha UTC, `execution_id` y SHA-256.
-3. **Parsing:** CiscoConfParse para `running-config` y TextFSM para siete comandos operacionales.
-4. **Contextos:** `AnalysisContext`, `OperationalContext` y `MultiSourceContext` inmutables.
-5. **Reglas deterministas:** lógica Python y metadatos YAML.
-6. **Orquestación:** validación del lote y construcción de `FullDeviceAnalysisResult`.
-7. **API:** contratos FastAPI y Pydantic para archivos y análisis integrales.
-8. **Persistencia:** definida para el Incremento 9, todavía no implementada.
-9. **Interfaz conversacional:** evolución futura, desacoplada del diagnóstico.
+El parsing produce datos normalizados. La evidencia de una evaluación o Finding incluye fuente, hash, fragmento relevante y número de línea cuando corresponde. El DTO público integral omite el host de conexión, las salidas crudas, la configuración completa y los contextos completos; publica metadatos de comandos y evidencia sanitizada.
 
-La descripción completa está en [`docs/arquitectura.md`](docs/arquitectura.md).
+SHA-256 permite comprobar integridad. No cifra la evidencia ni aporta confidencialidad. La información se conserva en memoria durante los flujos actuales, sin una base de datos de auditorías persistentes.
 
-## Tecnologías
+## Interfaz actual
 
-### Implementadas
+La interfaz en `apps/streamlit/app.py` permite:
 
-- Python 3.11 o posterior.
-- Cisco IOS e IOS XE como plataformas iniciales de análisis.
-- Netmiko para recopilación SSH de solo lectura.
-- `ciscoconfparse2` y `CiscoConfParse` para `running-config`.
-- TextFSM mediante plantillas propias para comandos `show`.
-- FastAPI y Uvicorn para la API local.
-- Pydantic para contratos y validación.
-- pytest para pruebas automatizadas.
-- YAML para metadatos de reglas.
-- Git y GitHub para control de versiones y colaboración.
+- **Analizar archivo:** cargar una configuración UTF-8 `.cfg`, `.conf` o `.txt`, de hasta 2 MiB, sin abrir SSH.
+- **Analizar dispositivo:** solicitar el análisis integral con credenciales transitorias en un laboratorio autorizado. La API limita los destinos a IPv4 privadas RFC 1918.
+- **Resumen:** dashboard con KPIs de los cinco estados, total de evaluaciones, información del análisis y distribución de Findings por severidad.
+- **Hallazgos:** filtros por severidad y regla, búsqueda por `rule_id`, nombre, mensaje o recomendación, y evidencia técnica colapsable.
+- **Asistente IA:** explicar los Findings y mantener una conversación limitada al análisis seleccionado. La conversación permanece en la sesión de UI.
+- **Evidencia:** revisar los metadatos publicados por el backend y los fragmentos de los Findings, sin salidas crudas completas.
+- **Exportaciones:** descargar el resultado sanitizado en JSON y todos los Findings en CSV, independientemente de los filtros visibles. El CSV incorpora protección frente a fórmulas de hoja de cálculo.
+- **Nuevo análisis:** limpiar el resultado visual, filtros, explicación y conversación anteriores.
+- **Tema claro/oscuro:** seleccionar Light o Dark desde el menú de Streamlit.
 
-### En desarrollo
+Los filtros y las proyecciones visuales no modifican los resultados del motor. La UI no reconstruye hostname, IP o versión del dispositivo cuando el DTO no los publica.
 
-El Incremento 9 define PostgreSQL, SQLAlchemy con sesiones síncronas y Alembic para persistencia relacional. Psycopg está contemplado como driver, pero su selección y distribución definitivas permanecen pendientes. Ninguna de estas capacidades está implementada todavía ni es requisito para ejecutar las funciones actuales.
+### Indicadores de estado
 
-### Previstas
+| Indicador | Qué comprueba |
+|---|---|
+| NetAudit | Que el backend responde a `GET /health`. |
+| Motor determinista | Que el catálogo responde a `GET /api/v1/rules`; no ejecuta una auditoría para comprobarlo. |
+| OmniRoute | La accesibilidad HTTP que informa el backend mediante `GET /api/v1/ai/health`. |
+| IA | Configuración, errores y última respuesta real validada en esa sesión. |
 
-- Streamlit para la interfaz del MVP.
-- Jinja2 y salidas HTML, PDF y JSON para reportes.
-- Pasarela opcional para un modelo local o una API externa de IA.
-- GNS3 como posible ampliación del laboratorio si se dispone legalmente de imágenes autorizadas.
+Un health accesible no demuestra inferencia ni disponibilidad del modelo. Antes de obtener una respuesta real, la UI puede indicar «Configurada · sin inferencia de prueba»; después de una respuesta `source=ai`, «Disponible · respuesta verificada». La etiqueta Gemini identifica el modelo del baseline validado, no un descubrimiento dinámico del modelo activo.
 
-Estas tecnologías no deben interpretarse como capacidades actuales.
+El estado se comprueba al abrir, mediante **Actualizar estado** o al interactuar después de 60 segundos. Los indicadores no generan inferencias de prueba ni realizan polling automático.
 
-## Estado funcional actual
+## Explicación asistida por IA
 
-El sistema puede:
+La integración está implementada y es opcional. El backend utiliza OmniRoute como gateway compatible con `chat/completions`. El proveedor validado es **Gemini de Google AI Studio**, con el modelo **Gemini 3.5 Flash-Lite** y el ID concreto `gemini/gemini-3.5-flash-lite`.
 
-- analizar archivos locales `running-config` mediante CLI y FastAPI;
-- conectarse a un dispositivo mediante una sesión SSH de solo lectura;
-- ejecutar los ocho comandos canónicos y crear ocho `CommandEvidence`;
-- agrupar las evidencias con un `execution_id` común y fechas UTC;
-- conservar salida original y normalizada y calcular SHA-256 para integridad;
-- analizar `running-config` mediante CiscoConfParse;
-- parsear los siete comandos operacionales mediante TextFSM, con formatos nuevos desconocidos explícitamente no evaluables;
-- construir un `AnalysisContext`, siete `OperationalContext` y un `MultiSourceContext` inmutables;
-- ejecutar veintiuna evaluaciones con los registros actuales habilitados, en orden determinista, y conservar todos sus estados;
-- derivar findings únicamente desde `FAIL`;
-- construir un `FullDeviceAnalysisResult` inmutable;
-- exponer `POST /api/v1/device-analyses` con una respuesta pública sanitizada.
+La inferencia real se documentó el **25 de octubre de 2026**, con explicación, conversación y conservación de los resultados deterministas. El refinamiento de interfaz también registra validaciones funcionales y resiliencia. Esta actualización del README no ejecuta una nueva inferencia ni confirma la disponibilidad actual del proveedor.
 
-## Reglas deterministas actuales
+Antes de llamar al modelo, el backend crea un snapshot mínimo sanitizado de Findings existentes. No envía configuraciones completas, credenciales del dispositivo ni objetos de conexión. La autenticación con el gateway utiliza su encabezado HTTP; la clave no forma parte del contexto del modelo.
 
-| ID | Área | Propósito |
+Los contratos Pydantic son cerrados y la respuesta debe referenciar exactamente los `rule_id` enviados, sin duplicados, omisiones ni identificadores inventados. La capa IA no tiene herramientas ni actions, acceso a Netmiko o funciones para alterar el análisis. Evidencia y pregunta se tratan como datos no confiables.
+
+La sanitización ocurre antes de truncar y se aplica también a los textos de salida. El contexto tiene límites de tamaño y de número de Findings; si se recorta, se informa al usuario. Es una política conservadora que requiere revisión humana de la información real y de las explicaciones.
+
+Ante IA desactivada, errores de autenticación, modelo no disponible, rate limit, timeout, caída del gateway o respuesta inválida, se devuelve un error público controlado y los resultados deterministas se conservan. Los reintentos están acotados. Sin Findings, el backend responde de forma determinista sin llamar al modelo.
+
+Referencias: [integración, contratos y límites](docs/registro-integracion-ia.md), [validación real de Gemini](docs/registro-validacion-final-ia.md) y [validación de interfaz y resiliencia](docs/registro-refinamiento-ux-ui-fase2.md).
+
+## Seguridad y restricciones
+
+- **Solo lectura:** lista blanca exacta de comandos; sin aplicación automática de configuraciones ni remediación.
+- **Credenciales transitorias:** no se persisten en archivos o base de datos ni se incorporan al resultado. La API usa `SecretStr` y la UI limpia los campos de conexión tras el intento.
+- **Datos mínimos para IA:** sanitización de secretos, localizadores reconocibles y fragmentos antes de construir el contexto; no se envían salidas completas ni credenciales del dispositivo.
+- **Aislamiento:** el paquete explicativo recibe Findings del backend, sin acceso al collector, SSH o herramientas de configuración. No utiliza cookies ni sesiones de proveedores web.
+- **Datos no confiables:** la evidencia y las preguntas no se consideran instrucciones para cambiar la función del modelo.
+- **Resultados inmutables respecto de IA:** la explicación no altera identificadores, severidades, `RuleStatus`, evidencia ni Findings.
+- **Exportaciones sanitizadas:** JSON y CSV utilizan una lista explícita de campos públicos y redacción adicional de texto.
+- **Operación local:** los comandos de arranque siguientes enlazan los servicios a loopback. No hay autenticación multiusuario ni certificación de seguridad del producto.
+
+La revisión y aplicación manual de cambios corresponden al administrador. No deben publicarse configuraciones reales completas, credenciales, secretos o capturas que los contengan.
+
+## Stack tecnológico
+
+Las restricciones declaradas están en [pyproject.toml](pyproject.toml). Las versiones siguientes se observaron en el entorno virtual utilizado para la verificación del 2 de noviembre de 2026; no constituyen un lockfile ni una validación de todas las combinaciones permitidas por los rangos.
+
+| Componente | Uso | Rango declarado / versión observada |
 |---|---|---|
-| `IOS-ADM-001` | Administración remota | Detectar Telnet permitido en líneas VTY. |
-| `IOS-SRV-001` | Servicios innecesarios | Detectar el servidor HTTP sin cifrado habilitado. |
-| `IOS-AUTH-001` | Autenticación | Detectar `enable password` sin `enable secret`. |
-| `IOS-ADM-002` | Administración remota | Detectar SSH versión 1 habilitada. |
-| `IOS-SRV-002` | Servicios innecesarios | Detectar servicios TCP/UDP pequeños habilitados. |
-| `IOS-NTP-001` | NTP | Detectar que no existe un servidor NTP configurado. |
-| `IOS-LOG-001` | Syslog | Detectar que no existe un servidor Syslog configurado. |
-| `IOS-AUTH-002` | Autenticación | Detectar ausencia demostrable de autenticación de consola. |
-| `IOS-ACL-001` | ACL | Detectar un permiso IP global any-any explícito en ACL IPv4 extendidas. |
-| `IOS-OSPF-001` | OSPF | Detectar ausencia de autenticación con contexto de interfaz suficiente. |
-| `IOS-SNMP-001` | SNMP | Detectar comunidades predeterminadas o RW, sin revelar valores. |
-| `IOS-DOC-001` | Nomenclatura | Detectar hostname ausente o Router/Switch genérico. |
-| `IOS-AUTH-003` | Autenticación | Detectar usuario local evaluable con password en vez de secret, sin revelar valores. |
-| `IOS-ADM-003` | Administración remota | Detectar timeout administrativo explícitamente deshabilitado, no su ausencia. |
-| `IOS-IF-001` | Interfaces | Detectar una interfaz físicamente activa con protocolo de línea inactivo. |
-| `IOS-INT-002` | Interfaces | Detectar descripción ausente en una interfaz UP/UP correlacionable. |
-| `IOS-ACL-002` | ACL | Detectar ACL IPv4 concordante sin aplicación configurada reconocida. |
-| `IOS-NTP-002` | NTP | Comprobar sincronización según la tabla de asociaciones soportada. |
-| `IOS-AVL-001` | Disponibilidad | Alertar sobre contadores acumulados elevados, con umbral documentado. |
-| `IOS-OSPF-002` | OSPF | Evaluar estados observados sin inventar expectativas de vecinos ausentes. |
-| `IOS-INT-001` | Interfaces | Corroborar sin uso declarado mediante marcador explícito, no inferir abandono desde down/down. |
+| Python | Dominio y servicios | `>=3.11` / `3.13.7` |
+| FastAPI | API | `>=0.115,<0.116` / `0.115.14` |
+| Uvicorn | Servidor ASGI | `>=0.34,<0.35` / `0.34.3` |
+| Pydantic | Contratos y validación | Dependencia transitiva de FastAPI / `2.13.5` |
+| Netmiko | Recolección SSH | `>=4.7,<5` / `4.8.0` |
+| Paramiko | Transporte SSH utilizado por Netmiko | `>=4,<5` / `4.0.0` |
+| ciscoconfparse2 | Clase `CiscoConfParse` para configuración | `>=0.8,<1` / `0.9.18` |
+| TextFSM | Parsing operacional con plantillas propias | `>=2.1,<3` / `2.1.0` |
+| Streamlit | Interfaz, extra `ui` | `>=1.40,<2` / `1.66.1` |
+| HTTPX | Cliente de UI y gateway IA | `>=0.28,<0.29` / `0.28.1` |
+| PyYAML | Metadatos de reglas | `>=6,<7` / `6.0.3` |
+| pytest | Pruebas, extra `dev` | `>=8,<9` / `8.4.2` |
 
-Las primeras catorce reglas reciben exclusivamente `AnalysisContext` de `running-config`. `IOS-IF-001` recibe el `OperationalContext` derivado de `show ip interface brief`. Los nombres, metadatos y criterios se documentan en [`docs/catalogo-reglas.md`](docs/catalogo-reglas.md). La expansión para la Evaluación 2 tiene [contratos y resultados propios](docs/registro-controles-adicionales-evaluacion-2.md), con sintaxis acotada y estados no binarios; no demuestra cobertura completa de Cisco IOS.
+OmniRoute es un servicio externo al entorno Python. Google AI Studio y Gemini son el proveedor y modelo de la validación documentada; no son dependencias instaladas por `pip` en NetAudit.
 
-Las otras seis reglas reciben `MultiSourceContext`. Su [contrato operacional](docs/registro-expansion-operacional-evaluacion-2.md)
-documenta umbrales y límites: IOS-AVL-001 es MEDIUM por evidencia histórica, no
-diagnóstico temporal; IOS-OSPF-002 usa NOT_EVALUATED sin una expectativa segura y
-no emite FAIL en este corte. La ampliación se validó primero OFFLINE. Posteriormente,
-el responsable informó una validación manual real contra CSR1000v IOS XE 16.9.5
-con Paramiko 4.0.0: una sesión, ocho comandos, 21 evaluaciones y tres findings.
-El [registro de compatibilidad](docs/registro-controles-adicionales-evaluacion-2.md#compatibilidad-ssh-del-laboratorio-y-validación-manual-reportada)
-distingue ese resultado de las pruebas sintéticas; no se repitió SSH en este ajuste.
+El límite `paramiko>=4,<5` conserva compatibilidad con el KEX heredado del laboratorio CSR1000v IOS XE 16.9.5 documentado en el repositorio. Es una restricción acotada de laboratorio, no una recomendación de algoritmos heredados para producción. No se modifica el router para realizar la auditoría.
 
-Campaña integral sintética para capturas, desde el directorio del proyecto:
+## Instalación en Windows
+
+Desde la raíz del repositorio grupal, entrar al proyecto y crear un entorno virtual con Python 3.11 o posterior:
+
+```powershell
+cd Proyecto-Titulo-Cisco-IOS
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev,ui]"
+```
+
+El extra `dev` instala pytest y `ui` instala Streamlit. Después de crear el entorno también puede utilizarse directamente `.\.venv\Scripts\python.exe`, sin depender de la activación de PowerShell.
+
+PostgreSQL, SQLAlchemy, Alembic, Docker y WSL no son necesarios para ejecutar las capacidades implementadas. La IA requiere adicionalmente un gateway OmniRoute y un proveedor configurados; el análisis determinista funciona sin ellos.
+
+## Ejecución local
+
+Todos los comandos siguientes se ejecutan desde `Proyecto-Titulo-Cisco-IOS/`.
+
+### Backend FastAPI
+
+En una terminal PowerShell:
 
 ```powershell
 $env:PYTHONUTF8 = '1'
+$env:NETAUDIT_AI_ENABLED = 'false'
+.\.venv\Scripts\python.exe -m uvicorn ios_auditor.api.app:app --host 127.0.0.1 --port 8000
+```
+
+La API queda en `http://127.0.0.1:8000`. Su documentación interactiva está en `/docs` y `/redoc`.
+
+### Interfaz Streamlit
+
+En otra terminal, con el mismo directorio de trabajo:
+
+```powershell
+$env:NETAUDIT_API_BASE_URL = 'http://127.0.0.1:8000'
+.\.venv\Scripts\python.exe -m streamlit run apps/streamlit/app.py --server.address 127.0.0.1 --server.port 8501
+```
+
+Abrir `http://127.0.0.1:8501`. La configuración versionada de Streamlit mantiene loopback, carga máxima de 2 MiB y telemetría de uso desactivada.
+
+### Configurar IA opcional
+
+[.env.example](.env.example) documenta las variables sin credenciales. La aplicación **no carga automáticamente ese archivo ni un `.env`**: lee las variables del proceso que inicia FastAPI. Configurarlas antes de arrancar el backend, o reiniciarlo después de cambiarlas.
+
+| Variable | Propósito / valor por defecto |
+|---|---|
+| `NETAUDIT_AI_ENABLED` | Activa la capa explicativa; `false` por defecto. |
+| `NETAUDIT_AI_BASE_URL` | URL del gateway; `http://127.0.0.1:20128/v1`. |
+| `NETAUDIT_AI_API_KEY` | Credencial local de OmniRoute, obtenida mediante configuración privada; sin valor real versionado. |
+| `NETAUDIT_AI_MODEL` | ID concreto; vacío por defecto. No se admite `auto`. |
+| `NETAUDIT_AI_TIMEOUT_SECONDS` | Timeout por intento; `15` segundos por defecto. |
+| `NETAUDIT_AI_MAX_RETRIES` | Reintentos acotados a `0` o `1`; `1` por defecto. |
+| `NETAUDIT_API_BASE_URL` | Backend que consume la UI; `http://127.0.0.1:8000`. |
+
+El baseline validado utilizó esta configuración no secreta:
+
+```powershell
+$env:NETAUDIT_AI_ENABLED = 'true'
+$env:NETAUDIT_AI_BASE_URL = 'http://127.0.0.1:20128/v1'
+$env:NETAUDIT_AI_MODEL = 'gemini/gemini-3.5-flash-lite'
+$env:NETAUDIT_AI_TIMEOUT_SECONDS = '30'
+$env:NETAUDIT_AI_MAX_RETRIES = '0'
+```
+
+La clave local del gateway se proporciona de forma privada al proceso mediante `NETAUDIT_AI_API_KEY` cuando la autenticación lo requiere. La credencial del proveedor se configura en OmniRoute. No guardar valores reales en scripts, documentación, capturas o Git.
+
+### CLI y carga por API
+
+Análisis offline con salida JSON:
+
+```powershell
+.\.venv\Scripts\python.exe -m ios_auditor analyze samples/running_config_incorrecta.cfg --pretty
+```
+
+Carga de archivo mediante FastAPI:
+
+```powershell
+curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" -F "file=@samples/running_config_incorrecta.cfg"
+```
+
+## API disponible
+
+| Método y ruta | Función |
+|---|---|
+| `GET /health` | Estado y versión del backend. |
+| `GET /api/v1/rules` | Las 14 reglas habilitadas de configuración. |
+| `POST /api/v1/analyses` | Analizar un archivo en memoria. |
+| `GET /api/v1/analyses/{analysis_id}` | Consultar un análisis de archivo retenido en memoria. |
+| `GET /api/v1/analyses/{analysis_id}/evaluations` | Evaluaciones del análisis de archivo. |
+| `GET /api/v1/analyses/{analysis_id}/findings` | Findings del análisis de archivo. |
+| `POST /api/v1/device-analyses` | Recopilar y analizar un dispositivo de forma síncrona. |
+| `GET /api/v1/ai/health` | Estado de configuración y accesibilidad HTTP del gateway, sin inferencia. |
+| `POST /api/v1/analyses/{analysis_id}/ai-explanation` | Explicar Findings existentes, con una pregunta opcional. |
+
+Para explicar un archivo se usa su `analysis_id`; para un dispositivo se usa el `execution_id` devuelto por el análisis integral. Ambos identifican un contexto del backend. La UI no envía Findings editables al endpoint de IA.
+
+El repositorio temporal de archivos conserva hasta 100 resultados y el de IA hasta 100 snapshots sanitizados. Se pierden al reiniciar y los más antiguos se expulsan al alcanzar el límite. El endpoint integral no añade un historial permanente ni una API de consultas históricas de dispositivos.
+
+## Pruebas y validación
+
+Ejecutar la suite ordinaria:
+
+```powershell
+$env:PYTHONUTF8 = '1'
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Resultado real del **2 de noviembre de 2026**, antes de esta actualización documental:
+
+```text
+815 passed, 1 warning in 15.51s
+```
+
+**0 failed.** El warning conocido es un `DeprecationWarning` de Starlette sobre el alias `anyio.abc.BlockingPortal`; no es un fallo de las reglas ni de la suite.
+
+Los tests ordinarios usan fixtures sintéticas, fakes, mocks, `TestClient` y pruebas de interfaz. No requieren IA en vivo ni abren sesiones SSH reales. Las pruebas live opcionales están fuera de `testpaths`, en `tests_live/`, y no forman parte de esta ejecución.
+
+### Validación sintética integral
+
+```powershell
 .\.venv\Scripts\python.exe scripts/evaluacion_2/run_validation_scenarios.py --summary-only
 ```
 
-Las fixtures operacionales son sintéticas y están etiquetadas como tales; no son
-salidas recopiladas de un router. La IA continúa pendiente para la Evaluación 3.
+Resultado verificado en esta revisión: **3 escenarios × 21 reglas = 63 evaluaciones coincidentes**, con **0 diferencias y 0 errores de contrato** de orden o Findings.
 
-## Seguridad y privacidad
+Son escenarios **sintéticos/offline**. No representan 63 ejecuciones contra un router físico o virtual. Las validaciones reales de laboratorio y de IA se conservan por separado en sus registros; esta revisión no repitió SSH ni inferencia en vivo.
 
-- Las credenciales SSH son transitorias y nunca deben almacenarse en el repositorio, logs, respuestas o documentación.
-- La contraseña del contrato API utiliza `SecretStr` y solo se revela internamente para crear la conexión.
-- Los errores públicos están sanitizados y no incluyen credenciales ni detalles internos del dispositivo.
-- El DTO integral público excluye host de conexión, `raw_output`, `normalized_output`, configuraciones completas y contextos operacionales completos.
-- La configuración completa tampoco podrá enviarse a la futura IA; antes de cualquier integración deberá aplicarse sanitización.
-- La lista blanca impide ejecutar comandos fuera del alcance aprobado.
-- Ningún componente aplica cambios sobre los dispositivos.
-- SHA-256 permite comprobar integridad; no cifra el contenido ni aporta confidencialidad.
-
-## API
-
-Iniciar el servicio local únicamente en loopback:
-
-```powershell
-python -m uvicorn ios_auditor.api.app:app --host 127.0.0.1 --port 8000
-```
-
-Rutas disponibles:
-
-- `GET /health`: estado y versión del servicio.
-- `GET /api/v1/rules`: catálogo habilitado de `running-config` (catorce reglas); las operacionales se evalúan en el flujo integral.
-- `POST /api/v1/analyses`: análisis síncrono de un archivo.
-- `GET /api/v1/analyses/{analysis_id}`: resultado de un archivo analizado.
-- `GET /api/v1/analyses/{analysis_id}/evaluations`: evaluaciones del análisis.
-- `GET /api/v1/analyses/{analysis_id}/findings`: hallazgos derivados de `FAIL`.
-- `POST /api/v1/device-analyses`: análisis integral mediante SSH de solo lectura.
-
-La especificación interactiva generada por FastAPI queda disponible en `http://127.0.0.1:8000/docs` y `http://127.0.0.1:8000/redoc` durante el desarrollo.
-
-## Instalación y ejecución
-
-Crear y activar un entorno virtual en PowerShell:
-
-```powershell
-py -3 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
-```
-
-Si `python` no está disponible globalmente, puede utilizarse directamente `.\.venv\Scripts\python.exe` después de crear el entorno.
-
-`pyproject.toml` exige `paramiko>=4,<5`: Paramiko ya es una dependencia de Netmiko,
-y este límite evita instalar 5.x, que eliminó los KEX SHA-1 ofrecidos por el
-laboratorio CSR1000v IOS XE 16.9.5. La versión probada manualmente fue 4.0.0;
-no se certifican todas las versiones 4.x. Es una compatibilidad acotada con ese
-laboratorio heredado, no una recomendación de algoritmos para producción ni un
-cambio del router por NetAudit. Revisar el límite cuando se actualice el laboratorio;
-no constituye un bloqueo completo de versiones de todas las dependencias.
-
-Analizar un archivo y obtener JSON compacto:
-
-```powershell
-python -m ios_auditor analyze samples/running_config_incorrecta.cfg
-```
-
-Solicitar una salida legible:
-
-```powershell
-python -m ios_auditor analyze samples/running_config_incorrecta.cfg --pretty
-```
-
-Ejemplo de carga mediante la API:
-
-```powershell
-curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" `
-  -F "file=@samples\running_config_incorrecta.cfg"
-```
-
-La carga acepta `.cfg`, `.conf` y `.txt` hasta 2 MiB, procesa el contenido en memoria y no escribe los archivos recibidos. PostgreSQL, Docker, WSL y las dependencias de persistencia no son necesarios para las capacidades implementadas.
-
-## Corte de versiones para la auditoría académica
-
-Las capacidades y las ocho reglas de auditoría descritas en este README corresponden a `main`. La ampliación de Evaluación 2 está en [feature/evaluacion-2-validacion](https://github.com/thomasdbs21/grupo-1/tree/feature/evaluacion-2-validacion), commit `d3d05ca`, pendiente de fusión. Esa rama contiene 14 reglas de configuración y 7 reglas operacionales, ocho evidencias y siete contextos operacionales. Su catálogo y sus registros deben consultarse en esa misma rama.
-
-NetAudit separa la detección técnica de la explicación: el motor determinista evalúa evidencia verificable y la IA futura apoyará la interpretación de resultados. La retroalimentación docente motivó hacer más explícita esta separación y el alcance de solo lectura.
-
-La [presentación del 6 de octubre](../Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pptx) corresponde a la versión ampliada. El [registro de auditoría](../Avances-del-Proyecto/Auditoria-2026-10-13.md) identifica qué se verificó en cada versión.
-
-## Pruebas
-
-La suite se ejecuta con:
-
-```powershell
-$env:PYTHONUTF8 = '1'
-python -m pytest -q
-```
-
-Las pruebas automatizadas usan dobles, mocks y datos sintéticos para los flujos SSH; no necesitan conexión a un dispositivo real. **Al cierre del Incremento 8, la suite completa alcanzó 314 pruebas aprobadas.** Esta cifra no corresponde a una implementación del Incremento 9. La ejecución del 12/10/2026 sobre main obtuvo `314 passed, 1 warning in 7.77s`; el warning es externo (Starlette/AnyIO). La rama de Evaluación 2 obtuvo `703 passed, 1 warning in 9.67s`.
-
-## Estado del desarrollo
-
-| Capacidad | Estado |
-|---|---|
-| Análisis offline | Implementado |
-| Reglas deterministas | Implementado |
-| SSH de solo lectura | Implementado |
-| Parsing TextFSM | Implementado |
-| Análisis integral | Implementado |
-| API FastAPI | Implementado |
-| Persistencia PostgreSQL | Definida para el Incremento 9; no implementada |
-| Interfaz de usuario final | Pendiente |
-| Asistente conversacional | Pendiente |
-| Explicaciones mediante IA | Pendiente |
-| Reportes finales | Pendiente |
-
-## Laboratorio de validación
-
-Las validaciones reales controladas de los Incrementos 4 a 8 utilizaron un CSR1000v con Cisco IOS XE 16.9.5 sobre VirtualBox. Se comprobaron la conexión SSH de solo lectura, la lista blanca, la evidencia y el análisis integral sin publicar datos reales del dispositivo.
-
-GNS3 permanece como ampliación futura opcional y no debe interpretarse como una plataforma ya utilizada.
-
-## Estructura principal
+## Estructura del proyecto
 
 ```text
-.
-├── docs/                     # Arquitectura, decisiones y planificación
-├── samples/                  # Configuraciones sintéticas de ejemplo
-├── src/ios_auditor/
-│   ├── api/                  # FastAPI, contratos y repositorio temporal
-│   ├── collectors/           # Recopilación SSH de solo lectura
-│   ├── domain/               # Modelos tipados e inmutables
-│   ├── parsers/              # CiscoConfParse y TextFSM
-│   ├── resources/            # Metadatos YAML y plantillas TextFSM
-│   ├── rules/                # Lógica determinista y registros
-│   └── services/             # Orquestación, análisis y serialización
-└── tests/
-    ├── integration/
-    └── unit/
+Proyecto-Titulo-Cisco-IOS/
+├── .env.example
+├── pyproject.toml
+├── .streamlit/
+│   └── config.toml
+├── apps/
+│   └── streamlit/app.py
+├── src/
+│   └── ios_auditor/
+│       ├── ai/
+│       ├── api/
+│       ├── collectors/
+│       ├── domain/
+│       ├── parsers/
+│       ├── resources/
+│       ├── rules/
+│       ├── services/
+│       └── ui/
+├── tests/
+│   ├── integration/
+│   └── unit/
+├── tests_live/
+├── scripts/
+│   └── evaluacion_2/
+├── samples/
+└── docs/
 ```
 
-## Documentación
+## Documentación relacionada
 
-- [Arquitectura](docs/arquitectura.md)
-- [Decisiones técnicas](docs/decisiones-tecnicas.md)
-- [Plan incremental](docs/plan-incremental.md)
-- [Catálogo de reglas](docs/catalogo-reglas.md)
-- [Expansión y validación de la Evaluación 2](docs/registro-expansion-reglas-evaluacion-2.md)
-- [Expansión operacional de la Evaluación 2](docs/registro-expansion-operacional-evaluacion-2.md)
-- [Definición del Incremento 9](docs/definicion-incremento-9-persistencia-relacional.md)
+- [Arquitectura](docs/arquitectura.md).
+- [Decisiones técnicas](docs/decisiones-tecnicas.md).
+- [Catálogo de reglas](docs/catalogo-reglas.md).
+- [Integración de IA, configuración y contratos](docs/registro-integracion-ia.md).
+- [Validación real de Gemini e invariantes](docs/registro-validacion-final-ia.md).
+- [Interfaz actual, exportaciones y resiliencia](docs/registro-refinamiento-ux-ui-fase2.md).
+- [Registro del catálogo integral de 21 reglas](docs/registro-controles-adicionales-evaluacion-2.md).
+- [Escenarios sintéticos y sus límites](samples/evaluacion_2/README.md).
+- [Persistencia relacional definida, todavía no implementada](docs/definicion-incremento-9-persistencia-relacional.md).
 
-## Alcance y limitaciones
+## Equipo y contexto
 
-- El alcance inicial se limita a Cisco IOS e IOS XE y a un laboratorio controlado.
-- La cobertura actual es de veintiuna reglas (catorce de configuración y siete operacionales/multifuente), no del catálogo completo previsto para el MVP.
-- Solo ocho comandos SSH están autorizados; siete salidas `show` tienen parsing TextFSM acotado.
-- El repositorio temporal de la API de archivos conserva como máximo 100 resultados en memoria y pierde su contenido al reiniciar.
-- La persistencia PostgreSQL y la integración con los endpoints actuales todavía no están implementadas.
-- La interfaz básica y la conversación explicativa sobre Findings están validadas en esta rama. El refinamiento visual, los reportes y el alcance multiusuario continúan pendientes.
-- El sistema no modifica dispositivos ni aplica recomendaciones automáticamente.
-- La herramienta apoya al profesional de redes; la revisión y aplicación de cambios siguen bajo su responsabilidad.
+Proyecto de Título de **Ingeniería en Conectividad y Redes, Duoc UC**.
 
-## Contexto académico
+| Integrante | Área principal de coordinación |
+|---|---|
+| Axl Urrutia | Arquitectura, backend e integración |
+| Thomas Henriquez | Laboratorio y validación de red |
+| Maikol Mamani | Reglas, seguridad y pruebas |
+| Emilio Cortes | Interfaz y documentación |
 
-**Proyecto de Título — Ingeniería en Conectividad y Redes — Duoc UC.**
-
-La conectividad y las redes constituyen el eje del proyecto. El desarrollo de software estructura la automatización, la ciberseguridad orienta los controles y la IA validada en esta rama explica resultados determinados previamente por las reglas.
+El trabajo es colaborativo; estas áreas no atribuyen autoría exclusiva de módulos. Los entregables y la planificación académica se mantienen en [Entregables-APT](../Entregables-APT/), separados de la identidad técnica del producto.
