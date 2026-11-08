@@ -234,9 +234,9 @@ def test_full_eight_command_flow_one_simulated_session(scenario, findings):
     connection.config_mode.assert_not_called()
     connection.send_config_set.assert_not_called()
     assert len(result.evidences) == 8 and len(result.operational_results) == 7
-    assert len(result.configuration_evaluations) == 14
+    assert len(result.configuration_evaluations) == 17
     assert tuple(item.rule_id for item in result.operational_evaluations) == ("IOS-IF-001",) + IDS
-    assert len(result.evaluations) == len({item.rule_id for item in result.evaluations}) == 21
+    assert len(result.evaluations) == len({item.rule_id for item in result.evaluations}) == 24
     assert len(result.findings) == findings
     assert [item.rule_id for item in result.findings] == [item.rule_id for item in result.evaluations if item.status == FAIL]
     assert {item.execution_id for item in result.evidences} == {result.execution_id}
@@ -287,13 +287,13 @@ def test_campaign_summary_uses_full_observed_results(scenario):
     spec.loader.exec_module(module)
     selected = next(item for item in module.SCENARIOS if item.filename == f"escenario_{scenario}.cfg")
     result = module.run_integral_scenario(selected)
-    assert result.success and len(result.comparisons) == 21
+    assert result.success and len(result.comparisons) == 24
     assert "FUENTES SINTÉTICAS" in module.render_scenario(result)
     results = tuple(module.run_integral_scenario(item) for item in module.SCENARIOS)
     assert module.calculate_summary(results) == {
-        "scenarios": 3, "rules_per_scenario": 21, "comparisons": 63,
-        "matches": 63, "differences": 0, "pass": 32, "fail": 17,
-        "not_evaluated": 14, "not_applicable": 0, "error": 0, "contract_errors": 0,
+        "scenarios": 3, "rules_per_scenario": 24, "comparisons": 72,
+        "matches": 72, "differences": 0, "pass": 32, "fail": 17,
+        "not_evaluated": 23, "not_applicable": 0, "error": 0, "contract_errors": 0,
     }
 
 

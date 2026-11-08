@@ -131,13 +131,13 @@ def test_device_execution_id_registers_only_sanitized_context(setup):
     assert connection.send_command.call_count==8
     explained=client.post(f'/api/v1/analyses/{reference}/ai-explanation')
     assert explained.status_code==200 and len(provider.calls)==1
-    assert data['total_evaluations']==21
+    assert data['total_evaluations']==24
 
 
 def test_failure_registering_optional_context_does_not_break_analysis(setup,monkeypatch,caplog):
     client,repo,_,_=setup
     def fail(_):raise RuntimeError('SYNTHETIC_VALUE_NOT_TO_EXPOSE')
     monkeypatch.setattr(repo,'put',fail)
-    assert upload(client)['total_evaluations']==14
+    assert upload(client)['total_evaluations']==17
     assert 'ai_context_registration_failed' in caplog.text
     assert 'SYNTHETIC_VALUE_NOT_TO_EXPOSE' not in caplog.text

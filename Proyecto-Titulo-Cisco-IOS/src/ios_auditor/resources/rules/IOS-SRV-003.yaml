@@ -1,0 +1,16 @@
+id: IOS-SRV-003
+version: "1.0.0"
+name: Servicio Finger explícito
+category: servicios innecesarios
+description: Evalúa directivas globales explícitas con el perfil de endurecimiento de Fase 3.
+default_severity: LOW
+required_sources: [running-config]
+applicable_platforms: [Cisco IOS, Cisco IOS XE]
+risk: Finger puede divulgar información de usuarios y sesiones.
+recommendation: Verificar si se necesita Finger y revisar su desactivación según la política.
+references:
+  - "Cisco IOS XE Software Hardening Guide | https://sec.cloudapps.cisco.com/security/center/resources/IOS_XE_hardening"
+false_positives:
+  - Puede existir una excepción autorizada o un filtro adicional en la red.
+exceptions: []
+enabled: true

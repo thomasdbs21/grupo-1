@@ -47,9 +47,9 @@ def manual():
 
 
 @pytest.mark.parametrize("key,statuses,finding_count", [
-    ("seguro", ["PASS"] * 14, 0),
-    ("inseguro", ["FAIL"] * 5 + ["PASS"] * 2 + ["FAIL"] * 7, 12),
-    ("no-evaluable", ["PASS", "PASS", "PASS", "NOT_EVALUATED", "PASS", "PASS", "PASS"] + ["NOT_EVALUATED"] * 4 + ["PASS"] + ["NOT_EVALUATED"] * 2, 0),
+    ("seguro", ["PASS"] * 14 + ["NOT_EVALUATED"] * 3, 0),
+    ("inseguro", ["FAIL"] * 5 + ["PASS"] * 2 + ["FAIL"] * 7 + ["NOT_EVALUATED"] * 3, 12),
+    ("no-evaluable", ["PASS", "PASS", "PASS", "NOT_EVALUATED", "PASS", "PASS", "PASS"] + ["NOT_EVALUATED"] * 4 + ["PASS"] + ["NOT_EVALUATED"] * 5, 0),
 ])
 def test_scenarios_reuse_real_rules_and_match_declared_expectations(
     offline, key, statuses, finding_count,
@@ -73,16 +73,16 @@ def test_scenarios_reuse_real_rules_and_match_declared_expectations(
 def test_summary_is_computed_from_observed_comparisons(offline):
     results = tuple(offline.run_scenario(item) for item in offline.SCENARIOS)
     assert offline.calculate_summary(results) == {
-        "scenarios": 3, "rules_per_scenario": 14, "comparisons": 42,
-        "matches": 42, "differences": 0, "pass": 23, "fail": 12,
-        "not_evaluated": 7, "not_applicable": 0, "error": 0, "contract_errors": 0,
+        "scenarios": 3, "rules_per_scenario": 17, "comparisons": 51,
+        "matches": 51, "differences": 0, "pass": 23, "fail": 12,
+        "not_evaluated": 16, "not_applicable": 0, "error": 0, "contract_errors": 0,
     }
     changed_row = replace(results[0].comparisons[0], obtained=RuleStatus.FAIL)
     changed_result = replace(
         results[0], comparisons=(changed_row,) + results[0].comparisons[1:]
     )
     changed = offline.calculate_summary((changed_result,) + results[1:])
-    assert changed["matches"] == 41
+    assert changed["matches"] == 50
     assert changed["differences"] == 1
     assert changed["pass"] == 22
     assert not changed_result.success
@@ -93,11 +93,11 @@ def test_clean_capture_format_contains_no_configuration(offline):
     result = offline.run_scenario(offline.SCENARIOS[1])
     text = offline.render_scenario(result)
     assert "Esperado" in text and "Obtenido" in text and "Verificación" in text
-    assert "IOS-ADM-001" in text and "FAIL" in text and "14/14" in text
+    assert "IOS-ADM-001" in text and "FAIL" in text and "17/17" in text
     for forbidden in ("192.0.2.", "<REDACTED>", "enable password", "hostname", "ntp server"):
         assert forbidden not in text
     summary = offline.render_summary((result,))
-    assert "Comparaciones totales: 14" in summary
+    assert "Comparaciones totales: 17" in summary
     assert "FAIL verificados: 12" in summary
 
 
@@ -200,7 +200,7 @@ def test_manual_wrapper_uses_full_real_service_with_fake_transport_only(
     assert tuple(connection.commands) == manual.CANONICAL_EVIDENCE_COMMANDS
     assert connection.disconnected
     text = capsys.readouterr().out
-    for expected in ("Evidencias recopiladas: 8", "Evaluaciones ejecutadas: 21",
+    for expected in ("Evidencias recopiladas: 8", "Evaluaciones ejecutadas: 24",
                      "Findings: 13", "Sesiones SSH: 1", "IOS-IF-001",
                      "Plataforma: Cisco IOS XE"):
         assert expected in text

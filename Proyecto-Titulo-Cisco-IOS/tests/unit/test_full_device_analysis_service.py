@@ -479,7 +479,7 @@ def test_real_pure_flow_executes_existing_parsers_and_rules():
     result = analyze_validated_evidence_batch(batch)
 
     assert result.execution_id == batch.execution_id
-    assert len(result.configuration_evaluations) == 14
+    assert len(result.configuration_evaluations) == 17
     assert len(result.operational_results) == 7
     assert tuple(context.command for context in result.operational_results) == (
         "show version",
@@ -495,5 +495,5 @@ def test_real_pure_flow_executes_existing_parsers_and_rules():
     assert result.operational_evaluations[0].status is RuleStatus.FAIL
     assert len(result.configuration_findings) == 3
     assert len(result.operational_findings) == 1
-    assert len(result.evaluations) == 21
+    assert len(result.evaluations) == 24
     assert len(result.findings) == 4

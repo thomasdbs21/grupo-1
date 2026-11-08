@@ -67,6 +67,9 @@ def test_registry_has_deterministic_order():
         "IOS-DOC-001",
         "IOS-AUTH-003",
         "IOS-ADM-003",
+        "IOS-SRV-003",
+        "IOS-SRV-004",
+        "IOS-IP-002",
     )
 
 
@@ -107,7 +110,7 @@ def test_disabled_rule_is_not_listed_as_enabled(tmp_path):
     enabled_ids = tuple(rule.metadata.id for rule in registry.list_rules(enabled_only=True))
 
     assert "IOS-SRV-001" not in enabled_ids
-    assert len(enabled_ids) == 13
+    assert len(enabled_ids) == 16
 
 
 def test_disabled_rule_produces_no_evaluation_or_finding(tmp_path):
@@ -129,5 +132,5 @@ def test_disabled_rule_produces_no_evaluation_or_finding(tmp_path):
 
     assert "IOS-SRV-001" not in evaluated_ids
     assert "IOS-SRV-001" not in finding_ids
-    assert len(result.evaluations) == 13
+    assert len(result.evaluations) == 16
     assert len(result.findings) == 5

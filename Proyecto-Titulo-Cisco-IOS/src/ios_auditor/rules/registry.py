@@ -14,6 +14,7 @@ from ios_auditor.rules.evaluation2 import (
     SnmpCommunityRule,
     HostnameRule,
 )
+from ios_auditor.rules.explicit_services import FingerRule, PadRule, SourceRouteRule
 from ios_auditor.rules.increment8 import (
     NtpServerRule,
     RemoteSyslogServerRule,
@@ -40,6 +41,9 @@ OFFICIAL_RULE_FILES = (
     "IOS-DOC-001.yaml",
     "IOS-AUTH-003.yaml",
     "IOS-ADM-003.yaml",
+    "IOS-SRV-003.yaml",
+    "IOS-SRV-004.yaml",
+    "IOS-IP-002.yaml",
 )
 RULE_TYPES = (
     TelnetVtyRule,
@@ -56,6 +60,9 @@ RULE_TYPES = (
     HostnameRule,
     LocalUserPasswordRule,
     AdministrativeTimeoutRule,
+    FingerRule,
+    PadRule,
+    SourceRouteRule,
 )
 
 

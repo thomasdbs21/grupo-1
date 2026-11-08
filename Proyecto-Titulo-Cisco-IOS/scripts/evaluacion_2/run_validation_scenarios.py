@@ -42,6 +42,9 @@ SCENARIOS = (
         ("IOS-DOC-001", RuleStatus.PASS),
         ("IOS-AUTH-003", RuleStatus.PASS),
         ("IOS-ADM-003", RuleStatus.PASS),
+        ("IOS-SRV-003", RuleStatus.NOT_EVALUATED),
+        ("IOS-SRV-004", RuleStatus.NOT_EVALUATED),
+        ("IOS-IP-002", RuleStatus.NOT_EVALUATED),
     )),
     Scenario("inseguro", "ESCENARIO B - ADMINISTRACIÓN INSEGURA", "escenario_inseguro.cfg", (
         ("IOS-ADM-001", RuleStatus.FAIL),
@@ -58,6 +61,9 @@ SCENARIOS = (
         ("IOS-DOC-001", RuleStatus.FAIL),
         ("IOS-AUTH-003", RuleStatus.FAIL),
         ("IOS-ADM-003", RuleStatus.FAIL),
+        ("IOS-SRV-003", RuleStatus.NOT_EVALUATED),
+        ("IOS-SRV-004", RuleStatus.NOT_EVALUATED),
+        ("IOS-IP-002", RuleStatus.NOT_EVALUATED),
     )),
     Scenario("no-evaluable", "ESCENARIO C - INFORMACIÓN INSUFICIENTE", "escenario_no_evaluable.cfg", (
         ("IOS-ADM-001", RuleStatus.PASS),
@@ -74,6 +80,9 @@ SCENARIOS = (
         ("IOS-DOC-001", RuleStatus.PASS),
         ("IOS-AUTH-003", RuleStatus.NOT_EVALUATED),
         ("IOS-ADM-003", RuleStatus.NOT_EVALUATED),
+        ("IOS-SRV-003", RuleStatus.NOT_EVALUATED),
+        ("IOS-SRV-004", RuleStatus.NOT_EVALUATED),
+        ("IOS-IP-002", RuleStatus.NOT_EVALUATED),
     )),
 )
 
