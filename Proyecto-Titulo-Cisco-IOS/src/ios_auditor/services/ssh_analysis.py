@@ -148,5 +148,6 @@ def collect_and_analyze_device(
         CANONICAL_EVIDENCE_COMMANDS,
         execution_id=execution_id,
     )
+    # Solo un lote coherente pasa a parsing y evaluación; aquí termina la adquisición por SSH.
     validated_batch = validate_evidence_batch(evidences)
     return analyze_validated_evidence_batch(validated_batch)

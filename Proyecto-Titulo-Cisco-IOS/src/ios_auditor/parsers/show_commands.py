@@ -64,6 +64,7 @@ def normalize_show_output(value: str) -> str:
     return value.replace("\r\n", "\n").replace("\r", "\n")
 
 
+# Cada plantilla TextFSM corresponde a un comando. Sus columnas alimentan el modelo operacional.
 def _parse_rows(template_name: str, output: str) -> tuple[dict[str, str], ...]:
     resource = files("ios_auditor.resources.textfsm").joinpath(template_name)
     try:

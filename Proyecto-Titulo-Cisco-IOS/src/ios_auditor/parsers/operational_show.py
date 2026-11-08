@@ -21,6 +21,7 @@ def _counter(value: str) -> int | None:
     return int(value) if value else None
 
 
+# La salida del comando determina qué estructura se puede interpretar; un campo desconocido no prueba una falla.
 def build_operational_show(
     command: str, rows: tuple[dict[str, str], ...]
 ) -> ShowInterfacesData | ShowAccessListsData | ShowNtpAssociationsData | ShowIpOspfNeighborData:

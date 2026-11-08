@@ -19,6 +19,7 @@ def parse_running_config(
     *, source_path: Path, content: str, sha256: str
 ) -> AnalysisContext:
     raw_lines = tuple(content.splitlines())
+    # Conservamos las líneas originales para enlazar cada directiva normalizada con su ubicación.
     parse = CiscoConfParse(list(raw_lines), syntax="ios")
     normalized_lines = tuple(line.strip() for line in raw_lines if line.strip())
 

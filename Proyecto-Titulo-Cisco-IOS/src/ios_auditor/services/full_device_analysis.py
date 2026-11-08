@@ -104,6 +104,7 @@ def _validate_configuration_result(
         )
 
 
+# El resultado de parsing se conserva por comando para distinguir una fuente incompleta de un incumplimiento.
 def _parse_operational_evidence(
     batch: ValidatedEvidenceBatch,
     command: str,

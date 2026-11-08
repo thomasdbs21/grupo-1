@@ -173,14 +173,14 @@ def test_success_response_contains_only_authorized_integral_data(client):
         for item in body["evidences"]
     )
     assert body["operational_context_count"] == 7
-    assert body["total_evaluations"] == 21
+    assert body["total_evaluations"] == 24
     assert body["total_findings"] == 4
     assert len(body["rule_evaluations"]) == body["total_evaluations"]
     assert len(body["findings"]) == body["total_findings"]
     assert body["status_summary"] == {
         "PASS": 3,
         "NOT_APPLICABLE": 10,
-        "NOT_EVALUATED": 4,
+        "NOT_EVALUATED": 7,
         "FAIL": 4,
     }
     assert body["finding_severity_summary"] == {"MEDIUM": 3, "LOW": 1}
@@ -396,7 +396,7 @@ def test_endpoint_preserves_future_additional_evaluations(client, monkeypatch):
     response = _post(client)
 
     assert response.status_code == 200
-    assert response.json()["total_evaluations"] == 22
+    assert response.json()["total_evaluations"] == 25
     assert response.json()["rule_evaluations"][-8]["rule_id"] == "IOS-FUTURE-001"
     assert [item["rule_id"] for item in response.json()["rule_evaluations"][-7:]] == [
         "IOS-IF-001", "IOS-INT-002", "IOS-ACL-002", "IOS-NTP-002", "IOS-AVL-001", "IOS-OSPF-002", "IOS-INT-001"

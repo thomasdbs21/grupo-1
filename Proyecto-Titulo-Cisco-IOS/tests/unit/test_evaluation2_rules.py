@@ -280,10 +280,10 @@ def test_full_public_flow_expands_dynamically_without_network(scenario, findings
                                        connection_factory=factory)
     ids = tuple(rule.expected_id for rule in get_default_registry().list_rules(enabled_only=True))
     assert tuple(item.rule_id for item in result.configuration_evaluations) == ids
-    assert len(ids) == len(RULE_TYPES) == 14
+    assert len(ids) == len(RULE_TYPES) == 17
     assert tuple(item.rule_id for item in result.evaluations) == ids + (
         "IOS-IF-001", "IOS-INT-002", "IOS-ACL-002", "IOS-NTP-002", "IOS-AVL-001", "IOS-OSPF-002", "IOS-INT-001")
-    assert len(result.evaluations) == 21 and len({item.rule_id for item in result.evaluations}) == 21
+    assert len(result.evaluations) == 24 and len({item.rule_id for item in result.evaluations}) == 24
     assert len(result.evidences) == 8 and len(result.operational_results) == 7
     assert {item.execution_id for item in result.evidences} == {result.execution_id}
     assert tuple(call.args[0] for call in connection.send_command.call_args_list) == CANONICAL_EVIDENCE_COMMANDS

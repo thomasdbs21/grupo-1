@@ -10,6 +10,7 @@ def findings_from_evaluations(
 ) -> tuple[Finding, ...]:
     """Deriva hallazgos exclusivamente de evaluaciones FAIL."""
 
+    # La evidencia y la severidad se toman de la evaluación original para mantener su trazabilidad.
     return tuple(
         Finding(
             rule_id=evaluation.rule_id,

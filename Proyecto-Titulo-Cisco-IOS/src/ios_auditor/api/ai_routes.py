@@ -25,6 +25,7 @@ def explain_analysis(
     repository: AIContextRepository = Depends(get_ai_context_repository),
     service: ExplanationService = Depends(get_ai_service),
 ) -> ExplanationResponse:
+    # El identificador recupera hallazgos del servidor. El navegador solo aporta la pregunta.
     context = repository.get(analysis_id)
     if context is None:
         raise ApiError(404, "ANALYSIS_NOT_FOUND", "El contexto del análisis no existe o expiró.")

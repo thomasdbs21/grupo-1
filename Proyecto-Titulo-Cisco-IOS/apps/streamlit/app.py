@@ -71,6 +71,7 @@ def show_explanation(result):
 def ask_ai(client, reference, question=None):
     try:
         with st.spinner('Solicitando explicación de los Findings existentes…'):
+            # El estado de la explicación se guarda separado de los resultados del análisis.
             response = client.explain(reference, question)
         st.session_state['_ai_last_success'] = response.get('source') == 'ai'
         st.session_state.pop('_ai_error', None)

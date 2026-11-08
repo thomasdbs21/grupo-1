@@ -331,14 +331,14 @@ def test_complete_simulated_flow_uses_real_validation_parsers_and_rules():
     assert len(result.evidences) == 8
     assert len({evidence.execution_id for evidence in result.evidences}) == 1
     assert result.execution_id is result.evidences[0].execution_id
-    assert len(result.configuration_evaluations) == 14
+    assert len(result.configuration_evaluations) == 17
     assert len(result.operational_results) == 7
     assert len(result.operational_evaluations) == 7
     assert result.operational_evaluations[0].rule_id == "IOS-IF-001"
     assert result.operational_evaluations[0].status is RuleStatus.FAIL
     assert len(result.configuration_findings) == 3
     assert len(result.operational_findings) == 1
-    assert len(result.evaluations) == 21
+    assert len(result.evaluations) == 24
     assert len(result.findings) == 4
     factory.assert_called_once()
     connection.disconnect.assert_called_once_with()

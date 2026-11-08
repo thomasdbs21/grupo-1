@@ -1,0 +1,16 @@
+id: IOS-SRV-004
+version: "1.0.0"
+name: Servicio PAD explícito
+category: servicios innecesarios
+description: Evalúa directivas globales explícitas con el perfil de endurecimiento de Fase 3.
+default_severity: LOW
+required_sources: [running-config]
+applicable_platforms: [Cisco IOS, Cisco IOS XE]
+risk: PAD habilita una función de acceso X.25 que puede ser innecesaria.
+recommendation: Confirmar si existe una necesidad X.25 antes de revisar la habilitación de PAD.
+references:
+  - "Cisco IOS XE Software Hardening Guide | https://sec.cloudapps.cisco.com/security/center/resources/IOS_XE_hardening"
+false_positives:
+  - Puede existir una excepción autorizada o un filtro adicional en la red.
+exceptions: []
+enabled: true

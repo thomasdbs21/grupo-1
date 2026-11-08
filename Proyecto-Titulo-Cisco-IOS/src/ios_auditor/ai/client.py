@@ -54,6 +54,7 @@ class OmniRouteClient:
         try:
             with httpx.Client(timeout=self.settings.timeout_seconds, transport=self._transport,
                               trust_env=False, follow_redirects=False) as client:
+                # El destino es el gateway configurado. El límite de bytes se aplica mientras se lee la respuesta.
                 with client.stream("POST", self.settings.base_url + "/chat/completions",
                                    headers=self._headers(), json={
                                        "model": self.settings.model, "messages": messages,

@@ -1,0 +1,16 @@
+id: IOS-IP-002
+version: "1.0.0"
+name: Enrutamiento IPv4 indicado por el origen
+category: enrutamiento
+description: Evalúa directivas globales explícitas con el perfil de endurecimiento de Fase 3.
+default_severity: MEDIUM
+required_sources: [running-config]
+applicable_platforms: [Cisco IOS, Cisco IOS XE]
+risk: El procesamiento de rutas indicadas por el origen puede contradecir la política de encaminamiento.
+recommendation: Revisar el requisito de source routing, filtros de opciones IP y política de tránsito.
+references:
+  - "Cisco IOS XE Software Hardening Guide | https://sec.cloudapps.cisco.com/security/center/resources/IOS_XE_hardening"
+false_positives:
+  - Puede existir una excepción autorizada o un filtro adicional en la red.
+exceptions: []
+enabled: true

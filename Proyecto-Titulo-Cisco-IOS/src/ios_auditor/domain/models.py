@@ -148,6 +148,7 @@ class MultiSourceContext:
             raise ValueError("Las fuentes requieren una ejecución común.")
 
 
+# Una evaluación conserva el estado de la regla, aun cuando no genera un hallazgo.
 @dataclass(frozen=True, slots=True)
 class RuleEvaluation:
     rule_id: str

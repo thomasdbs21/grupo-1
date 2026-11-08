@@ -13,15 +13,13 @@ Repositorio académico grupal del Proyecto de Título de la carrera de Ingenier�
 
 NetAudit es un asistente orientado al análisis técnico de configuraciones Cisco IOS e IOS XE. El proyecto busca apoyar a administradores de red y equipos de soporte y operación en la detección de configuraciones incorrectas, controles de seguridad ausentes, inconsistencias y malas prácticas.
 
-La solución mantiene un enfoque de solo lectura: recopila información autorizada, la normaliza y la evalúa mediante reglas deterministas. La inteligencia artificial está planificada como componente complementario para explicar resultados y recomendaciones; el cumplimiento técnico lo decide el motor determinista. NetAudit obtiene evidencia y audita condiciones verificables, sin aplicar configuraciones ni reemplazar herramientas de despliegue de cambios.
+La solución mantiene un enfoque de solo lectura: recopila información autorizada, la normaliza y la evalúa mediante reglas deterministas. La inteligencia artificial es un componente opcional para explicar resultados y recomendaciones; el cumplimiento técnico lo decide el motor determinista. NetAudit obtiene evidencia y audita condiciones verificables, sin aplicar configuraciones ni reemplazar herramientas de despliegue de cambios.
 
 ## Estado actual
 
-Al 12 de octubre de 2026, `main` contiene los Incrementos 0 a 8: ocho reglas deterministas, cuatro comandos SSH y API FastAPI. La revisión actual obtuvo **314 passed, 1 warning**. El warning corresponde a una dependencia y no es un fallo.
+El catálogo integral cuenta con 24 reglas, 17 de configuración y siete operacionales. Se mantienen ocho consultas SSH de lectura. El archivo sintético del avance genera tres hallazgos con su número de línea. La suite ordinaria obtuvo 852 pruebas aprobadas y un aviso de Starlette/AnyIO. La explicación por IA es opcional y depende de la disponibilidad del proveedor.
 
-La ampliación presentada el 6 de octubre está implementada en la rama [feature/evaluacion-2-validacion](https://github.com/thomasdbs21/grupo-1/tree/feature/evaluacion-2-validacion), commit `d3d05ca`: 21 reglas de auditoría (14 de configuración y 7 operacionales), ocho comandos y **703 passed, 1 warning** en la revisión actual. Esa ampliación **todavía no está fusionada en main**. La presentación se conserva como evidencia de esa versión.
-
-La persistencia relacional con PostgreSQL, SQLAlchemy y Alembic está planificada como Incremento 9. La interfaz final, los reportes y la IA explicativa siguen pendientes. Los resultados de la API de archivos se conservan temporalmente en memoria.
+[Resultados y demostración](Proyecto-Titulo-Cisco-IOS/docs/avance-fase3.md) · [Guía de defensa](Proyecto-Titulo-Cisco-IOS/docs/guia-codigo-defensa.md).
 
 El laboratorio utilizado para las validaciones reales de los Incrementos 4 a 8 fue una CSR1000v con IOS XE 16.9.5 ejecutada en VirtualBox. GNS3 permanece como una alternativa futura sujeta a la disponibilidad legal de imágenes autorizadas.
 

@@ -47,6 +47,7 @@ class ValidatedEvidenceBatch:
                 "INVALID_BATCH_TYPE",
                 "El lote validado requiere una tupla de evidencias.",
             )
+        # La posición canónica identifica la fuente; el UUID común impide mezclar dos ejecuciones.
         ordered, execution_id = _validate_and_order(self.evidences)
         object.__setattr__(self, "evidences", ordered)
         object.__setattr__(self, "execution_id", execution_id)

@@ -67,5 +67,6 @@ def sanitize_text(value: str) -> str:
     return value.strip()
 
 
+# Primero se ocultan valores reconocibles; el límite se aplica al texto que ya pasó por ese filtro.
 def bounded_text(value: str, limit: int) -> str:
     return sanitize_text(value)[:limit]

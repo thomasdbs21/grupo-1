@@ -574,3 +574,7 @@ relacional. La validación real posterior confirmó Google AI Studio con
 Pydantic e invariantes preservados. La indisponibilidad de IA mantiene el análisis disponible.
 El [registro de cierre](registro-validacion-final-ia.md) separa la inferencia real de las
 evidencias sintéticas del escenario integral y conserva el MVP básico sin cambios visuales.
+
+## Actualización de Fase 3
+
+El registro ahora incorpora tres clases para directivas globales explícitas en el mismo contexto de running-config. El servicio integral agrega 17 evaluaciones de configuración y siete operacionales. El contrato de ocho comandos, FastAPI, Streamlit y la capa explicativa se conserva. [Pruebas y límites](avance-fase3.md).

@@ -214,9 +214,9 @@ def test_previous_eighteen_rule_states_are_preserved(scenario):
         "inseguro": [FAIL] * 5 + [PASS] * 2 + [FAIL] * 5 + [PASS] + [FAIL] * 4 + [NE],
         "no_evaluable": [PASS] * 3 + [NE] + [PASS] * 3 + [NE] * 4 + [PASS] * 2 + [NE] * 5,
     }
-    old = [item.status for item in result.evaluations if item.rule_id not in {"IOS-AUTH-003", "IOS-ADM-003", "IOS-INT-001"}]
+    old = [item.status for item in result.evaluations if item.rule_id not in {"IOS-AUTH-003", "IOS-ADM-003", "IOS-INT-001", "IOS-SRV-003", "IOS-SRV-004", "IOS-IP-002"}]
     assert old == expected[scenario]
-    assert len(result.evaluations) == len({item.rule_id for item in result.evaluations}) == 21
+    assert len(result.evaluations) == len({item.rule_id for item in result.evaluations}) == 24
 
 
 @pytest.mark.parametrize("rule_id", ["IOS-AUTH-003", "IOS-ADM-003"])
@@ -228,7 +228,7 @@ def test_each_static_addition_can_be_disabled_without_finding(rule_id):
     registry = build_registry(metadata)
     result = analyze_bytes(outputs("inseguro")["show running-config"].encode(),
                            source_name="synthetic-config", registry=registry)
-    assert len(result.evaluations) == 13
+    assert len(result.evaluations) == 16
     assert rule_id not in {item.rule_id for item in result.evaluations + result.findings}
 
 
@@ -246,6 +246,6 @@ def test_multisource_addition_registry_disabling_is_dynamic(monkeypatch):
     result = collect_and_analyze_device(host="synthetic.example.invalid", port=22,
                                        username="<REDACTED>", password="<REDACTED>",
                                        connection_factory=Mock(return_value=connection))
-    assert len(result.evaluations) == 20
+    assert len(result.evaluations) == 23
     assert "IOS-INT-001" not in {item.rule_id for item in result.evaluations + result.findings}
     connection.disconnect.assert_called_once_with()
