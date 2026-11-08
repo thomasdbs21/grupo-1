@@ -103,6 +103,7 @@ def build_registry(
     rule_types: Iterable[type] = RULE_TYPES,
 ) -> RuleRegistry:
     metadata_sequence = tuple(metadata_items)
+    # Se enlaza cada implementación con un único YAML y se conserva el orden de RULE_TYPES.
     metadata_by_id = {item.id: item for item in metadata_sequence}
     if len(metadata_by_id) != len(metadata_sequence):
         raise RegistryError("Los metadatos contienen IDs duplicados.")

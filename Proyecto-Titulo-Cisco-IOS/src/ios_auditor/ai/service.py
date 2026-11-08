@@ -30,6 +30,7 @@ def build_context(analysis_id: UUID, findings: tuple[Finding, ...]) -> AIContext
     for finding in findings[:MAX_FINDINGS]:
         if not isinstance(finding, Finding):
             raise TypeError("Se requieren Findings deterministas.")
+        # El proveedor recibe una copia limitada del hallazgo. La evidencia completa queda en el análisis.
         safe = FindingContext(
             rule_id=finding.rule_id, rule_name=bounded_text(finding.rule_name, 160),
             severity=finding.severity.value, message=bounded_text(finding.message, 500),
@@ -82,6 +83,7 @@ class ExplanationService:
                 messages = messages + [{"role": "user", "content": "Devuelve solo JSON válido según OUTPUT_SCHEMA."}]
         if explanation is None:
             raise AIError(AIErrorCode.INVALID_RESPONSE)
+        # Validar el esquema no basta: cada identificador recibido debe corresponder a un hallazgo del contexto.
         expected = {f.rule_id for f in context.findings}
         actual = [f.rule_id for f in explanation.findings]
         if len(actual) != len(set(actual)) or set(actual) != expected:

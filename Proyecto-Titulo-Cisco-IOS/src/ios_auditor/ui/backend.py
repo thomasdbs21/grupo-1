@@ -27,6 +27,7 @@ class BackendClient:
         try:
             with httpx.Client(timeout=120, transport=self.transport, trust_env=False,
                               follow_redirects=False) as client:
+                # Streamlit consume la API desde el servidor que ejecuta la interfaz, incluso con un navegador remoto.
                 response = client.request(method, self.base_url + path, **kwargs)
             if response.is_error:
                 code = response.json().get("error", {}).get("code", "BACKEND_ERROR")

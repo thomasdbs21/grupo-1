@@ -307,6 +307,7 @@ async def create_analysis(
             422, "UNANALYZABLE_CONFIG", "La configuración no pudo analizarse."
         ) from exc
 
+    # Se guarda el análisis determinista antes de preparar el contexto opcional para IA.
     stored = repository.create(source_name=source_name, result=result)
     _register_ai_context(stored.analysis_id, result.findings, ai_repository)
     logger.info(

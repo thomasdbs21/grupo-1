@@ -48,6 +48,7 @@ def safe_result(analysis: dict) -> dict:
             for e in analysis['evidences']]
     return out
 
+# Los filtros seleccionan filas para la vista; las exportaciones parten del análisis completo.
 def filtered_findings(analysis: dict, severities=(), rules=(), query: str = '') -> list[dict]:
     """Filtra y ordena una vista, sin cambiar Findings ni severidades."""
     query = query.strip().casefold()

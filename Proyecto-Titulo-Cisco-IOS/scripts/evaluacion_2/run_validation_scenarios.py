@@ -130,6 +130,7 @@ def run_scenario(scenario: Scenario) -> ScenarioResult:
         Comparison(rule_id, None, status)
         for rule_id, status in obtained.items() if rule_id not in expected
     )
+    # La comparación verifica tanto la decisión por regla como la correspondencia de FAIL con Findings.
     fail_ids = [item.rule_id for item in result.evaluations if item.status == RuleStatus.FAIL]
     finding_ids = [item.rule_id for item in result.findings]
     return ScenarioResult(

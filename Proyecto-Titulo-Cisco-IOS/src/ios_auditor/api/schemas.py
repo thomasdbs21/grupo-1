@@ -26,6 +26,7 @@ MAX_DEVICE_USERNAME_LENGTH = 128
 MAX_DEVICE_PASSWORD_LENGTH = 1024
 
 
+# El contrato de entrada delimita qué información puede entregar el cliente para la sesión de lectura.
 class DeviceAnalysisRequest(ApiModel):
     host: IPv4Address
     port: Annotated[int, Field(strict=True, ge=1, le=65535)]

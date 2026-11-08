@@ -29,6 +29,7 @@ REQUIRED_FIELDS = frozenset(
 )
 
 
+# Un catálogo mal formado se rechaza al cargarlo, antes de evaluar la configuración.
 class MetadataError(ValueError):
     """Metadatos de reglas ausentes, inválidos o inconsistentes."""
 

@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Any
 
 
+# Convierte el resultado del dominio a tipos serializables para transmitirlo sin reevaluar reglas.
 def to_primitive(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value

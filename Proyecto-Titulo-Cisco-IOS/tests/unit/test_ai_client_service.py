@@ -99,6 +99,7 @@ class Fake:
     def reachable(self):return True
 
 
+# Un proveedor de prueba permite comprobar el contrato aunque Gemini esté indisponible.
 def test_valid_explanation_and_question_preserve_deterministic_context():
     source=context();before=source.model_dump_json()
     fake=Fake(json.dumps(answer()))

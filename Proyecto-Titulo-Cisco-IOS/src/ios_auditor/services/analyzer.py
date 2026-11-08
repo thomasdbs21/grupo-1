@@ -78,6 +78,7 @@ def load_context(path_value: str | Path):
         ) from exc
 
 
+# Una excepción de la regla tiene estado ERROR y queda visible entre las evaluaciones.
 def _evaluate_rule(rule: Rule, context) -> RuleEvaluation:
     try:
         return rule.evaluate(context)
@@ -112,6 +113,7 @@ def analyze_context(context, *, registry: RuleRegistry | None = None) -> Analysi
         _evaluate_rule(rule, context)
         for rule in active_registry.list_rules(enabled_only=True)
     )
+    # La lista de evaluaciones incluye todos los estados; solo FAIL se publica además como Finding.
     findings = findings_from_evaluations(evaluations)
     return AnalysisResult(
         source_path=context.source_path,

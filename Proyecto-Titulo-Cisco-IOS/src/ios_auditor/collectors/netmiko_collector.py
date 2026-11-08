@@ -95,6 +95,7 @@ class NetmikoCollector:
     ) -> tuple[CommandEvidence, ...]:
         """Recopila uno o varios comandos validados usando una sola conexion."""
 
+        # Rechazar toda la solicitud antes de abrir SSH evita una recolección parcial con comandos no autorizados.
         normalized_commands = self._validate_commands(commands)
         run_id = execution_id or uuid4()
         connection: NetmikoConnection | None = None
@@ -131,6 +132,7 @@ class NetmikoCollector:
         finally:
             if connection is not None:
                 try:
+                    # El bloque finally libera la sesión incluso cuando falla un comando.
                     connection.disconnect()
                 except Exception:
                     if not operation_failed:

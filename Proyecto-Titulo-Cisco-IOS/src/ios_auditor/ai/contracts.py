@@ -73,6 +73,7 @@ class Explanation(ClosedModel):
         return tuple(sanitize_text(item) for item in value)
 
 
+# El origen distingue una explicación del modelo de una respuesta determinista sin hallazgos.
 class ExplanationResponse(ClosedModel):
     analysis_id: UUID
     source: Literal["ai", "deterministic"]
