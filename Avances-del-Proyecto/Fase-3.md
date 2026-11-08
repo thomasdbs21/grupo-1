@@ -1,18 +1,7 @@
 # Fase 3
 
-**Estado:** pendiente de evidencia suficiente.
+El incremento técnico quedó integrado en el [PR 12](https://github.com/thomasdbs21/grupo-1/pull/12). El registro integral pasó de 21 a 24 reglas. La [demo reproducible](../Proyecto-Titulo-Cisco-IOS/docs/avance-fase3.md) y la [guía de defensa](../Proyecto-Titulo-Cisco-IOS/docs/guia-codigo-defensa.md) permiten preparar la exposición del 10 de noviembre.
 
-La estructura de la tercera fase se encuentra preparada. Aún no existen avances o entregables verificables que permitan documentar resultados o un cierre académico.
+Los [entregables y sus estados](../Entregables-APT/Fase-3/README.md) distinguen los diarios, las autoevaluaciones pendientes de video y el material programado para el 17. El ensayo del 24 y la defensa del 1 de diciembre siguen pendientes.
 
-Cuando corresponda, este documento deberá reunir:
-
-- objetivos y alcance de cierre;
-- actividades realizadas;
-- resultados técnicos y académicos;
-- validaciones finales;
-- entregables individuales y grupales;
-- conclusiones, limitaciones y continuidad del proyecto.
-
-Los futuros archivos deberán organizarse en [`Entregables-APT/Fase-3/`](../Entregables-APT/Fase-3/).
-
-[Volver al índice de avances](README.md)
+[Volver al índice](README.md).
