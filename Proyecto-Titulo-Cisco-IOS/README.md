@@ -13,8 +13,8 @@ Estado verificado sobre el código de `main` el **2 de noviembre de 2026**.
 | Capacidad | Estado |
 |---|---|
 | Motor determinista y parsing de configuración y datos operacionales | Implementado |
-| Análisis de archivos locales | Implementado: 14 reglas de configuración |
-| Análisis integral de dispositivos por SSH de solo lectura | Implementado: 21 reglas, 8 evidencias y 7 contextos operacionales |
+| Análisis de archivos locales | Implementado: 17 reglas de configuración |
+| Análisis integral de dispositivos por SSH de solo lectura | Implementado: 24 reglas, 8 evidencias y 7 contextos operacionales |
 | API FastAPI y contratos Pydantic | Implementado |
 | Interfaz Streamlit con dashboard, filtros, temas e indicadores | Implementado |
 | Explicación y conversación asistidas por IA | Implementadas y opcionales; desactivadas por defecto |
@@ -84,9 +84,11 @@ Una regla no evaluada no equivale a `PASS`. Los estados distintos de `FAIL` se c
 
 ### Catálogo actual
 
-El análisis integral combina **21 reglas deterministas: 14 de configuración y 7 operacionales/multifuente**. El modo archivo ejecuta las 14 de configuración, porque no dispone de las salidas operacionales adicionales.
+El análisis integral combina **24 reglas deterministas: 17 de configuración y 7 operacionales/multifuente**. El modo archivo ejecuta las 17 de configuración, porque no dispone de las salidas operacionales adicionales.
 
 Las condiciones, recomendaciones, referencias y límites se encuentran en el [catálogo de reglas](docs/catalogo-reglas.md) y el [registro de ampliación del catálogo integral](docs/registro-controles-adicionales-evaluacion-2.md). Las reglas utilizan lógica Python y metadatos YAML; la IA no sustituye su evaluación.
+
+[Demostración y resultados de Fase 3](docs/avance-fase3.md) · [Recorrido del código para la defensa](docs/guia-codigo-defensa.md).
 
 ### Comandos autorizados
 
@@ -281,7 +283,7 @@ curl.exe -X POST "http://127.0.0.1:8000/api/v1/analyses" -F "file=@samples/runni
 | Método y ruta | Función |
 |---|---|
 | `GET /health` | Estado y versión del backend. |
-| `GET /api/v1/rules` | Las 14 reglas habilitadas de configuración. |
+| `GET /api/v1/rules` | Las 17 reglas habilitadas de configuración. |
 | `POST /api/v1/analyses` | Analizar un archivo en memoria. |
 | `GET /api/v1/analyses/{analysis_id}` | Consultar un análisis de archivo retenido en memoria. |
 | `GET /api/v1/analyses/{analysis_id}/evaluations` | Evaluaciones del análisis de archivo. |
@@ -306,7 +308,7 @@ $env:PYTHONUTF8 = '1'
 Resultado real del **2 de noviembre de 2026**, antes de esta actualización documental:
 
 ```text
-815 passed, 1 warning in 15.51s
+852 passed, 1 warning
 ```
 
 **0 failed.** El warning conocido es un `DeprecationWarning` de Starlette sobre el alias `anyio.abc.BlockingPortal`; no es un fallo de las reglas ni de la suite.
@@ -319,9 +321,9 @@ Los tests ordinarios usan fixtures sintéticas, fakes, mocks, `TestClient` y pru
 .\.venv\Scripts\python.exe scripts/evaluacion_2/run_validation_scenarios.py --summary-only
 ```
 
-Resultado verificado en esta revisión: **3 escenarios × 21 reglas = 63 evaluaciones coincidentes**, con **0 diferencias y 0 errores de contrato** de orden o Findings.
+Resultado verificado en esta revisión: **3 escenarios × 24 reglas = 72 evaluaciones coincidentes**, con **0 diferencias y 0 errores de contrato** de orden o Findings.
 
-Son escenarios **sintéticos/offline**. No representan 63 ejecuciones contra un router físico o virtual. Las validaciones reales de laboratorio y de IA se conservan por separado en sus registros; esta revisión no repitió SSH ni inferencia en vivo.
+Son escenarios **sintéticos/offline**. No representan 72 ejecuciones contra un router físico o virtual. Las validaciones reales de laboratorio y de IA se conservan por separado en sus registros; esta revisión no repitió SSH ni inferencia en vivo.
 
 ## Estructura del proyecto
 

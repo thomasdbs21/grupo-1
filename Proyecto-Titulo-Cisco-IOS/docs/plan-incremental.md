@@ -505,3 +505,7 @@ Los Incrementos 6, 7 y 8 están completados. El cierre del Incremento 7 fue fusi
 La próxima acción autorizable es implementar el Incremento 9 según su definición documental, pero requiere una orden separada, una rama propia y la aprobación previa del rango de SQLAlchemy, la provisión PostgreSQL de pruebas y la selección y distribución del driver. El pool de producción permanece sin definir.
 
 La integración HTTP, los endpoints históricos, Streamlit, reportes, inteligencia artificial y demás alternativas posteriores no están aprobados ni numerados.
+
+## Actualización de Fase 3
+
+Para el 10 de noviembre se priorizó ampliar el registro con evidencia existente. El incremento verificado añade tres reglas y mantiene la adquisición sin cambios. La planificación del 17 de noviembre reúne documentos individuales y video. El ensayo del 24 y la defensa del 1 de diciembre siguen programados. [Pruebas y límites](avance-fase3.md).

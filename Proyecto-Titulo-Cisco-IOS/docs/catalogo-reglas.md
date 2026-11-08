@@ -1,5 +1,48 @@
 # Catálogo inicial de reglas Cisco IOS
 
+## Catálogo vigente de Fase 3
+
+Hay 17 reglas de configuración y siete operacionales. La matriz siguiente identifica los metadatos vigentes. Los apartados por regla de este documento y los registros enlazados detallan sus condiciones de evaluación. ERROR corresponde a un fallo durante la evaluación; no equivale a un incumplimiento.
+
+| ID | Nombre | Categoría | Severidad | Fuentes requeridas |
+|---|---|---|---|---|
+| IOS-ACL-001 | ACL con permiso IP global any-any | ACL | HIGH | running-config |
+| IOS-ACL-002 | ACL definida pero no aplicada | ACL | MEDIUM | running-config, show access-lists |
+| IOS-ADM-001 | Telnet permitido en líneas VTY | administración remota | HIGH | running-config |
+| IOS-ADM-002 | SSH versión 1 habilitada | administración remota | HIGH | running-config |
+| IOS-ADM-003 | Timeout de sesión administrativa explícitamente deshabilitado | Administración remota | MEDIUM | running-config |
+| IOS-AUTH-001 | Enable password sin enable secret | contraseñas y autenticación | HIGH | running-config |
+| IOS-AUTH-002 | Autenticación de consola ausente | Contraseñas y autenticación | MEDIUM | running-config |
+| IOS-AUTH-003 | Usuario local protegido con password en vez de secret | Contraseñas y autenticación | HIGH | running-config |
+| IOS-AVL-001 | Contadores acumulados de errores elevados | Disponibilidad | MEDIUM | show interfaces |
+| IOS-DOC-001 | Hostname genérico o ausente | Documentación y nomenclatura | LOW | running-config |
+| IOS-IF-001 | Interfaz físicamente activa con protocolo de línea inactivo | interfaces | MEDIUM | show ip interface brief |
+| IOS-INT-001 | Interfaz no utilizada sin shutdown | Interfaces | MEDIUM | running-config, show interfaces |
+| IOS-INT-002 | Descripción ausente en interfaz activa | Interfaces | LOW | running-config, show ip interface brief |
+| IOS-IP-002 | Enrutamiento IPv4 indicado por el origen | enrutamiento | MEDIUM | running-config |
+| IOS-LOG-001 | Servidor Syslog no configurado | Syslog | MEDIUM | running-config |
+| IOS-NTP-001 | Servidor NTP no configurado | NTP | MEDIUM | running-config |
+| IOS-NTP-002 | Asociación NTP no sincronizada | NTP | MEDIUM | show ntp associations |
+| IOS-OSPF-001 | Autenticación OSPF ausente | OSPF | HIGH | running-config |
+| IOS-OSPF-002 | Expectativa de vecinos OSPF no demostrable | OSPF | HIGH | running-config, show ip ospf neighbor |
+| IOS-SNMP-001 | Comunidad SNMP insegura o predeterminada | SNMP | HIGH | running-config |
+| IOS-SRV-001 | Servidor HTTP sin cifrado habilitado | servicios innecesarios | MEDIUM | running-config |
+| IOS-SRV-002 | Servicios TCP/UDP pequeños habilitados | servicios innecesarios | MEDIUM | running-config |
+| IOS-SRV-003 | Servicio Finger explícito | servicios innecesarios | LOW | running-config |
+| IOS-SRV-004 | Servicio PAD explícito | servicios innecesarios | LOW | running-config |
+
+### Contrato de las tres incorporaciones
+
+| ID | Directiva | Motivo de la severidad |
+|---|---|---|
+| IOS-SRV-003 | ip finger o service finger | LOW. La configuración permite el servicio de consulta de sesiones. |
+| IOS-SRV-004 | service pad | LOW. Es una función adicional cuya necesidad depende del uso de X.25. |
+| IOS-IP-002 | ip source-route | MEDIUM. Afecta al tratamiento de paquetes IPv4 que indican su ruta. |
+
+PASS requiere negación explícita y coherente. FAIL requiere habilitación explícita. Una forma ausente, contradictoria, por defecto o no soportada queda NOT_EVALUATED. Las reglas no emiten NOT_APPLICABLE por mera ausencia. Se ignoran directivas anidadas y banners IOS soportados. La evidencia identifica la fuente, el hash y la línea del comando evaluable; la recomendación pide revisar la necesidad operativa. La configuración sola no demuestra alcance desde Internet, uso legítimo, filtrado efectivo ni la presencia de un atacante.
+
+[Contratos operacionales y umbrales](registro-expansion-operacional-evaluacion-2.md) · [Reglas adicionales anteriores](registro-controles-adicionales-evaluacion-2.md) · [Fuente Cisco y selección previa](avance-fase3.md).
+
 ## 1. Propósito
 
 Este catálogo define reglas destinadas a detectar errores, riesgos, malas prácticas, inconsistencias y controles de seguridad ausentes en configuraciones Cisco IOS. Todas las detecciones serán deterministas, tendrán condiciones explícitas y producirán evidencia verificable.
