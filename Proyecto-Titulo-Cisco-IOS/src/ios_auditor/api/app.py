@@ -81,6 +81,7 @@ app = FastAPI(
 )
 
 
+# Construye el formato JSON común de los errores que se publican al cliente.
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
     payload = ErrorResponse(error={"code": code, "message": message})
     return JSONResponse(status_code=status_code, content=payload.model_dump(mode="json"))
@@ -89,12 +90,14 @@ def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
 app.include_router(ai_router)
 
 
+# Publica el código cerrado de IA y registra solamente la causa tipificada.
 @app.exception_handler(AIError)
 async def ai_error_handler(_request: Request, exc: AIError) -> JSONResponse:
     logger.warning("ai_unavailable code=%s", exc.code.value)
     return _error_response(exc.status_code, exc.code.value, exc.message)
 
 
+# La preparación del snapshot es opcional para conservar disponible el análisis determinista.
 def _register_ai_context(reference, findings, repository: AIContextRepository) -> None:
     try:
         repository.put(build_context(reference, findings))
@@ -103,11 +106,13 @@ def _register_ai_context(reference, findings, repository: AIContextRepository) -
         logger.warning("ai_context_registration_failed")
 
 
+# Convierte un error controlado del endpoint en la respuesta HTTP acordada.
 @app.exception_handler(ApiError)
 async def api_error_handler(_request: Request, exc: ApiError) -> JSONResponse:
     return _error_response(exc.status_code, exc.code, exc.message)
 
 
+# Distingue el archivo omitido de otras solicitudes que incumplen el esquema de entrada.
 @app.exception_handler(RequestValidationError)
 async def validation_error_handler(
     _request: Request, exc: RequestValidationError
@@ -121,6 +126,7 @@ async def validation_error_handler(
     return _error_response(422, "INVALID_REQUEST", "La solicitud no es válida.")
 
 
+# Registra el tipo del fallo y devuelve un mensaje genérico al navegador.
 @app.exception_handler(Exception)
 async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResponse:
     logger.error(
@@ -132,6 +138,7 @@ async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResp
     return _error_response(500, "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE)
 
 
+# Registra método, ruta y estado HTTP después de procesar la solicitud.
 @app.middleware("http")
 async def safe_request_logging(request: Request, call_next):
     response = await call_next(request)
@@ -145,6 +152,7 @@ async def safe_request_logging(request: Request, call_next):
     return response
 
 
+# Conserva el nombre base y admite únicamente extensiones de configuración reconocidas.
 def _sanitize_filename(filename: str | None) -> str:
     if not filename or not filename.strip():
         raise ApiError(400, "EMPTY_FILENAME", "El nombre del archivo está vacío.")
@@ -161,6 +169,7 @@ def _sanitize_filename(filename: str | None) -> str:
     return basename
 
 
+# Convierte el identificador externo en UUID y rechaza entradas incompatibles.
 def _parse_analysis_id(value: str) -> UUID:
     try:
         return UUID(value)
@@ -168,6 +177,7 @@ def _parse_analysis_id(value: str) -> UUID:
         raise ApiError(422, "INVALID_ANALYSIS_ID", "El analysis_id no es un UUID válido.") from exc
 
 
+# Distingue un identificador inválido de un análisis que ya no existe.
 def _get_stored(
     value: str, repository: InMemoryAnalysisRepository
 ) -> StoredAnalysis:
@@ -178,6 +188,7 @@ def _get_stored(
     return stored
 
 
+# Serializa las evaluaciones y calcula los contadores del resultado ya almacenado.
 def _analysis_response(stored: StoredAnalysis) -> AnalysisResponse:
     evaluations = [to_primitive(item) for item in stored.result.evaluations]
     findings = [to_primitive(item) for item in stored.result.findings]
@@ -198,11 +209,13 @@ def _analysis_response(stored: StoredAnalysis) -> AnalysisResponse:
     )
 
 
+# Expone la disponibilidad de la API y su versión.
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     return HealthResponse(status="ok", service=SERVICE_NAME, version=__version__)
 
 
+# Publica los metadatos de las reglas habilitadas en el registro.
 @app.get("/api/v1/rules", response_model=list[RuleSummaryResponse])
 def list_rules(
     registry: RuleRegistry = Depends(get_rule_registry),
@@ -221,6 +234,7 @@ def list_rules(
     ]
 
 
+# Solicita la recolección integral y traduce fallos de adquisición a errores HTTP controlados.
 @app.post(
     "/api/v1/device-analyses",
     response_model=FullDeviceAnalysisResponse,
@@ -276,6 +290,7 @@ def create_device_analysis(
         raise ApiError(500, "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE) from None
 
 
+# Limita y decodifica el archivo recibido antes de ejecutar el analizador.
 @app.post(
     "/api/v1/analyses",
     response_model=AnalysisCreatedResponse,
@@ -320,6 +335,7 @@ async def create_analysis(
     return AnalysisCreatedResponse(**_analysis_response(stored).model_dump())
 
 
+# Entrega el análisis existente sin volver a ejecutar las reglas.
 @app.get("/api/v1/analyses/{analysis_id}", response_model=AnalysisResponse)
 def get_analysis(
     analysis_id: str,
@@ -328,6 +344,7 @@ def get_analysis(
     return _analysis_response(_get_stored(analysis_id, repository))
 
 
+# Publica todos los estados de evaluación guardados para ese análisis.
 @app.get(
     "/api/v1/analyses/{analysis_id}/evaluations",
     response_model=list[RuleEvaluationResponse],
@@ -340,6 +357,7 @@ def get_evaluations(
     return [to_primitive(item) for item in stored.result.evaluations]
 
 
+# Devuelve los hallazgos guardados que derivaron de evaluaciones FAIL.
 @app.get(
     "/api/v1/analyses/{analysis_id}/findings",
     response_model=list[FindingResponse],

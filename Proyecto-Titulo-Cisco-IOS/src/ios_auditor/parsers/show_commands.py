@@ -65,6 +65,7 @@ def normalize_show_output(value: str) -> str:
 
 
 # Cada plantilla TextFSM corresponde a un comando. Sus columnas alimentan el modelo operacional.
+# Aplica una plantilla TextFSM y convierte sus columnas en registros con nombres de campo.
 def _parse_rows(template_name: str, output: str) -> tuple[dict[str, str], ...]:
     resource = files("ios_auditor.resources.textfsm").joinpath(template_name)
     try:
@@ -97,6 +98,7 @@ def _optional(value: str) -> str | None:
     return normalized or None
 
 
+# Rechaza una salida cuya cantidad de registros no corresponde al modelo de fila única.
 def _single_row(rows: tuple[dict[str, str], ...]) -> dict[str, str]:
     if len(rows) != 1:
         raise ShowOutputFormatError(
@@ -105,6 +107,7 @@ def _single_row(rows: tuple[dict[str, str], ...]) -> dict[str, str]:
     return rows[0]
 
 
+# Construye el modelo de versión a partir de las columnas de TextFSM.
 def _build_show_version(rows: tuple[dict[str, str], ...]) -> ShowVersionData:
     row = _single_row(rows)
     version = row.get("IOS_VERSION", "").strip()
@@ -120,6 +123,7 @@ def _build_show_version(rows: tuple[dict[str, str], ...]) -> ShowVersionData:
     )
 
 
+# Convierte los estados de interfaces de la tabla a los tipos del dominio.
 def _build_interfaces(
     rows: tuple[dict[str, str], ...],
 ) -> ShowIpInterfaceBriefData:
@@ -165,6 +169,7 @@ def _optional_int(value: str) -> int | None:
     return parsed
 
 
+# Interpreta disponibilidad y versión SSH conservando la incertidumbre de campos ausentes.
 def _build_show_ip_ssh(rows: tuple[dict[str, str], ...]) -> ShowIpSshData:
     row = _single_row(rows)
     state = row.get("STATE", "").strip().lower()

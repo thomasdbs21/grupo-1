@@ -1,3 +1,4 @@
+# Prueba autenticación local, timeout administrativo y puertos declarados como no utilizados.
 """Contratos conservadores de las tres reglas, sin red ni secretos reales."""
 
 from dataclasses import FrozenInstanceError, replace

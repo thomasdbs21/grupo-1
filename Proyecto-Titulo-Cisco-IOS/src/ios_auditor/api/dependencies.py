@@ -15,10 +15,12 @@ from ios_auditor.rules import RuleRegistry, get_default_registry
 _repository = InMemoryAnalysisRepository(max_items=100)
 
 
+# Comparte el repositorio temporal de resultados entre las solicitudes de la API.
 def get_analysis_repository() -> InMemoryAnalysisRepository:
     return _repository
 
 
+# Proporciona el registro oficial cargado desde los metadatos YAML.
 def get_rule_registry() -> RuleRegistry:
     return get_default_registry()
 
@@ -34,10 +36,12 @@ def get_connection_factory() -> ConnectionFactory:
 _ai_context_repository = AIContextRepository(max_items=100)
 
 
+# Entrega el repositorio separado de snapshots explicativos.
 def get_ai_context_repository() -> AIContextRepository:
     return _ai_context_repository
 
 
+# Construye el servicio con las variables actuales y el cliente HTTP de OmniRoute.
 def get_ai_service() -> ExplanationService:
     settings = AISettings.from_env()
     return ExplanationService(settings, OmniRouteClient(settings))

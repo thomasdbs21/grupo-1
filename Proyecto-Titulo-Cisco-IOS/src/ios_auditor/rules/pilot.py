@@ -31,6 +31,7 @@ def _evidence(
     )
 
 
+# Marca FAIL cuando encuentra Telnet; exige solo SSH en todas las VTY para PASS.
 @dataclass(frozen=True, slots=True)
 class TelnetVtyRule:
     metadata: RuleMetadata
@@ -80,6 +81,7 @@ class TelnetVtyRule:
         )
 
 
+# Evalúa la presencia de ip http server en las líneas normalizadas del contexto.
 @dataclass(frozen=True, slots=True)
 class HttpServerRule:
     metadata: RuleMetadata
@@ -108,6 +110,7 @@ class HttpServerRule:
         )
 
 
+# Distingue enable secret, password sin secret y ausencia de ambos mecanismos.
 @dataclass(frozen=True, slots=True)
 class EnablePasswordRule:
     metadata: RuleMetadata

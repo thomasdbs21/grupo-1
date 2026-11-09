@@ -1,3 +1,4 @@
+# Comprueba correlaciones entre configuración y salidas operacionales sin adquirir datos por SSH.
 """Contratos operacionales nuevos; toda recopilación es simulada u offline."""
 
 from dataclasses import FrozenInstanceError, replace

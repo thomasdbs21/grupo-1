@@ -1,3 +1,4 @@
+# Carga YAML de prueba para comprobar campos obligatorios, tipos y errores del catálogo.
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError, replace

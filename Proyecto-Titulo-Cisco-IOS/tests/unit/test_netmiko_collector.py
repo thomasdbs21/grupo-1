@@ -1,3 +1,4 @@
+# Inyecta una fábrica simulada para comprobar allowlist, evidencia y cierre ante errores de sesión.
 from __future__ import annotations
 
 import hashlib

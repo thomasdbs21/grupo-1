@@ -1,3 +1,4 @@
+# Usa salidas sintéticas para comprobar columnas TextFSM, modelos y formatos incompletos.
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError

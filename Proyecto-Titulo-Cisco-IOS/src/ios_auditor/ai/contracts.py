@@ -10,10 +10,12 @@ from .sanitization import sanitize_text
 RuleId = Annotated[str, Field(pattern=r"^IOS-[A-Z]+-[0-9]{3}$", max_length=40)]
 
 
+# Contrato cerrado e inmutable que rechaza campos adicionales en la explicación.
 class ClosedModel(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+# Copia acotada de un hallazgo que puede enviarse al proveedor explicativo.
 class FindingContext(ClosedModel):
     rule_id: RuleId
     rule_name: Annotated[str, Field(max_length=160)]
@@ -23,6 +25,7 @@ class FindingContext(ClosedModel):
     evidence: Annotated[tuple[str, ...], Field(max_length=2)]
 
 
+# Agrupa las copias sanitizadas y señala si el conjunto enviado fue truncado.
 class AIContext(ClosedModel):
     analysis_id: UUID
     findings: Annotated[tuple[FindingContext, ...], Field(max_length=32)]
@@ -30,9 +33,11 @@ class AIContext(ClosedModel):
     truncated: bool = False
 
 
+# Admite una pregunta opcional con longitud y contenido validados.
 class ExplanationRequest(ClosedModel):
     question: Annotated[str, Field(min_length=1, max_length=500)] | None = None
 
+    # Rechaza una pregunta formada solo por espacios antes de enviarla al proveedor.
     @field_validator("question")
     @classmethod
     def nonblank(cls, value: str | None) -> str | None:
@@ -43,6 +48,7 @@ class ExplanationRequest(ClosedModel):
         return value
 
 
+# Describe impacto y revisión manual para un único rule_id existente.
 class FindingExplanation(ClosedModel):
     rule_id: RuleId
     explanation: Annotated[str, Field(min_length=1, max_length=1500)]
@@ -56,6 +62,7 @@ class FindingExplanation(ClosedModel):
         return sanitize_text(value)
 
 
+# Esquema del texto generado y de su respuesta opcional a la pregunta.
 class Explanation(ClosedModel):
     summary: Annotated[str, Field(min_length=1, max_length=1500)]
     findings: Annotated[tuple[FindingExplanation, ...], Field(max_length=32)]
@@ -74,6 +81,7 @@ class Explanation(ClosedModel):
 
 
 # El origen distingue una explicación del modelo de una respuesta determinista sin hallazgos.
+# Asocia la explicación validada a su análisis y al origen que la produjo.
 class ExplanationResponse(ClosedModel):
     analysis_id: UUID
     source: Literal["ai", "deterministic"]
@@ -81,6 +89,7 @@ class ExplanationResponse(ClosedModel):
     explanation: Explanation
 
 
+# Expone configuración y accesibilidad HTTP para los indicadores de la interfaz.
 class AIHealth(ClosedModel):
     enabled: bool
     gateway_reachable: bool

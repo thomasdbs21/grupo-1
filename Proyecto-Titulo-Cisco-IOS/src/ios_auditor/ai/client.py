@@ -11,7 +11,9 @@ from .settings import AISettings
 MAX_RESPONSE_BYTES = 128 * 1024
 
 
+# Traduce el estado HTTP a un código público sin conservar el cuerpo del proveedor.
 def _status_error(status: int) -> AIError:
+    # Los rechazos de autenticación se distinguen de cuota, modelo y errores del servidor.
     if status in {401, 403}:
         return AIError(AIErrorCode.AUTH_ERROR)
     if status in {400, 404}:
@@ -30,10 +32,12 @@ class OmniRouteClient:
         self._transport = transport
         self._sleep = sleep
 
+    # Construye la cabecera de autenticación en memoria para la petición al gateway.
     def _headers(self) -> dict[str, str]:
         key = self.settings.api_key.get_secret_value()
         return {"Authorization": "Bearer " + key} if key else {}
 
+    # Aplica el máximo de reintentos configurado solo a errores transitorios admitidos.
     def complete(self, messages: list[dict[str, str]]) -> str:
         if not self.settings.enabled:
             raise AIError(AIErrorCode.DISABLED)
@@ -50,6 +54,7 @@ class OmniRouteClient:
                 self._sleep(0.1)
         raise AIError(AIErrorCode.UPSTREAM_ERROR)  # rango validado por settings
 
+    # Devuelve el contenido textual de chat/completions tras limitar los bytes de respuesta.
     def _complete_once(self, messages: list[dict[str, str]]) -> str:
         try:
             with httpx.Client(timeout=self.settings.timeout_seconds, transport=self._transport,
@@ -65,6 +70,7 @@ class OmniRouteClient:
                     chunks = bytearray()
                     for chunk in response.iter_bytes():
                         chunks.extend(chunk)
+                        # Se corta la lectura de respuestas demasiado grandes antes de interpretar el JSON.
                         if len(chunks) > MAX_RESPONSE_BYTES:
                             raise AIError(AIErrorCode.INVALID_RESPONSE)
                     import json

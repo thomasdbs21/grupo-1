@@ -6,6 +6,7 @@ from typing import Any
 
 
 # Convierte el resultado del dominio a tipos serializables para transmitirlo sin reevaluar reglas.
+# Convierte dataclasses, enumeraciones y colecciones a valores serializables.
 def to_primitive(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value

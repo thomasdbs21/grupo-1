@@ -1,3 +1,4 @@
+# Comprueba que los hallazgos conserven el estado, severidad y evidencia que corresponde a su evaluación.
 from __future__ import annotations
 
 from ios_auditor.domain import RuleStatus

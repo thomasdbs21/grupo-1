@@ -94,6 +94,7 @@ def analyze_validated_evidence_batch(
     )
 
 
+# Comprueba que el analizador conserve la identidad de la evidencia de configuración.
 def _validate_configuration_result(
     result: AnalysisResult,
     evidence_sha256: str,
@@ -105,6 +106,7 @@ def _validate_configuration_result(
 
 
 # El resultado de parsing se conserva por comando para distinguir una fuente incompleta de un incumplimiento.
+# Construye un contexto por consulta y propaga los errores que invalidan la adquisición.
 def _parse_operational_evidence(
     batch: ValidatedEvidenceBatch,
     command: str,
@@ -131,6 +133,7 @@ def _parse_operational_evidence(
     return context
 
 
+# Relaciona la regla operacional con la fuente que necesita evaluar.
 def _operational_result_for(
     results: tuple[OperationalContext, ...],
     command: str,

@@ -1,3 +1,4 @@
+# Comprueba correspondencia de IDs, duplicados, orden y desactivación de reglas.
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError, replace

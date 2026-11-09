@@ -59,12 +59,15 @@ def filtered_findings(analysis: dict, severities=(), rules=(), query: str = '') 
     return sorted(findings, key=lambda f: (
         SEVERITIES.index(f['severity']) if f['severity'] in SEVERITIES else len(SEVERITIES), f['rule_id']))
 
+# Cuenta las severidades de los hallazgos del análisis para representar el resumen.
 def severity_counts(analysis: dict) -> dict:
     return dict(Counter(f['severity'] for f in analysis.get('findings', [])))
 
+# Serializa la proyección de campos públicos como JSON codificado en UTF-8.
 def json_export(analysis: dict) -> bytes:
     return json.dumps(safe_result(analysis), ensure_ascii=False, indent=2).encode('utf8')
 
+# Escribe los hallazgos sanitizados y protege las celdas que una hoja podría interpretar como fórmulas.
 def csv_export(analysis: dict) -> bytes:
     stream = StringIO(newline='')
     writer = csv.writer(stream)
@@ -77,6 +80,7 @@ def csv_export(analysis: dict) -> bytes:
                          or v.startswith(('\t', '\r', '\n')) else v for v in values])
     return stream.getvalue().encode('utf-8-sig')
 
+# Distingue salud HTTP, configuración de IA y resultado de la última inferencia.
 def service_badges(health: dict, last_ai_success: bool = False, ai_error: str = '') -> list[tuple[str, str, str]]:
     backend = health.get('backend', False)
     engine = health.get('engine', False)
@@ -101,6 +105,7 @@ def service_badges(health: dict, last_ai_success: bool = False, ai_error: str = 
         badges.append(('IA', 'Configurada · sin inferencia de prueba', 'warn'))
     return badges
 
+# Transforma un código de error en una indicación comprensible para el usuario.
 def error_message(code: str, origin: str = '') -> str:
     if code == 'DEVICE_TIMEOUT':
         return 'El dispositivo no respondió a tiempo. Revisa la conexión SSH y el laboratorio.'

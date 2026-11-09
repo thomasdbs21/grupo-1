@@ -1,3 +1,4 @@
+# Usa una conexión simulada para comprobar una sola adquisición y la agregación de resultados.
 from __future__ import annotations
 
 import hashlib

@@ -1,3 +1,4 @@
+# Comprueba almacenamiento temporal, consulta y expulsión de análisis por capacidad.
 from __future__ import annotations
 
 from ios_auditor.api.repository import InMemoryAnalysisRepository

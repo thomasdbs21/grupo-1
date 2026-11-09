@@ -1,3 +1,4 @@
+# Comprueba la integración entre collector y analizador mediante una conexión inyectada.
 from __future__ import annotations
 
 import hashlib

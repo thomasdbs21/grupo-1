@@ -102,6 +102,7 @@ class NetmikoCollector:
         operation_failed = True
 
         try:
+            # La fábrica crea la conexión Cisco; en las pruebas se sustituye por un objeto simulado.
             connection = self.connection_factory(
                 device_type="cisco_ios",
                 host=self.host,
@@ -109,6 +110,7 @@ class NetmikoCollector:
                 username=self.username,
                 password=self.password,
             )
+            # Las consultas comparten conexión e identificador de ejecución.
             evidence = tuple(
                 self._collect_command(connection, command, run_id)
                 for command in normalized_commands
@@ -140,6 +142,7 @@ class NetmikoCollector:
                             "No fue posible cerrar correctamente la sesion SSH."
                         ) from None
 
+    # Normaliza la lista completa y la contrasta con el allowlist antes de abrir SSH.
     @staticmethod
     def _validate_commands(commands: str | Iterable[str]) -> tuple[str, ...]:
         candidates = (commands,) if isinstance(commands, str) else tuple(commands)
@@ -156,6 +159,7 @@ class NetmikoCollector:
             normalized_commands.append(normalized)
         return tuple(normalized_commands)
 
+    # Ejecuta una consulta permitida y asocia la salida con su hash, hora y UUID.
     def _collect_command(
         self,
         connection: NetmikoConnection,
@@ -178,5 +182,6 @@ class NetmikoCollector:
         )
 
 
+# Unifica saltos de línea para que el tratamiento del texto sea reproducible.
 def _normalize_line_endings(value: str) -> str:
     return value.replace("\r\n", "\n").replace("\r", "\n")

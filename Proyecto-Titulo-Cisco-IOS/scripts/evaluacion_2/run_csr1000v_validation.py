@@ -17,6 +17,7 @@ from ios_auditor.domain import FullDeviceAnalysisResult
 from ios_auditor.services import CANONICAL_EVIDENCE_COMMANDS, collect_and_analyze_device
 
 
+# Contadores de intentos, sesiones, comandos y desconexiones del ensayo manual.
 @dataclass
 class SessionAudit:
     attempts: int = 0
@@ -45,6 +46,7 @@ class ReadOnlyConnection:
         self._audit.disconnects += 1
 
 
+# Autoriza un solo intento de conexión y cuenta las sesiones de la validación manual.
 def audited_factory(audit: SessionAudit):
     def connect(**kwargs):
         if audit.attempts:
@@ -56,6 +58,7 @@ def audited_factory(audit: SessionAudit):
     return connect
 
 
+# Aborta si el terminal no puede ocultar la entrada solicitada.
 def hidden_input(prompt: str) -> str:
     # Si el terminal no permite ocultar, se aborta antes de leer en modo visible.
     with warnings.catch_warnings():
@@ -63,6 +66,7 @@ def hidden_input(prompt: str) -> str:
         return getpass.getpass(prompt)
 
 
+# Recoge datos de conexión con entrada oculta y valida su presencia y puerto.
 def request_connection() -> tuple[str, int, str, str]:
     host = hidden_input("Host (entrada oculta): ").strip()
     port_text = hidden_input("Puerto (Enter = 22, entrada oculta): ").strip()
@@ -74,6 +78,7 @@ def request_connection() -> tuple[str, int, str, str]:
     return host, port, username, password
 
 
+# Comprueba sesión y comandos antes de producir el resumen sanitizado de laboratorio.
 def render_result(result: FullDeviceAnalysisResult, audit: SessionAudit) -> str:
     if (audit.sessions != 1 or audit.disconnects != 1
             or tuple(audit.commands) != CANONICAL_EVIDENCE_COMMANDS):
@@ -96,6 +101,7 @@ def render_result(result: FullDeviceAnalysisResult, audit: SessionAudit) -> str:
     return "\n".join(lines)
 
 
+# Esta entrada manual pide datos ocultos y verifica el contrato de una única sesión autorizada.
 def main() -> int:
     audit = SessionAudit()
     try:

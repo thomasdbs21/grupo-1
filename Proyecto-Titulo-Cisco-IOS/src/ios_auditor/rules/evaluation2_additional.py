@@ -11,6 +11,7 @@ PASS, FAIL, NA, NE = (RuleStatus.PASS, RuleStatus.FAIL,
                       RuleStatus.NOT_APPLICABLE, RuleStatus.NOT_EVALUATED)
 
 
+# Distingue password de secret solo cuando su sintaxis y carga son evaluables.
 def _username_status(tokens: tuple[str, ...]) -> RuleStatus:
     if len(tokens) < 4 or re.fullmatch(r'[^\s"\']+', tokens[1]) is None:
         return NE
@@ -31,6 +32,7 @@ def _username_status(tokens: tuple[str, ...]) -> RuleStatus:
     return FAIL if mechanism == "password" else PASS
 
 
+# Agrupa directivas por identidad para evitar decidir sobre usuarios con sintaxis ambigua.
 @dataclass(frozen=True, slots=True)
 class LocalUserPasswordRule:
     metadata: RuleMetadata
@@ -55,6 +57,7 @@ class LocalUserPasswordRule:
         return _result(self.metadata, context, status, messages[status])
 
 
+# Delimita el rango de consola o VTY para detectar secciones administrativas solapadas.
 def _line_interval(tokens: tuple[str, ...]) -> tuple[str, int, int] | None:
     if len(tokens) not in {3, 4} or tokens[1] not in {"console", "vty"}:
         return None
@@ -66,6 +69,7 @@ def _line_interval(tokens: tuple[str, ...]) -> tuple[str, int, int] | None:
     return (tokens[1], first, last) if first <= last else None
 
 
+# Comprueba intervalos de líneas y timeout explícito; los solapamientos impiden decidir.
 @dataclass(frozen=True, slots=True)
 class AdministrativeTimeoutRule:
     metadata: RuleMetadata

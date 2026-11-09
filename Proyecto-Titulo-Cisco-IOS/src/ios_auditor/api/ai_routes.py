@@ -11,6 +11,7 @@ from ios_auditor.api.errors import ApiError
 router = APIRouter()
 
 
+# Consulta la configuración y accesibilidad del gateway sin solicitar una explicación.
 @router.get("/api/v1/ai/health", response_model=AIHealth)
 def ai_health(service: ExplanationService = Depends(get_ai_service)) -> AIHealth:
     return AIHealth(enabled=service.settings.enabled,
@@ -18,6 +19,7 @@ def ai_health(service: ExplanationService = Depends(get_ai_service)) -> AIHealth
                     model_configured=bool(service.settings.model))
 
 
+# Recupera el contexto asociado al UUID y delega la pregunta al servicio de explicación.
 @router.post("/api/v1/analyses/{analysis_id}/ai-explanation", response_model=ExplanationResponse)
 def explain_analysis(
     analysis_id: UUID,

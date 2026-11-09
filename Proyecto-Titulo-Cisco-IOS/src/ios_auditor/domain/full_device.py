@@ -80,6 +80,7 @@ class FullDeviceAnalysisResult:
             self.operational_findings,
         )
 
+    # Convierte las colecciones recibidas en tuplas dentro del modelo inmutable.
     def _freeze_collection(self, field_name: str) -> None:
         value = getattr(self, field_name)
         try:
@@ -107,6 +108,7 @@ class FullDeviceAnalysisResult:
         return self.configuration_findings + self.operational_findings
 
 
+# Exige correspondencia exacta entre los hallazgos y las evaluaciones FAIL.
 def _validate_findings(
     evaluations: tuple[RuleEvaluation, ...],
     findings: tuple[Finding, ...],
@@ -122,6 +124,7 @@ def _validate_findings(
         )
 
 
+# Copia los datos de una evaluación fallida sin recalcular severidad o evidencia.
 def _finding_from_evaluation(evaluation: RuleEvaluation) -> Finding:
     return Finding(
         rule_id=evaluation.rule_id,

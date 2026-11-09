@@ -30,11 +30,13 @@ MIN_ERRORS = 100
 ERROR_PERCENT = 1
 
 
+# Busca evidencia operacional del comando y tipo requeridos por la regla multifuente.
 def _source(context: MultiSourceContext, command: str, model: type) -> OperationalContext | None:
     return next((item for item in context.operational
                  if item.command == command and isinstance(item.data, model)), None)
 
 
+# Combina resultados parciales con prioridad para incumplimientos demostrados e incertidumbre.
 def _combined(states: list[RuleStatus]) -> RuleStatus:
     if FAIL in states:
         return FAIL
@@ -43,6 +45,7 @@ def _combined(states: list[RuleStatus]) -> RuleStatus:
     return PASS if states else NA
 
 
+# Comprueba descripciones en interfaces UP/UP correlacionadas con una sección única de configuración.
 def _descriptions(context: MultiSourceContext) -> RuleStatus:
     source = _source(context, "show ip interface brief", ShowIpInterfaceBriefData)
     if source is None:
@@ -82,6 +85,7 @@ def _acl_number(value: str) -> str | None:
     return None
 
 
+# Compara ACL definidas y referencias de interfaz con la evidencia operacional reconocida.
 def _acl_application(context: MultiSourceContext) -> RuleStatus:
     source = _source(context, "show access-lists", ShowAccessListsData)
     if source is None or not source.data.recognized:
@@ -141,6 +145,7 @@ def _acl_application(context: MultiSourceContext) -> RuleStatus:
     operational = {item.name: item.kind for item in source.data.access_lists}
     if len(operational) != len(source.data.access_lists) or ambiguous:
         return NE
+    # La discrepancia entre ACL configuradas y observadas impide afirmar que una ACL esté sin uso.
     if defined != operational or applied - defined.keys():
         return NE
     if not defined:
@@ -148,6 +153,7 @@ def _acl_application(context: MultiSourceContext) -> RuleStatus:
     return PASS if defined.keys() <= applied else FAIL
 
 
+# Busca una asociación sincronizada con stratum y alcance válidos en la tabla reconocida.
 def _ntp(context: MultiSourceContext) -> RuleStatus:
     source = _source(context, "show ntp associations", ShowNtpAssociationsData)
     if source is None or not source.data.recognized:
@@ -160,10 +166,12 @@ def _ntp(context: MultiSourceContext) -> RuleStatus:
     return FAIL
 
 
+# Exige muestra suficiente y aplica el umbral histórico a los contadores acumulados.
 def _counter_direction(packets: int | None, errors: int | None) -> RuleStatus:
     if packets is None or errors is None or packets < 0 or errors < 0:
         return NE
     total = packets + errors
+    # Se exige una muestra mínima para evitar alertar a partir de unos pocos paquetes.
     if total < MIN_OBSERVATIONS:
         return NE
     if errors >= MIN_ERRORS and errors * 100 > ERROR_PERCENT * total:
@@ -171,6 +179,7 @@ def _counter_direction(packets: int | None, errors: int | None) -> RuleStatus:
     return PASS
 
 
+# Evalúa por dirección los contadores de interfaces operacionalmente activas.
 def _availability(context: MultiSourceContext) -> RuleStatus:
     source = _source(context, "show interfaces", ShowInterfacesData)
     if source is None or not source.data.recognized:
@@ -184,6 +193,7 @@ def _availability(context: MultiSourceContext) -> RuleStatus:
     return _combined(states)
 
 
+# Comprueba estados observados sin inferir cuántos vecinos OSPF deberían existir.
 def _neighbors(context: MultiSourceContext) -> RuleStatus:
     source = _source(context, "show ip ospf neighbor", ShowIpOspfNeighborData)
     if source is None or not source.data.recognized:
@@ -195,6 +205,7 @@ def _neighbors(context: MultiSourceContext) -> RuleStatus:
     if any(len(block.head.tokens) != 3 or not block.head.tokens[2].isdigit()
            or not 1 <= int(block.head.tokens[2]) <= 65535 for block in processes):
         return NE
+    # Una tabla sin vecinos no demuestra por sí sola que falte una vecindad esperada.
     if not source.data.neighbors:
         return NE
     if all(item.state == "FULL" or (item.state, item.role) == ("2WAY", "DROTHER")
@@ -204,6 +215,7 @@ def _neighbors(context: MultiSourceContext) -> RuleStatus:
     return NE
 
 
+# Ejecuta la comprobación multifuente y vincula las evidencias requeridas por su metadato.
 @dataclass(frozen=True, slots=True)
 class ExpandedOperationalRule:
     metadata: RuleMetadata
@@ -225,31 +237,37 @@ class ExpandedOperationalRule:
                               self.metadata.recommendation, sources)
 
 
+# Revisa descripciones de interfaces activas correlacionando configuración y brief.
 @dataclass(frozen=True, slots=True)
 class InterfaceDescriptionRule(ExpandedOperationalRule):
     expected_id = "IOS-INT-002"
 
 
+# Contrasta ACL declaradas, observadas y aplicadas por interfaz.
 @dataclass(frozen=True, slots=True)
 class AccessListApplicationRule(ExpandedOperationalRule):
     expected_id = "IOS-ACL-002"
 
 
+# Comprueba sincronización NTP a partir de asociaciones reconocidas.
 @dataclass(frozen=True, slots=True)
 class NtpSynchronizationRule(ExpandedOperationalRule):
     expected_id = "IOS-NTP-002"
 
 
+# Aplica los mínimos de muestra y el umbral de errores acumulados.
 @dataclass(frozen=True, slots=True)
 class InterfaceErrorCountersRule(ExpandedOperationalRule):
     expected_id = "IOS-AVL-001"
 
 
+# Evalúa estados observados conservando la incertidumbre de la topología esperada.
 @dataclass(frozen=True, slots=True)
 class OspfNeighborExpectationRule(ExpandedOperationalRule):
     expected_id = "IOS-OSPF-002"
 
 
+# Revisa puertos declarados como no utilizados y su estado administrativo.
 @dataclass(frozen=True, slots=True)
 class UnusedInterfaceRule(ExpandedOperationalRule):
     expected_id = "IOS-INT-001"
@@ -289,6 +307,7 @@ _MESSAGES = {
 }
 
 
+# Carga los metadatos y conserva el orden de las reglas operacionales ampliadas.
 @lru_cache(maxsize=1)
 def get_expanded_operational_rules() -> tuple[ExpandedOperationalRule, ...]:
     directory = Path(str(files("ios_auditor.resources.rules")))

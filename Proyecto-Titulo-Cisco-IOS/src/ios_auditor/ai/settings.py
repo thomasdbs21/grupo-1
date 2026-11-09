@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from .errors import AIError, AIErrorCode
 
 
+# Valida la configuración efectiva del cliente y mantiene la clave como valor secreto.
 class AISettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -18,6 +19,7 @@ class AISettings(BaseModel):
     timeout_seconds: float = Field(default=15, ge=0.1, le=120)
     max_retries: int = Field(default=1, ge=0, le=1)
 
+    # Valida el destino del gateway y rechaza credenciales o parámetros incrustados en la URL.
     @field_validator("base_url")
     @classmethod
     def safe_url(cls, value: str) -> str:
@@ -27,6 +29,7 @@ class AISettings(BaseModel):
             raise ValueError("URL de pasarela no válida.")
         return value.rstrip("/")
 
+    # Exige un identificador concreto para conservar el control sobre el modelo solicitado.
     @field_validator("model")
     @classmethod
     def concrete_model(cls, value: str) -> str:
@@ -35,6 +38,7 @@ class AISettings(BaseModel):
             raise ValueError("Debe seleccionar un modelo concreto.")
         return value
 
+    # Lee la configuración efectiva del proceso y convierte valores inválidos en un error público.
     @classmethod
     def from_env(cls) -> AISettings:
         # No carga .env, cookies, archivos de proveedores ni sesiones del navegador.

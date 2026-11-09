@@ -23,6 +23,7 @@ en question_answer usando únicamente esos Findings; si no puede resolverse, ind
 """
 
 
+# Serializa el contexto y la pregunta como datos no confiables junto al esquema de explicación.
 def build_messages(context: AIContext, question: str | None = None) -> list[dict[str, str]]:
     data = {
         "UNTRUSTED_DATA": {

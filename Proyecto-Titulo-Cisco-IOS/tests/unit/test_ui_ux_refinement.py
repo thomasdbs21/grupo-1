@@ -1,3 +1,4 @@
+# Verifica filtros, exportaciones, sanitización y estados visuales sin solicitar inferencia real.
 import copy
 import csv
 import io

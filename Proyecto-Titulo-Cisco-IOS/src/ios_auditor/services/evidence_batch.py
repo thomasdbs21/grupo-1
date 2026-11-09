@@ -80,6 +80,7 @@ def validate_evidence_batch(
     return ValidatedEvidenceBatch(evidence_tuple)
 
 
+# Rechaza comandos repetidos o ajenos y UUID distintos antes de ordenar el lote canónico.
 def _validate_and_order(
     evidences: tuple[CommandEvidence, ...],
 ) -> tuple[tuple[CommandEvidence, ...], UUID]:
@@ -119,6 +120,7 @@ def _validate_and_order(
             "El lote contiene un comando ajeno al contrato integral.",
         )
 
+    # Una fuente repetida no puede reemplazar otra consulta requerida del lote.
     if len(set(commands)) != len(commands):
         raise EvidenceBatchValidationError(
             "DUPLICATE_COMMAND",
@@ -141,6 +143,7 @@ def _validate_and_order(
         _validate_evidence(evidence)
 
     execution_id = evidences[0].execution_id
+    # El mismo UUID vincula las ocho evidencias a una única adquisición.
     if any(evidence.execution_id != execution_id for evidence in evidences[1:]):
         raise EvidenceBatchValidationError(
             "MISMATCHED_EXECUTION_ID",
@@ -154,6 +157,7 @@ def _validate_and_order(
     return ordered, execution_id
 
 
+# Verifica estructura e integridad de la evidencia antes de combinarla con otras fuentes.
 def _validate_evidence(evidence: CommandEvidence) -> None:
     if not isinstance(evidence.execution_id, UUID):
         raise EvidenceBatchValidationError(

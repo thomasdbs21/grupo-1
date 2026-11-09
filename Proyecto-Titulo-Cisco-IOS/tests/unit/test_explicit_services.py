@@ -1,3 +1,4 @@
+# Contrasta habilitación, negación y ambigüedad de Finger, PAD y source routing.
 """Casos de política global explícita. Los datos son sintéticos."""
 
 import pytest

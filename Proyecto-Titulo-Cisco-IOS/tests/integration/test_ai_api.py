@@ -1,3 +1,4 @@
+# Verifica el endpoint explicativo con proveedor de prueba y compara los resultados antes y después de IA.
 import json
 from pathlib import Path
 from unittest.mock import MagicMock

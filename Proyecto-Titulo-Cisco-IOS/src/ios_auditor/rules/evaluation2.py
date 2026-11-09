@@ -58,6 +58,7 @@ def _blocks(context: AnalysisContext) -> tuple[_Block, ...]:
     return tuple(result)
 
 
+# Conserva metadatos, fuente, hash y ubicación en una evaluación con evidencia acotada.
 def _result(metadata: RuleMetadata, context: AnalysisContext, status: RuleStatus,
             text: str, line: int | None = None) -> RuleEvaluation:
     return RuleEvaluation(
@@ -69,6 +70,7 @@ def _result(metadata: RuleMetadata, context: AnalysisContext, status: RuleStatus
     )
 
 
+# Un FAIL demostrado prevalece; la falta de información impide devolver PASS.
 def _aggregate(states: list[RuleStatus]) -> RuleStatus:
     if RuleStatus.FAIL in states:
         return RuleStatus.FAIL
@@ -77,12 +79,14 @@ def _aggregate(states: list[RuleStatus]) -> RuleStatus:
     return RuleStatus.PASS
 
 
+# Reconoce el subconjunto de sintaxis de autenticación admitido por estas reglas.
 def _secret_payload(tokens: tuple[str, ...], types: set[str]) -> bool:
     return (len(tokens) == 1 and tokens[0] not in types) or (
         len(tokens) == 2 and tokens[0] in types
     )
 
 
+# Comprueba si la autenticación local referenciada tiene respaldo en la configuración.
 def _local_secret_exists(blocks: tuple[_Block, ...]) -> bool:
     for block in blocks:
         tokens = block.head.tokens
@@ -99,6 +103,7 @@ def _local_secret_exists(blocks: tuple[_Block, ...]) -> bool:
     return False
 
 
+# Relaciona la consola con su método de login y el contexto AAA disponible.
 def _console_state(block: _Block, blocks: tuple[_Block, ...]) -> RuleStatus:
     children = tuple(line.tokens for line in block.children)
     aaa = any(item.head.tokens == ("aaa", "new-model") for item in blocks)
@@ -133,6 +138,7 @@ def _console_state(block: _Block, blocks: tuple[_Block, ...]) -> RuleStatus:
     return RuleStatus.FAIL
 
 
+# Relaciona las líneas de consola con el login y el respaldo local o AAA reconocido.
 @dataclass(frozen=True, slots=True)
 class ConsoleAuthenticationRule:
     metadata: RuleMetadata
@@ -155,6 +161,7 @@ class ConsoleAuthenticationRule:
                        consoles[index].head.number if index is not None else None)
 
 
+# Identifica los rangos numéricos de ACL IPv4 extendidas del subconjunto admitido.
 def _extended_number(value: str) -> bool:
     return value.isdigit() and (100 <= int(value) <= 199 or 2000 <= int(value) <= 2699)
 
@@ -177,6 +184,7 @@ def _endpoint(tokens: tuple[str, ...], index: int) -> tuple[int, bool] | None:
     return None
 
 
+# Interpreta una entrada ACL y conserva la incertidumbre ante sintaxis no reconocida.
 def _acl_entry(tokens: tuple[str, ...]) -> RuleStatus | None:
     if tokens and tokens[0].isdigit():
         tokens = tokens[1:]
@@ -197,6 +205,7 @@ def _acl_entry(tokens: tuple[str, ...]) -> RuleStatus | None:
     return RuleStatus.PASS
 
 
+# Detecta permisos IP any-any en el subconjunto de ACL IPv4 extendidas admitido.
 @dataclass(frozen=True, slots=True)
 class GlobalAclPermitRule:
     metadata: RuleMetadata
@@ -259,6 +268,7 @@ def _passive(interface: str, process: _Block) -> bool | None:
     return enabled or (("passive-interface", "default") in children and not disabled)
 
 
+# Resuelve el modo de autenticación reconocido y la disponibilidad de su clave.
 def _ospf_authentication(interface: _Block, process: _Block, area: int) -> RuleStatus:
     commands = [line.tokens for line in interface.children]
     modes = [tokens[3:] for tokens in commands if tokens[:3] == ("ip", "ospf", "authentication")]
@@ -289,6 +299,7 @@ def _ospf_authentication(interface: _Block, process: _Block, area: int) -> RuleS
     return RuleStatus.NOT_EVALUATED
 
 
+# Correlaciona procesos, áreas e interfaces antes de juzgar la autenticación OSPF.
 def _ospf_states(blocks: tuple[_Block, ...]) -> list[tuple[RuleStatus, int]]:
     processes = [block for block in blocks if block.head.tokens[:2] == ("router", "ospf")]
     interfaces = [block for block in blocks if block.head.tokens[:1] == ("interface",)]
@@ -348,6 +359,7 @@ def _ospf_states(blocks: tuple[_Block, ...]) -> list[tuple[RuleStatus, int]]:
     return results
 
 
+# Exige una interfaz OSPF aplicable antes de evaluar su autenticación.
 @dataclass(frozen=True, slots=True)
 class OspfAuthenticationRule:
     metadata: RuleMetadata
@@ -367,6 +379,7 @@ class OspfAuthenticationRule:
         return _result(self.metadata, context, status, texts[status], line)
 
 
+# Evalúa el modo de comunidad reconocido sin publicar su valor.
 def _snmp_community(tokens: tuple[str, ...]) -> RuleStatus:
     if len(tokens) < 3:
         return RuleStatus.NOT_EVALUATED
@@ -392,6 +405,7 @@ def _snmp_community(tokens: tuple[str, ...]) -> RuleStatus:
     return RuleStatus.PASS
 
 
+# Comprueba comunidades predeterminadas o escritura sin publicar el valor encontrado.
 @dataclass(frozen=True, slots=True)
 class SnmpCommunityRule:
     metadata: RuleMetadata
@@ -416,6 +430,7 @@ class SnmpCommunityRule:
                        communities[index].number if index is not None else None)
 
 
+# Comprueba presencia y nomenclatura del hostname dentro de la política del catálogo.
 @dataclass(frozen=True, slots=True)
 class HostnameRule:
     metadata: RuleMetadata

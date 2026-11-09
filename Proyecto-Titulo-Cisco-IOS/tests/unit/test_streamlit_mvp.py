@@ -1,3 +1,4 @@
+# Comprueba la interfaz y su contrato con el backend usando las herramientas de prueba de Streamlit.
 import ast
 import json
 from pathlib import Path

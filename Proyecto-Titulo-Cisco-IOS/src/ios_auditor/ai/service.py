@@ -18,6 +18,7 @@ from .sanitization import (
 from .settings import AISettings
 
 
+# Contrato del proveedor inyectado para explicar contexto y consultar accesibilidad.
 class ExplanationProvider(Protocol):
     def complete(self, messages: list[dict[str, str]]) -> str: ...
     def reachable(self) -> bool: ...
@@ -47,12 +48,15 @@ def build_context(analysis_id: UUID, findings: tuple[Finding, ...]) -> AIContext
                      total_findings=len(findings), truncated=len(selected) < len(findings))
 
 
+# Orquesta la preparación de mensajes y la validación de una respuesta explicativa.
 class ExplanationService:
     def __init__(self, settings: AISettings, provider: ExplanationProvider):
         self.settings = settings
         self.provider = provider
 
+    # Valida estructura e identificadores antes de devolver una explicación del contexto existente.
     def explain(self, context: AIContext, question: str | None = None) -> ExplanationResponse:
+        # Un análisis sin hallazgos obtiene una respuesta determinista y no requiere invocar al modelo.
         if not context.total_findings:
             return ExplanationResponse(
                 analysis_id=context.analysis_id, source="deterministic", context_truncated=False,
@@ -67,6 +71,7 @@ class ExplanationService:
             raise AIError(AIErrorCode.INVALID_RESPONSE)
         messages = build_messages(context, question)
         explanation = None
+        # Se permite una reparación de formato; su fallo final queda como error de explicación.
         for repair in range(2):
             try:
                 raw = self.provider.complete(messages)

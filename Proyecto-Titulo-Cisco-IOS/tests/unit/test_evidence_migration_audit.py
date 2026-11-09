@@ -1,3 +1,4 @@
+# Revisa las evidencias versionadas para detectar referencias incompatibles con el contrato de adquisición.
 """Auditoría transversal del contrato; no abre conexiones ni usa el router."""
 
 from typing import get_args

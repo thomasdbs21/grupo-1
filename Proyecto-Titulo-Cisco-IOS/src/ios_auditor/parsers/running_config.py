@@ -7,6 +7,7 @@ from ciscoconfparse2 import CiscoConfParse
 from ios_auditor.domain import AnalysisContext, VtySection
 
 
+# Busca la posición original de una directiva para relacionar el parser con la evidencia.
 def _line_number(lines: tuple[str, ...], target: str, start: int = 0) -> int:
     normalized_target = target.strip()
     for index in range(start, len(lines)):
@@ -15,6 +16,7 @@ def _line_number(lines: tuple[str, ...], target: str, start: int = 0) -> int:
     return 0
 
 
+# Construye el contexto de configuración a partir de la jerarquía que interpreta CiscoConfParse.
 def parse_running_config(
     *, source_path: Path, content: str, sha256: str
 ) -> AnalysisContext:

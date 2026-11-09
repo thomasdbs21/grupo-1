@@ -30,6 +30,7 @@ class UnanalyzableConfigError(AnalysisError):
     """El parser no pudo procesar la configuración."""
 
 
+# Valida contenido y codificación antes de construir el contexto de running-config.
 def load_context_from_bytes(raw: bytes, *, source_name: str):
     if b"\x00" in raw:
         raise InvalidEncodingError("El contenido parece binario y no puede analizarse.")
@@ -53,6 +54,7 @@ def load_context_from_bytes(raw: bytes, *, source_name: str):
         ) from exc
 
 
+# Lee un archivo regular y distingue errores de lectura, contenido y formato.
 def load_context(path_value: str | Path):
     path = Path(path_value)
     if not path.exists():
@@ -79,6 +81,7 @@ def load_context(path_value: str | Path):
 
 
 # Una excepción de la regla tiene estado ERROR y queda visible entre las evaluaciones.
+# Convierte un fallo inesperado de la regla en una evaluación ERROR visible.
 def _evaluate_rule(rule: Rule, context) -> RuleEvaluation:
     try:
         return rule.evaluate(context)
@@ -93,6 +96,7 @@ def _evaluate_rule(rule: Rule, context) -> RuleEvaluation:
         )
 
 
+# Carga la configuración del archivo y la entrega al mismo motor de contextos.
 def analyze_file(
     path_value: str | Path, *, registry: RuleRegistry | None = None
 ) -> AnalysisResult:
@@ -100,6 +104,7 @@ def analyze_file(
     return analyze_context(context, registry=registry)
 
 
+# Transforma los bytes de entrada en contexto antes de ejecutar el catálogo.
 def analyze_bytes(
     raw: bytes, *, source_name: str, registry: RuleRegistry | None = None
 ) -> AnalysisResult:
@@ -107,6 +112,7 @@ def analyze_bytes(
     return analyze_context(context, registry=registry)
 
 
+# Recorre las reglas habilitadas y devuelve evaluaciones y hallazgos relacionados.
 def analyze_context(context, *, registry: RuleRegistry | None = None) -> AnalysisResult:
     active_registry = registry or get_default_registry()
     evaluations = tuple(

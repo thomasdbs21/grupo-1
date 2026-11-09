@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 
+# Códigos estables que permiten mostrar errores de IA sin publicar respuestas del proveedor.
 class AIErrorCode(StrEnum):
     DISABLED = "AI_DISABLED"
     GATEWAY_UNAVAILABLE = "AI_GATEWAY_UNAVAILABLE"

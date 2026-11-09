@@ -1,3 +1,4 @@
+# Construye lotes alterados para verificar comandos, hashes, orden y UUID de ejecución.
 from __future__ import annotations
 
 import hashlib
