@@ -103,6 +103,7 @@ def _evaluation(
     )
 
 
+# Comprueba la versión SSH explícita y deja indeterminada una versión ausente.
 @dataclass(frozen=True, slots=True)
 class SshVersionRule:
     metadata: RuleMetadata
@@ -139,6 +140,7 @@ class SshVersionRule:
         )
 
 
+# Busca servicios TCP o UDP pequeños habilitados dentro del alcance del parser.
 @dataclass(frozen=True, slots=True)
 class SmallServersRule:
     metadata: RuleMetadata
@@ -168,6 +170,7 @@ class SmallServersRule:
         )
 
 
+# Reconoce una directiva con destino NTP dentro de las variantes soportadas.
 def _is_valid_ntp_server(tokens: tuple[str, ...]) -> bool:
     if tokens[:2] != ("ntp", "server"):
         return False
@@ -181,6 +184,7 @@ def _is_valid_ntp_server(tokens: tuple[str, ...]) -> bool:
     return arguments[0] not in _NTP_OPTION_KEYWORDS
 
 
+# Comprueba la existencia de una directiva ntp server con destino reconocido.
 @dataclass(frozen=True, slots=True)
 class NtpServerRule:
     metadata: RuleMetadata
@@ -222,6 +226,7 @@ def _consume_pair(tokens: tuple[str, ...], index: int) -> int | None:
     return index + 2 if index + 1 < len(tokens) else None
 
 
+# Valida las opciones soportadas de un destino remoto de logging host.
 def _modern_logging_destination(tokens: tuple[str, ...]) -> bool | None:
     if tokens[:2] != ("logging", "host"):
         return None
@@ -261,6 +266,7 @@ def _modern_logging_destination(tokens: tuple[str, ...]) -> bool | None:
     return True
 
 
+# Separa un destino remoto, una opción local y una forma ambigua de logging.
 def _classify_logging_line(tokens: tuple[str, ...]) -> str:
     modern = _modern_logging_destination(tokens)
     if modern is not None:
@@ -276,6 +282,7 @@ def _classify_logging_line(tokens: tuple[str, ...]) -> str:
     return "ambiguous"
 
 
+# Distingue destinos remotos reconocidos de opciones locales y formas ambiguas.
 @dataclass(frozen=True, slots=True)
 class RemoteSyslogServerRule:
     metadata: RuleMetadata

@@ -7,6 +7,7 @@ from ios_auditor.domain import AnalysisContext, RuleEvaluation, RuleMetadata, Ru
 from ios_auditor.rules.evaluation2 import _blocks, _result
 
 
+# Resuelve habilitación, negación o incertidumbre de una directiva global explícita.
 @dataclass(frozen=True, slots=True)
 class ExplicitDirectiveRule:
     metadata: RuleMetadata
@@ -42,16 +43,19 @@ class ExplicitDirectiveRule:
         return _result(self.metadata, context, status, message, line)
 
 
+# Reconoce los alias ip finger y service finger dentro de la misma política.
 class FingerRule(ExplicitDirectiveRule):
     expected_id = "IOS-SRV-003"
     commands = (("ip", "finger"), ("service", "finger"))
 
 
+# Revisa la habilitación explícita del servicio PAD de X.25.
 class PadRule(ExplicitDirectiveRule):
     expected_id = "IOS-SRV-004"
     commands = (("service", "pad"),)
 
 
+# Revisa la directiva global explícita de source routing IPv4.
 class SourceRouteRule(ExplicitDirectiveRule):
     expected_id = "IOS-IP-002"
     commands = (("ip", "source-route"),)

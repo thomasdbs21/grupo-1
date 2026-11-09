@@ -1,3 +1,4 @@
+# Combina evidencias locales para probar parsing, reglas y contratos del análisis integral.
 from __future__ import annotations
 
 import hashlib

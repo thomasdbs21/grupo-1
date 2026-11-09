@@ -19,12 +19,14 @@ STATUS_COLORS = {'PASS': 'green', 'FAIL': 'red', 'NOT_APPLICABLE': 'gray',
                  'NOT_EVALUATED': 'orange', 'ERROR': 'red'}
 SEVERITY_COLORS = {'CRITICAL': 'red', 'HIGH': 'red', 'MEDIUM': 'orange', 'LOW': 'blue', 'INFO': 'gray'}
 
+# Limpia el análisis y su estado visual antes de comenzar otra revisión.
 def reset_analysis():
     for key in list(st.session_state):
         if key in ('analysis', 'explanation', 'chat', '_analysis_received_at', '_analysis_origin',
                    '_ai_error', '_ai_last_success', '_form_error', 'analysis_tabs') or key.startswith('filter_'):
             del st.session_state[key]
 
+# Consulta los servicios mediante el backend y conserva el momento de la comprobación.
 def health_snapshot(client):
     refresh = st.session_state.pop('_refresh_health', False)
     if refresh or time.monotonic() - st.session_state.get('_health_checked', 0) > 60:
@@ -41,6 +43,7 @@ def badge(label, value, tone):
                 f'<span><strong>{escape(label)}</strong><br><span class="na-service-detail">{escape(value)}</span></span></div>',
                 unsafe_allow_html=True)
 
+# Muestra los fragmentos sanitizados junto a la referencia del análisis.
 def evidence_view(items, reference):
     for evidence in items:
         metadata = [f"Fuente: {safe_text(evidence['source'])}" if evidence.get('source') else '',
@@ -52,6 +55,7 @@ def evidence_view(items, reference):
             st.code(evidence['content'], language='text', wrap_lines=True)
     st.caption('Referencia: ' + reference)
 
+# Presenta resumen, impacto y revisión manual de la respuesta explicativa.
 def show_explanation(result):
     explanation = result['explanation']
     st.write(explanation['summary'])
@@ -68,6 +72,7 @@ def show_explanation(result):
     if result.get('context_truncated'):
         st.warning('La explicación utiliza un contexto acotado; no incluye todos los fragmentos del análisis.')
 
+# Gestiona la espera y el error de explicación sin sustituir el resultado determinista.
 def ask_ai(client, reference, question=None):
     try:
         with st.spinner('Solicitando explicación de los Findings existentes…'):
@@ -82,6 +87,7 @@ def ask_ai(client, reference, question=None):
         st.session_state['_health_checked'] = 0
         return None
 
+# Recoge el origen de análisis y presenta el estado de los servicios.
 def sidebar(client):
     result = None
     with st.sidebar:
@@ -91,12 +97,14 @@ def sidebar(client):
         st.markdown('**ANÁLISIS**')
         mode = st.radio('Origen de análisis', ['Analizar archivo', 'Analizar dispositivo'],
                         format_func=lambda x: 'Archivo' if x == 'Analizar archivo' else 'Dispositivo')
+        # El origen elegido determina el formulario y el endpoint que se consultará.
         if mode == 'Analizar archivo':
             with st.form('file-analysis', clear_on_submit=True):
                 uploaded = st.file_uploader('Configuración Cisco IOS/IOS XE', type=['cfg', 'conf', 'txt'])
                 st.caption('UTF-8 · hasta 2 MiB · sin modificar el archivo original')
                 submit = st.form_submit_button('Analizar archivo', type='primary', width='stretch')
             if submit:
+                # Una entrega vacía se informa en la UI antes de intentar el envío al backend.
                 if uploaded is None:
                     st.session_state['_form_error'] = 'Selecciona un archivo de configuración.'
                 else:
@@ -123,6 +131,7 @@ def sidebar(client):
                 finally:
                     st.session_state['_clear_device_credentials'] = True
                     host = username = password = ''
+        # Solo una respuesta de análisis correcta sustituye el resultado de la sesión.
         if result is not None:
             reset_analysis()
             st.session_state.update(analysis=result, explanation=None, chat=[],
@@ -145,6 +154,7 @@ def sidebar(client):
         st.caption('Google AI Studio · configuración del baseline. El health no expone el modelo activo.')
         st.caption('Tema claro/oscuro: menú ⋮ → Light / Dark.')
 
+# Streamlit vuelve a ejecutar esta función al interactuar; session_state conserva el análisis entre ejecuciones.
 def main():
     st.set_page_config(page_title='NetAudit · Auditoría de redes', layout='wide', page_icon=':material/hub:')
     dark = st.context.theme.type == 'dark'
@@ -194,6 +204,7 @@ def main():
                         st.write('Recopila las evidencias autorizadas mediante una sesión SSH de solo lectura y ejecuta el análisis integral.')
             st.info('La explicación y la conversación con IA son opcionales. El análisis determinista funciona de forma independiente.')
             return
+        # La vista trabaja con una proyección sanitizada del resultado recibido.
         analysis = safe_result(raw)
         reference = raw.get('analysis_id') or raw.get('execution_id')
         with st.container(horizontal=True):
@@ -205,6 +216,7 @@ def main():
         if st.session_state.get('_ai_error') or (health_ai.get('enabled') and not health_ai.get('gateway_reachable')):
             st.warning(AI_UNAVAILABLE)
         tabs = st.tabs(['Resumen', 'Hallazgos', 'Asistente IA', 'Evidencia'], key='analysis_tabs')
+        # Los indicadores se calculan sobre el análisis completo.
         with tabs[0]:
             st.subheader('Resultados deterministas')
             with st.container(horizontal=True, gap='small'):
@@ -235,6 +247,7 @@ def main():
                 st.download_button('Descargar resultado JSON', json_export(raw), 'netaudit_resultado.json', 'application/json', on_click='ignore')
                 st.download_button('Descargar Findings CSV', csv_export(raw), 'netaudit_findings.csv', 'text/csv', on_click='ignore')
             st.caption('Incluyen todos los Findings, independientemente de los filtros. Evidencia redactada; sin credenciales de conexión ni salida cruda.')
+        # Los filtros afectan a la selección visible de hallazgos.
         with tabs[1]:
             st.subheader('Hallazgos')
             with st.container(horizontal=True):
@@ -257,6 +270,7 @@ def main():
                     st.write('**Recomendación:**', finding['recommendation'])
                     with st.expander('Ver evidencia técnica · ' + finding['rule_id']):
                         evidence_view(finding['evidence'], reference)
+        # La explicación y las preguntas se gestionan después de disponer de resultados deterministas.
         with tabs[2]:
             st.subheader('Explicación asistida por IA')
             st.info('La IA explica hallazgos previamente determinados por el motor. No modifica configuraciones, estados, severidades ni evidencia.')
@@ -276,6 +290,7 @@ def main():
                 with st.chat_message(message['role']):
                     st.write(message['content'])
             question = st.chat_input('Pregunta sobre este análisis', max_chars=500)
+            # La pregunta se acota y sanitiza antes de enviarla como parte de una solicitud explicativa.
             if question:
                 question = safe_text(question)[:500]
                 response = ask_ai(client, reference, question)
@@ -285,6 +300,7 @@ def main():
                     st.session_state.setdefault('chat', []).extend([
                         {'role': 'user', 'content': question}, {'role': 'assistant', 'content': safe_text(text)}])
                 st.rerun()
+        # La evidencia se presenta mediante metadatos y fragmentos públicos.
         with tabs[3]:
             st.subheader('Evidencia técnica')
             st.caption('Solo fragmentos sanitizados y metadatos publicados por el backend. Las salidas crudas no están disponibles en esta vista.')

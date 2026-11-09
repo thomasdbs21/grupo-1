@@ -12,6 +12,7 @@ from ios_auditor.domain.operational_sources import (
 )
 
 
+# Escala técnica utilizada por los metadatos y conservada en los hallazgos.
 class Severity(StrEnum):
     INFO = "INFO"
     LOW = "LOW"
@@ -20,6 +21,7 @@ class Severity(StrEnum):
     CRITICAL = "CRITICAL"
 
 
+# Estados de evaluación que distinguen cumplimiento, incertidumbre y error.
 class RuleStatus(StrEnum):
     PASS = "PASS"
     FAIL = "FAIL"
@@ -28,6 +30,7 @@ class RuleStatus(StrEnum):
     ERROR = "ERROR"
 
 
+# Estados físicos y administrativos reconocidos en el brief de interfaces.
 class InterfaceStatus(StrEnum):
     UP = "up"
     DOWN = "down"
@@ -35,11 +38,13 @@ class InterfaceStatus(StrEnum):
     DELETED = "deleted"
 
 
+# Estados de protocolo de línea reconocidos por el parser operacional.
 class ProtocolStatus(StrEnum):
     UP = "up"
     DOWN = "down"
 
 
+# Definición inmutable de identidad, severidad, fuentes y recomendación de una regla.
 @dataclass(frozen=True, slots=True)
 class RuleMetadata:
     id: str
@@ -58,6 +63,7 @@ class RuleMetadata:
     enabled: bool
 
 
+# Referencia a la fuente, su hash y el fragmento que respalda una evaluación.
 @dataclass(frozen=True, slots=True)
 class Evidence:
     source: str
@@ -66,6 +72,7 @@ class Evidence:
     content: str
 
 
+# Transportes de una sección VTY junto con sus números de línea.
 @dataclass(frozen=True, slots=True)
 class VtySection:
     header: str
@@ -73,6 +80,7 @@ class VtySection:
     transport_inputs: tuple[tuple[int, tuple[str, ...]], ...]
 
 
+# Datos de configuración que reciben las reglas deterministas.
 @dataclass(frozen=True, slots=True)
 class AnalysisContext:
     source_path: str
@@ -82,6 +90,7 @@ class AnalysisContext:
     vty_sections: tuple[VtySection, ...]
 
 
+# Campos estructurados que se extrajeron de show version.
 @dataclass(frozen=True, slots=True)
 class ShowVersionData:
     ios_version: str
@@ -90,6 +99,7 @@ class ShowVersionData:
     uptime: str | None
 
 
+# Una fila normalizada de la tabla breve de interfaces.
 @dataclass(frozen=True, slots=True)
 class InterfaceBriefEntry:
     name: str
@@ -99,11 +109,13 @@ class InterfaceBriefEntry:
     protocol: ProtocolStatus
 
 
+# Conjunto de interfaces interpretadas a partir del brief.
 @dataclass(frozen=True, slots=True)
 class ShowIpInterfaceBriefData:
     interfaces: tuple[InterfaceBriefEntry, ...]
 
 
+# Disponibilidad y versión del servicio SSH observadas en la salida de consulta.
 @dataclass(frozen=True, slots=True)
 class ShowIpSshData:
     enabled: bool
@@ -119,6 +131,7 @@ ShowCommandData: TypeAlias = (
 )
 
 
+# Asocia un comando interpretado con su ejecución, fecha y evidencia original.
 @dataclass(frozen=True, slots=True)
 class OperationalContext:
     execution_id: UUID
@@ -129,6 +142,7 @@ class OperationalContext:
     data: ShowCommandData
 
 
+# Combina configuración y consultas para reglas que necesitan correlacionar fuentes.
 @dataclass(frozen=True, slots=True)
 class MultiSourceContext:
     configuration: AnalysisContext
@@ -149,6 +163,7 @@ class MultiSourceContext:
 
 
 # Una evaluación conserva el estado de la regla, aun cuando no genera un hallazgo.
+# Decisión de una regla con estado, severidad, evidencia y recomendación.
 @dataclass(frozen=True, slots=True)
 class RuleEvaluation:
     rule_id: str
@@ -160,6 +175,7 @@ class RuleEvaluation:
     evidence: tuple[Evidence, ...] = ()
 
 
+# Hallazgo que conserva los datos de una evaluación FAIL.
 @dataclass(frozen=True, slots=True)
 class Finding:
     rule_id: str
@@ -170,6 +186,7 @@ class Finding:
     evidence: tuple[Evidence, ...]
 
 
+# Resultado inmutable del análisis y sus colecciones de evaluaciones y hallazgos.
 @dataclass(frozen=True, slots=True)
 class AnalysisResult:
     source_path: str

@@ -1,3 +1,4 @@
+# Comprueba las condiciones de SSH, pequeños servidores, NTP y Syslog con configuraciones acotadas.
 from __future__ import annotations
 
 import pytest

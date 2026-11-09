@@ -1,3 +1,4 @@
+# Evalúa límites y formas ambiguas de consola, ACL, OSPF, SNMP y hostname.
 """Contratos conservadores, evidencia sintética y aislamiento de los cinco controles."""
 
 from dataclasses import FrozenInstanceError, asdict, replace

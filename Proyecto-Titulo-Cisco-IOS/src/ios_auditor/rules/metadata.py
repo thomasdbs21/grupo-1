@@ -34,6 +34,7 @@ class MetadataError(ValueError):
     """Metadatos de reglas ausentes, inválidos o inconsistentes."""
 
 
+# Rechaza un campo obligatorio ausente o vacío en los metadatos de una regla.
 def _required_text(data: dict[str, Any], field: str, filename: str) -> str:
     value = data[field]
     if not isinstance(value, str) or not value.strip():
@@ -41,6 +42,7 @@ def _required_text(data: dict[str, Any], field: str, filename: str) -> str:
     return value.strip()
 
 
+# Valida la colección textual y la convierte al contrato inmutable del catálogo.
 def _string_tuple(data: dict[str, Any], field: str, filename: str) -> tuple[str, ...]:
     value = data[field]
     if not isinstance(value, list) or any(
@@ -50,6 +52,7 @@ def _string_tuple(data: dict[str, Any], field: str, filename: str) -> tuple[str,
     return tuple(item.strip() for item in value)
 
 
+# Construye RuleMetadata solamente después de validar cada campo del YAML.
 def _parse_metadata(data: Any, filename: str) -> RuleMetadata:
     if not isinstance(data, dict):
         raise MetadataError(f"{filename}: el YAML debe contener un mapa.")
@@ -90,6 +93,7 @@ def _parse_metadata(data: Any, filename: str) -> RuleMetadata:
     )
 
 
+# Carga los archivos oficiales con el parser YAML seguro y valida su estructura.
 def load_metadata_files(
     directory: Path, expected_filenames: Iterable[str]
 ) -> tuple[RuleMetadata, ...]:

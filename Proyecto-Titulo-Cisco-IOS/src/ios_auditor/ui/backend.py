@@ -7,6 +7,7 @@ from urllib.parse import urlsplit
 import httpx
 
 
+# Código controlado que la interfaz utiliza ante un fallo de comunicación con FastAPI.
 class BackendError(Exception):
     def __init__(self, code: str = "BACKEND_UNAVAILABLE"):
         self.code = code
@@ -23,6 +24,7 @@ class BackendClient:
             raise BackendError("INVALID_API_URL")
         self.transport = transport
 
+    # Realiza HTTP desde el servidor Streamlit y devuelve datos o un código de error controlado.
     def _request(self, method: str, path: str, **kwargs: Any) -> dict:
         try:
             with httpx.Client(timeout=120, transport=self.transport, trust_env=False,
@@ -39,9 +41,11 @@ class BackendClient:
         except (httpx.HTTPError, ValueError, TypeError):
             raise BackendError() from None
 
+    # Sube el archivo a FastAPI usando el contrato multipart del endpoint.
     def analyze_file(self, filename: str, content: bytes) -> dict:
         return self._request("POST", "/api/v1/analyses", files={"file": (filename, content, "application/octet-stream")})
 
+    # Envía las credenciales de sesión al backend y limpia el diccionario transitorio.
     def analyze_device(self, host: str, port: int, username: str, password: str) -> dict:
         # Las credenciales son transitorias y no se incorporan al estado de análisis de la UI.
         payload = dict(host=host, port=port, username=username, password=password)
@@ -50,6 +54,7 @@ class BackendClient:
         finally:
             payload.clear()
 
+    # Valida la referencia y solicita explicación o respuesta a una pregunta sobre ese análisis.
     def explain(self, analysis_id: str, question: str | None = None) -> dict:
         from uuid import UUID
         try:

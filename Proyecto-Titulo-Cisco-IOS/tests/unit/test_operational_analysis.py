@@ -1,3 +1,4 @@
+# Comprueba que la evidencia recolectada se interprete con el parser de su comando.
 from __future__ import annotations
 
 import hashlib

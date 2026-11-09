@@ -70,10 +70,12 @@ class RegistryError(ValueError):
     """El registro de reglas es inválido o inconsistente."""
 
 
+# Asocia IDs únicos a implementaciones y mantiene su orden de ejecución.
 class RuleRegistry:
     def __init__(self) -> None:
         self._rules: dict[str, Rule] = {}
 
+    # Vincula una clase a su ID YAML y rechaza identificadores duplicados o incompatibles.
     def register(self, rule_type: type, metadata: RuleMetadata) -> None:
         expected_id = getattr(rule_type, "expected_id", None)
         if expected_id != metadata.id:
@@ -91,6 +93,7 @@ class RuleRegistry:
         except KeyError as exc:
             raise RegistryError(f"Regla no registrada: {rule_id}") from exc
 
+    # Conserva el orden de registro y permite seleccionar solo las reglas habilitadas.
     def list_rules(self, *, enabled_only: bool = False) -> tuple[Rule, ...]:
         rules = tuple(self._rules.values())
         if enabled_only:
@@ -98,6 +101,7 @@ class RuleRegistry:
         return rules
 
 
+# Comprueba que cada metadato tenga una implementación y que cada implementación tenga metadatos.
 def build_registry(
     metadata_items: Iterable[RuleMetadata],
     rule_types: Iterable[type] = RULE_TYPES,
@@ -130,6 +134,7 @@ def load_registry_from_directory(
     return build_registry(metadata)
 
 
+# Carga y reutiliza el registro oficial de reglas del paquete.
 @lru_cache(maxsize=1)
 def get_default_registry() -> RuleRegistry:
     resource_directory = files("ios_auditor.resources.rules")

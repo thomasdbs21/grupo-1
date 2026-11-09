@@ -1,3 +1,4 @@
+# Sustituye la adquisición SSH por datos de prueba para verificar errores y serialización integral.
 from __future__ import annotations
 
 import json

@@ -1,3 +1,4 @@
+# Audita los archivos de ejemplo y comprueba el JSON que produce el ejecutable por consola.
 from __future__ import annotations
 
 import json

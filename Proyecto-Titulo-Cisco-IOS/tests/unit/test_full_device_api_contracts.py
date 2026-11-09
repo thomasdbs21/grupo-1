@@ -1,3 +1,4 @@
+# Verifica la proyección pública y la exclusión de datos de conexión y salidas crudas.
 from __future__ import annotations
 
 import hashlib

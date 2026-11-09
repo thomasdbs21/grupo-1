@@ -49,6 +49,7 @@ def build_operational_show(
         if command == "show ntp associations":
             values = []
             for row in entries:
+                # El alcance NTP se interpreta en octal, como lo representa la salida del comando.
                 stratum, reach = int(row["STRATUM"]), int(row["REACH"], 8)
                 if not 0 <= stratum <= 16 or not 0 <= reach <= 255:
                     return ShowNtpAssociationsData()

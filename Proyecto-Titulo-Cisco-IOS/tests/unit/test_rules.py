@@ -1,3 +1,4 @@
+# Verifica las decisiones de las reglas piloto con sus configuraciones de entrada.
 from __future__ import annotations
 
 from ios_auditor.domain import RuleStatus

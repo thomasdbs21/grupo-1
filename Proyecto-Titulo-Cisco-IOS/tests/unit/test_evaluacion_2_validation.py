@@ -1,3 +1,4 @@
+# Compara fixtures con expectativas declaradas e impide que las pruebas abran conexiones reales.
 """Campaña local y wrapper manual comprobados sin acceso a la red."""
 
 from __future__ import annotations

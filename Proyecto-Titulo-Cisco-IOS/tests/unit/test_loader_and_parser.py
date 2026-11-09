@@ -1,3 +1,4 @@
+# Verifica lectura, codificación y correspondencia entre las líneas IOS y el contexto del parser.
 from __future__ import annotations
 
 import hashlib

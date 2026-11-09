@@ -1,3 +1,4 @@
+# Contrasta estado físico y protocolo de línea con los resultados de la regla operacional.
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError

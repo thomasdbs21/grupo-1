@@ -14,6 +14,7 @@ from ios_auditor.services import (
 
 
 # Las salidas proceden de fixtures locales. El análisis usa el mismo motor que el lote adquirido por SSH.
+# Construye el lote con fixtures locales y lo entrega al analizador integral.
 def analyze_synthetic_scenario(project: Path, filename: str) -> FullDeviceAnalysisResult:
     key = filename.removeprefix("escenario_").removesuffix(".cfg")
     root = project / "samples" / "evaluacion_2"

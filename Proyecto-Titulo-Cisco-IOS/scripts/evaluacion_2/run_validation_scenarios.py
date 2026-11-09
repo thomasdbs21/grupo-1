@@ -18,6 +18,7 @@ from ios_auditor.services.analyzer import analyze_file
 from offline_integral import analyze_synthetic_scenario
 
 
+# Archivo sintético y decisiones esperadas que sirven de referencia independiente.
 @dataclass(frozen=True)
 class Scenario:
     key: str
@@ -87,6 +88,7 @@ SCENARIOS = (
 )
 
 
+# Pareja de estado esperado y obtenido para un identificador de regla.
 @dataclass(frozen=True)
 class Comparison:
     rule_id: str
@@ -98,6 +100,7 @@ class Comparison:
         return self.expected is not None and self.expected == self.obtained
 
 
+# Comparaciones y comprobaciones de orden y correspondencia de Findings.
 @dataclass(frozen=True)
 class ScenarioResult:
     scenario: Scenario
@@ -197,6 +200,7 @@ def calculate_summary(results: tuple[ScenarioResult, ...]) -> dict[str, int]:
     }
 
 
+# Presenta cada comparación entre el resultado observado y su expectativa declarada.
 def render_scenario(result: ScenarioResult) -> str:
     lines = ["=" * 76, result.scenario.title, "=" * 76,
              f"{'Regla':<16}{'Esperado':<20}{'Obtenido':<20}Verificación"]
@@ -213,6 +217,7 @@ def render_scenario(result: ScenarioResult) -> str:
     return "\n".join(lines)
 
 
+# Resume las comparaciones verificadas, diferencias y errores de contrato de la campaña.
 def render_summary(results: tuple[ScenarioResult, ...]) -> str:
     summary = calculate_summary(results)
     return "\n".join((
@@ -237,6 +242,7 @@ def render_summary(results: tuple[ScenarioResult, ...]) -> str:
     ))
 
 
+# El selector de consola decide qué escenarios locales comparar y cómo presentar su resumen.
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scenario", choices=[item.key for item in SCENARIOS])

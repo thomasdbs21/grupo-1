@@ -1,3 +1,4 @@
+# Simula respuestas HTTP y texto del modelo para comprobar reintentos, contratos e identificadores.
 import json
 from uuid import uuid4
 from dataclasses import replace

@@ -1,3 +1,4 @@
+# Verifica que el análisis por archivo mantenga sus datos y resultados dentro de los servicios en memoria.
 from __future__ import annotations
 
 import hashlib

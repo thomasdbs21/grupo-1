@@ -9,6 +9,7 @@ from ios_auditor.services.analyzer import AnalysisError, analyze_file
 from ios_auditor.services.serialization import to_primitive
 
 
+# Define los argumentos del ejecutable de análisis por archivo.
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ios_auditor",
@@ -25,6 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# La consola convierte errores de análisis en una salida y código de terminación controlados.
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 

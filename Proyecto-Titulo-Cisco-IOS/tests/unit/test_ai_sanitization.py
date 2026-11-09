@@ -1,3 +1,4 @@
+# Inyecta datos sensibles ficticios para comprobar qué texto puede llegar al contexto explicativo.
 from dataclasses import replace
 from uuid import uuid4
 import json

@@ -15,6 +15,7 @@ class AIContextRepository:
         self._items: OrderedDict[UUID, AIContext] = OrderedDict()
         self._lock = RLock()
 
+    # Actualiza el snapshot bajo bloqueo y expulsa el más antiguo cuando se supera el límite.
     def put(self, context: AIContext) -> None:
         with self._lock:
             self._items[context.analysis_id] = context
@@ -22,6 +23,7 @@ class AIContextRepository:
             while len(self._items) > self._max_items:
                 self._items.popitem(last=False)
 
+    # Busca por UUID el contexto explicativo almacenado en memoria.
     def get(self, analysis_id: UUID) -> AIContext | None:
         with self._lock:
             return self._items.get(analysis_id)

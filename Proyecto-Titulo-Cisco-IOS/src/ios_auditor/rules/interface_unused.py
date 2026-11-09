@@ -23,6 +23,7 @@ def _kind(name: str) -> str:
     return "unknown"
 
 
+# Exige declaración de desuso y correlación de estado antes de generar un hallazgo.
 def unused_interface_status(context: MultiSourceContext) -> RuleStatus:
     source = next((item for item in context.operational
                    if item.command == "show interfaces" and isinstance(item.data, ShowInterfacesData)), None)

@@ -39,6 +39,7 @@ _IPV4 = re.compile(r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])")
 _IPV6 = re.compile(r"(?<![\w])(?:[a-fA-F0-9]{0,4}:){2,}[a-fA-F0-9:]+(?:%[\w]+)?")
 
 
+# Distingue direcciones reconocidas para aplicar la política de ocultación del módulo.
 def _redact_ip(match: re.Match) -> str:
     try:
         ipaddress.ip_address(match.group())
@@ -68,5 +69,6 @@ def sanitize_text(value: str) -> str:
 
 
 # Primero se ocultan valores reconocibles; el límite se aplica al texto que ya pasó por ese filtro.
+# Devuelve texto sanitizado y recortado al límite solicitado.
 def bounded_text(value: str, limit: int) -> str:
     return sanitize_text(value)[:limit]

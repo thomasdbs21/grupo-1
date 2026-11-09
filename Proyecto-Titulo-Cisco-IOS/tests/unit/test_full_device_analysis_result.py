@@ -1,3 +1,4 @@
+# Altera colecciones y referencias para verificar la consistencia del resultado integral inmutable.
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError

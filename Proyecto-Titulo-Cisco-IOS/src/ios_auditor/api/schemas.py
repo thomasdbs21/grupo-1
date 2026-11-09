@@ -12,6 +12,7 @@ from ios_auditor.domain import RuleStatus, Severity
 from ios_auditor.services.evidence_batch import CANONICAL_EVIDENCE_COMMANDS
 
 
+# Base de los contratos HTTP con validación de campos de entrada y salida.
 class ApiModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -27,6 +28,7 @@ MAX_DEVICE_PASSWORD_LENGTH = 1024
 
 
 # El contrato de entrada delimita qué información puede entregar el cliente para la sesión de lectura.
+# Contrato de la sesión de adquisición con destino y credenciales transitorias.
 class DeviceAnalysisRequest(ApiModel):
     host: IPv4Address
     port: Annotated[int, Field(strict=True, ge=1, le=65535)]
@@ -39,6 +41,7 @@ class DeviceAnalysisRequest(ApiModel):
         Field(min_length=1, max_length=MAX_DEVICE_PASSWORD_LENGTH),
     ]
 
+    # Restringe el destino del análisis de dispositivo al contrato IPv4 privado de la API.
     @field_validator("host")
     @classmethod
     def validate_private_ipv4(cls, value: IPv4Address) -> IPv4Address:
@@ -62,6 +65,7 @@ class DeviceAnalysisRequest(ApiModel):
             )
         return value
 
+    # Valida el formato del usuario antes de delegar la conexión al collector.
     @field_validator("username")
     @classmethod
     def validate_username(cls, value: str) -> str:
@@ -70,21 +74,25 @@ class DeviceAnalysisRequest(ApiModel):
         return value
 
 
+# Código y mensaje público de una solicitud que no pudo completarse.
 class ErrorDetail(ApiModel):
     code: str
     message: str
 
 
+# Envoltorio común de los errores de la API.
 class ErrorResponse(ApiModel):
     error: ErrorDetail
 
 
+# Disponibilidad y versión del servicio consultadas por los clientes.
 class HealthResponse(ApiModel):
     status: Literal["ok"]
     service: str
     version: str
 
 
+# Metadatos del catálogo que el cliente puede consultar sin ejecutar reglas.
 class RuleSummaryResponse(ApiModel):
     id: str
     version: str
@@ -95,6 +103,7 @@ class RuleSummaryResponse(ApiModel):
     required_sources: list[str]
 
 
+# Fragmento y referencias de evidencia que acompañan al resultado público.
 class EvidenceResponse(ApiModel):
     source: str
     sha256: str
@@ -102,6 +111,7 @@ class EvidenceResponse(ApiModel):
     content: str
 
 
+# Representación HTTP de un resultado individual de regla.
 class RuleEvaluationResponse(ApiModel):
     rule_id: str
     rule_name: str
@@ -112,6 +122,7 @@ class RuleEvaluationResponse(ApiModel):
     evidence: list[EvidenceResponse]
 
 
+# Representación HTTP de un hallazgo derivado de FAIL.
 class FindingResponse(ApiModel):
     rule_id: str
     rule_name: str
@@ -133,12 +144,14 @@ CanonicalCommand = Literal[
 ]
 
 
+# Metadatos públicos de la consulta, conservando fuera las salidas crudas.
 class CommandEvidenceMetadataResponse(ApiModel):
     command: CanonicalCommand
     collected_at: datetime
     raw_output_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 
 
+# Respuesta agregada del análisis de configuración y fuentes operacionales.
 class FullDeviceAnalysisResponse(ApiModel):
     execution_id: UUID
     evidences: Annotated[
@@ -154,6 +167,7 @@ class FullDeviceAnalysisResponse(ApiModel):
     finding_severity_summary: dict[Severity, Annotated[int, Field(ge=0)]]
 
 
+# Resultado almacenado y contadores que consume la interfaz.
 class AnalysisResponse(ApiModel):
     analysis_id: str
     source_name: str
@@ -168,5 +182,6 @@ class AnalysisResponse(ApiModel):
     finding_severity_summary: dict[str, int]
 
 
+# Respuesta de creación del análisis por archivo.
 class AnalysisCreatedResponse(AnalysisResponse):
     pass

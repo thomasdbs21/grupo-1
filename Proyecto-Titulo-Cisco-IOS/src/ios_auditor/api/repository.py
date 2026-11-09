@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 from ios_auditor.domain import AnalysisResult
 
 
+# Vincula un resultado determinista con UUID, nombre de origen y fecha de creación.
 @dataclass(frozen=True, slots=True)
 class StoredAnalysis:
     analysis_id: UUID
@@ -28,6 +29,7 @@ class InMemoryAnalysisRepository:
         self._items: OrderedDict[UUID, StoredAnalysis] = OrderedDict()
         self._lock = RLock()
 
+    # Asigna UUID y fecha UTC al resultado y limita la cantidad de análisis retenidos.
     def create(self, *, source_name: str, result: AnalysisResult) -> StoredAnalysis:
         stored = StoredAnalysis(
             analysis_id=uuid4(),
@@ -42,10 +44,12 @@ class InMemoryAnalysisRepository:
                 self._items.popitem(last=False)
         return stored
 
+    # Devuelve el análisis guardado o None si ya no está en memoria.
     def get(self, analysis_id: UUID) -> StoredAnalysis | None:
         with self._lock:
             return self._items.get(analysis_id)
 
+    # Obtiene una vista inmutable de los identificadores bajo el bloqueo del repositorio.
     def list_ids(self) -> tuple[UUID, ...]:
         with self._lock:
             return tuple(self._items)
