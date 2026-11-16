@@ -1,12 +1,33 @@
 # Fase 3 de NetAudit
 
-| Hito comunicado | Material | Estado al 8 de noviembre |
+Revisión de cierre al 15 de noviembre de 2026. El prototipo está integrado; **la entrega académica aún requiere resolver video, transcripción y documentos de sus respectivos autores**. [Revisión detallada y tabla de tramos](Grupales/Revision_Entrega_Fase3.md).
+
+## Material grupal
+
+| Entregable | Ubicación | Estado real |
 |---|---|---|
-| 10 de noviembre · avance técnico | [Ficha del avance](Avances-Tecnicos/avance-10-noviembre.md) | Código integrado y pruebas offline verificadas. Exposición por realizar. |
-| 17 de noviembre · video y documentos | [Guion del equipo](Grupales/guion-video.md) y [documentos individuales](Individuales/) | Cuatro diarios disponibles. Axl debe revisar su redacción; Thomas conserva su archivo previo; Maikol y Emilio tienen preguntas personalizadas por completar. Cuatro autoevaluaciones en borrador. |
-| 24 de noviembre · ensayo | [Preparación de la presentación](Presentacion/README.md) | Ensayar diez minutos y registrar duración real. |
-| 1 de diciembre · defensa | Diez minutos de exposición, diez de preguntas y cinco de deliberación | Programada. |
+| Informe grupal 3.3 | [Cierre técnico](Grupales/3.3_NetAudit_Informe_Cierre_Fase3.docx) | Preparado y revisado documentalmente; registra límites y pendientes académicos. |
+| Presentación final | [PPTX](Presentacion/NetAudit_Defensa_Final_Comision_2026.pptx) · [PDF](Presentacion/NetAudit_Defensa_Final_Comision_2026.pdf) | Versión final existente de once diapositivas, conservada sin modificar. |
+| Video grupal | [Grabación en Drive](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view) | 12:06,77; excede diez minutos. No consta excepción docente. MP4 fuera de Git por tamaño. |
+| Tabla de segmentos | [Tramos observados](Grupales/Revision_Entrega_Fase3.md#tramos-observados) | Aproximados al segundo, por confirmar mediante escucha. |
+| Transcripción VTT | [Estado y bloqueo](Grupales/Revision_Entrega_Fase3.md#transcripción) | Borrador automático privado con errores; no existe todavía un VTT literal aprobado. |
+| PDF específico para el video | [PDF con tabla de tramos](Grupales/3.2_Presentacion_Grupo1.pdf) | Tabla de tramos y once diapositivas existentes; soporte de revisión, sujeto a resolver los requisitos del video. PDF de defensa intacto. |
 
-Las cuatro [referencias oficiales y complementarias](Referencias/) se conservan byte por byte. La pauta 3.2 incluye un sexto indicador de inglés y una referencia a 20 minutos. La guía complementaria de Redes considera el inglés opcional, cinco indicadores y un video grupal de 10 minutos. La guía 3.3 ubica los 20 minutos como máximo incluyendo preguntas. Para este ensayo usamos la instrucción específica de diez minutos de exposición. El tratamiento del sexto indicador y su ponderación en la entrega individual requieren confirmación docente. Mantenerlo sin marcar hasta resolverlo.
+## Documentos individuales
 
-El código, las pruebas y las configuraciones sintéticas están en el [proyecto técnico](../../Proyecto-Titulo-Cisco-IOS/). Los documentos individuales que contienen experiencias personales requieren revisión de su autor antes de entregar en AVA.
+| Integrante | Diario 3.1 | Autoevaluación 3.2 | Estado |
+|---|---|---|---|
+| Axl Urrutia | [Diario](Individuales/Axl-Urrutia/3.1_APT122_DiarioReflexionFase3_Axl_Urrutia.docx) | [Autoevaluación](Individuales/Axl-Urrutia/3.2_APT122_AutoevaluacionFase3_Axl_Urrutia.docx) | Diario existente conservado, con ajuste de paginación; autoevaluación propia revisada con video y publicación autorizada por Axl. |
+| Thomas Henriquez | [Diario](Individuales/Thomas-Henriquez/3.1_APT122_DiarioReflexionFase3%20thomas%20henriquez.docx) | [Autoevaluación](Individuales/Thomas-Henriquez/3.2_APT122_AutoevaluacionFase3_Thomas_Henriquez.docx) | Archivos existentes intactos; la autoevaluación corresponde a Thomas y no se elabora en esta actualización. |
+| Maikol Mamani | [Diario](Individuales/Maikol-Mamani/3.1_APT122_DiarioReflexionFase3_Maikol_Mamani.docx) | [Autoevaluación](Individuales/Maikol-Mamani/3.2_APT122_AutoevaluacionFase3_Maikol_Mamani.docx) | Archivos existentes intactos; su diario personal y autoevaluación corresponden a su autor. |
+| Emilio Cortes | [Diario](Individuales/Emilio-Cortes/3.1_APT122_DiarioReflexionFase3_Emilio_Cortes.docx) | [Autoevaluación](Individuales/Emilio-Cortes/3.2_APT122_AutoevaluacionFase3_Emilio_Cortes.docx) | Archivos existentes intactos; su diario personal y autoevaluación corresponden a su autor. |
+
+Se preservan las plantillas y rúbricas. Solo se actualizan los documentos de Axl y el material grupal, por instrucción del usuario. No se realizan autoevaluaciones de los demás integrantes. La guía complementaria de Redes considera el inglés opcional y no evaluado; la fila original se conserva sin marcar y no se calcula una nota final reponderada.
+
+## Referencias y materiales anteriores
+
+- [Referencias oficiales y guía complementaria](Referencias/), conservadas sin editar.
+- [Avance técnico del 10 de noviembre](Avances-Tecnicos/avance-10-noviembre.md), [PPTX](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pptx) y [PDF](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pdf), sin cambios.
+- [Proyecto técnico](../../../Proyecto-Titulo-Cisco-IOS/README.md): catálogo, código, pruebas y escenarios. Las métricas de 852 pruebas y 72/72 comparaciones corresponden al corte documentado, no a una ejecución nueva de esta revisión.
+
+Se mantienen como hitos el 17 de noviembre para video y documentos, el ensayo del 24 y la defensa del 1 de diciembre. No se declara entregado en AVA ni finalizado un hito futuro por actualizar este índice.
