@@ -26,6 +26,8 @@ Se preservan las plantillas y rúbricas. Solo se actualizan los documentos de Ax
 
 ## Referencias y materiales anteriores
 
+Canales de entrega según la guía complementaria: diario individual 3.1 en AVA; autoevaluación individual 3.2, VTT y PDF grupales en GitHub; video de más de 100 MB en OneDrive Duoc con acceso para cuentas Duoc y vínculo real en este índice. Una publicación en GitHub no acredita recepción en AVA ni carga en OneDrive. No se ha verificado todavía un vínculo institucional nuevo.
+
 - [Referencias oficiales y guía complementaria](Referencias/), conservadas sin editar.
 - [Avance técnico del 10 de noviembre](Avances-Tecnicos/avance-10-noviembre.md), [PPTX](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pptx) y [PDF](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pdf), sin cambios.
 - [Proyecto técnico](../../../Proyecto-Titulo-Cisco-IOS/README.md): catálogo, código, pruebas y escenarios. Las métricas de 852 pruebas y 72/72 comparaciones corresponden al corte documentado, no a una ejecución nueva de esta revisión.

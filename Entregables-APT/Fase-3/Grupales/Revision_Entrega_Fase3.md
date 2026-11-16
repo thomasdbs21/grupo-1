@@ -59,7 +59,7 @@ Para el indicador 5 se conserva la propuesta 2.3, 4.1 y 5.1: dos evidencias dire
 El [PDF del video](3.2_Presentacion_Grupo1.pdf) tiene doce páginas: tabla de segmentos anterior y once diapositivas originales sin alteraciones. El [informe 3.3](3.3_NetAudit_Informe_Cierre_Fase3.docx) conserva su corte anterior; este registro actualiza el estado posterior de la transcripción y los documentos de Axl sin modificar su contenido técnico.
 
 1. OneDrive Duoc: cargar el MP4 original, comprobar reproducción y compartir con cuentas Duoc autorizadas en modo de lectura; incorporar al índice únicamente el vínculo real verificado. No hay constancia de esa carga.
-2. AVA individual: entregar el diario 3.1 por el mecanismo indicado y la autoevaluación 3.2 completada por su autor; no usar propuestas de otros integrantes como documentos aprobados.
+2. Entrega individual: completar o subir el diario 3.1 en AVA según su pauta. La guía complementaria indica publicar la autoevaluación 3.2 en GitHub, completada por su autor; no exige cargarla también en AVA salvo instrucción adicional de la docente. No usar propuestas de otros integrantes como documentos aprobados.
 3. AVA grupal: presentar el vínculo del video y los archivos solicitados por la docente; VTT y PDF están disponibles en este repositorio. Conservar el comprobante de envío.
 4. Dejar constancia del exceso de duración; su consecuencia académica corresponde a la docente.
 
