@@ -1,12 +1,9 @@
-# Preparación de la defensa
+# Presentación de defensa de NetAudit
 
-Thomas opera la demo offline. Mantener abiertas la interfaz, el archivo sintético y la guía de código. El equipo ensaya el [guion de diez minutos](../Grupales/guion-video.md). Revisar audio, legibilidad de los IDs y visibilidad de la evidencia al exportar el PDF.
+La versión publicada consta de once diapositivas: [PowerPoint](NetAudit_Defensa_Final_Comision_2026.pptx) y [PDF](NetAudit_Defensa_Final_Comision_2026.pdf). No se encontró una versión posterior en Desktop/APT y se conservan ambos archivos sin modificar.
 
-| Salida prevista | Responsable de completar | Cuándo |
-|---|---|---|
-| Video grupal MP4 | Equipo | Después de grabar la exposición |
-| Transcripción con participantes y tiempos reales | Equipo | Después de revisar el MP4 |
-| Diapositivas PDF | Equipo | Después de aprobar la presentación |
-| Autoevaluación individual | Cada integrante | Después de ver su tramo y el trabajo completo |
+La [grabación del grupo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view) dura 12:06,77. No cumple el límite de diez minutos sin una excepción docente. No se recortó ni se incorporó el MP4 a Git.
 
-Conservar las versiones definitivas de video, transcripción y PDF en esta carpeta según las indicaciones de entrega y tamaño de la plataforma. Registrar la ubicación autorizada del MP4 si se entrega por enlace. No hay una grabación ni una transcripción final disponible en este corte.
+La [revisión de entrega](../Grupales/Revision_Entrega_Fase3.md) contiene los tramos observados, evidencias y bloqueos. El VTT automático sigue privado por errores de reconocimiento. Se revisó con el video únicamente la autoevaluación de Axl; las de los demás integrantes permanecen intactas y a cargo de sus autores. Se preparó un [PDF específico con tabla de tramos](../Grupales/3.2_Presentacion_Grupo1.pdf) en la primera página y las once diapositivas existentes. Es soporte de revisión del video disponible; no reemplaza el PDF de defensa ni resuelve el exceso de duración.
+
+[Volver a Fase 3](../README.md).

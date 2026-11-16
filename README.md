@@ -51,7 +51,7 @@ grupo-1/
 
 - [Fase 1](Avances-del-Proyecto/Fase-1.md): avance documentado y [entregables disponibles](Entregables-APT/Fase-1/).
 - [Fase 2](Avances-del-Proyecto/Fase-2.md): presentaciones, reflexión grupal, guía de desarrollo y autoevaluación de Axl.
-- [Fase 3](Avances-del-Proyecto/Fase-3.md): estructura preparada, pendiente de evidencia.
+- [Fase 3](Avances-del-Proyecto/Fase-3.md): [informe, presentación, video y revisión de cierre](Entregables-APT/Fase-3/README.md); pendientes académicos identificados antes de AVA.
 - [Historial Git](Avances-del-Proyecto/historial-git.md): explicación cronológica de los commits del proyecto.
 
 ## Documentos para la auditoría del 13 de octubre
@@ -77,7 +77,7 @@ La implementación se mantiene en [`Proyecto-Titulo-Cisco-IOS/`](Proyecto-Titulo
 Entre las capacidades implementadas se encuentran:
 
 - análisis local de archivos `running-config`;
-- recopilación SSH de solo lectura mediante Netmiko y una lista blanca de cuatro comandos;
+- recopilación SSH de solo lectura mediante Netmiko y una lista blanca de ocho comandos;
 - parsing de información operacional mediante TextFSM;
 - motor determinista de reglas con evaluaciones y hallazgos trazables;
 - API FastAPI para análisis de archivos y dispositivos;

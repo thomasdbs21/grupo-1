@@ -1,7 +1,9 @@
 # Fase 3
 
-El incremento técnico quedó integrado en el [PR 12](https://github.com/thomasdbs21/grupo-1/pull/12). El registro integral pasó de 21 a 24 reglas. La [demo reproducible](../Proyecto-Titulo-Cisco-IOS/docs/avance-fase3.md) y la [guía de defensa](../Proyecto-Titulo-Cisco-IOS/docs/guia-codigo-defensa.md) permiten preparar la exposición del 10 de noviembre.
+El incremento técnico se integró en el [PR 12](https://github.com/thomasdbs21/grupo-1/pull/12). El catálogo contiene 24 reglas: 17 de configuración y siete operacionales, con ocho consultas de lectura. El [registro técnico](../Proyecto-Titulo-Cisco-IOS/docs/avance-fase3.md) documenta 852 pruebas aprobadas y 72/72 comparaciones offline; estas cifras corresponden a su corte de validación y no a una ejecución nueva de esta revisión.
 
-Los [entregables y sus estados](../Entregables-APT/Fase-3/README.md) distinguen los diarios, las autoevaluaciones pendientes de video y el material programado para el 17. El ensayo del 24 y la defensa del 1 de diciembre siguen pendientes.
+Al 15 de noviembre se dispone del [informe grupal de cierre](../Entregables-APT/Fase-3/Grupales/3.3_NetAudit_Informe_Cierre_Fase3.docx), la [presentación final](../Entregables-APT/Fase-3/Presentacion/README.md) y una grabación con ejecución del producto. El video dura 12:06,77 y excede el límite de diez minutos. La [tabla de tramos y revisión de requisitos](../Entregables-APT/Fase-3/Grupales/Revision_Entrega_Fase3.md) distingue las evidencias observadas de los pendientes.
 
-[Volver al índice](README.md).
+Solo se actualizan el diario y la autoevaluación de Axl, con revisión de publicación autorizada por él. Los documentos de Thomas, Maikol y Emilio se conservan intactos y quedan a cargo de sus autores. Falta una transcripción literal fiable y resolver duración, privacidad y condiciones del enlace. No se declara aún lista la entrega para AVA. El ensayo del 24 de noviembre y la defensa del 1 de diciembre siguen programados.
+
+[Entregables de Fase 3](../Entregables-APT/Fase-3/README.md) · [Volver al índice](README.md).
