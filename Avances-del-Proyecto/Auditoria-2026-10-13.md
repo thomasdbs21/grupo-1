@@ -6,14 +6,14 @@ Revisión efectuada el 12/10/2026 sobre el repositorio `thomasdbs21/grupo-1`. Lo
 
 | Requisito | Evidencia localizada | Estado y acción |
 |---|---|---|
-| Definición, alcance, objetivos y metodología | [Definición de Fase 1](../Entregables-APT/Fase-1/Grupales/Grupo-1_Definicion_Proyecto_APT_Fase-1.pdf) | Presente; metodología incremental, página 4 |
+| Definición, alcance, objetivos y metodología | [Definición de Fase 1](../Entregables-APT/Fase-1/Grupales/1.5_Grupo1_DefinicionProyecto_APT_Fase1.pdf) | Presente; metodología incremental, página 4 |
 | Carta Gantt | Mismo documento, páginas 5–6 | Presente; ocho actividades, S1–S18; sin fecha inicial que permita calendarizar retrasos |
 | Documentos individuales de Fase 1 | [Individuales](../Entregables-APT/Fase-1/Individuales/) | Autoevaluación y reflexión de los cuatro integrantes |
 | Presentación de Fase 1 | [Presentación inicial](../Entregables-APT/Fase-1/Grupales/Grupo-1_Presentacion_Proyecto_Fase-1.pptx) | Presente |
 | Presentación del 22/09/2026 | [PDF de avance](../Entregables-APT/Fase-2/Grupales/Grupo-1_Presentacion_Avance_Proyecto_Fase-2_22-09-2026.pdf) | Presente |
 | Presentación del 06/10/2026 | [PPTX de Evaluación 2](../Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pptx) | Presentación realizada como Evaluación 2; PPTX y [PDF](../Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pdf) |
-| Diario grupal | [2.1](../Entregables-APT/Fase-2/Grupales/2.1_APT122_DiarioReflexionFase2.docx) | Seis preguntas originales y respuestas del equipo |
-| Autoevaluación | [2.2 de Axl](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/2.2_APT122_AutoevaluacionAvance_Fase2_Axl_Urrutia.docx) | Solo Axl; rúbrica original conservada |
+| Diario grupal | [2.1](../Entregables-APT/Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | Seis preguntas originales y respuestas del equipo |
+| Autoevaluación | [2.2 de Axl](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) | Solo Axl; rúbrica original conservada |
 | Guía de desarrollo | [2.4](../Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) | Avance, ocho filas de actividades con responsables completos, factores, ajustes y pendientes |
 | Originales docentes | [Plantillas](../Entregables-APT/Fase-2/Referencias/Plantillas/) y [especificaciones](../Entregables-APT/Fase-2/Referencias/Especificaciones_Presentacion_Avance_Fase2.docx) | Copias sin modificación de contenido |
 
