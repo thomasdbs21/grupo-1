@@ -24,18 +24,20 @@ El nombre `1_APT122_DiarioReflexionFase2.docx` no apareció. El diario grupal ex
 
 ## Autoevaluación 1.3 de Axl
 
-Se fundamentó únicamente en la definición 1.5 y los documentos 1.1/1.2 de Fase 1. No se utilizaron las 24 reglas ni las 852 pruebas posteriores para justificar Fase 1.
+Actualización personal solicitada expresamente por Axl el 17/11/2026, posterior al PR #27. Se mantiene el nombre académico Axl Jesús Urrutia Maldonado y se emplean exclusivamente antecedentes de definición de Fase 1, no resultados técnicos posteriores.
 
-| Indicadores | Propuesta | Fundamento o limitación |
+| Indicadores | Propuesta personal de Axl | Respaldo y alcance |
 |---|---|---|
-| 1–8 | Completamente logrado | Definición, relación profesional, viabilidad, objetivos, método incremental, ocho actividades/18 semanas y evidencias propuestas |
-| 9 | Logrado | Redacción comprensible; falta formalizar referencia bibliográfica para criterios Cisco y detalles de puntuación |
-| 10 | Logrado | Estructura de definición presente; no incluye todos los apartados de inglés exigidos por esta pauta |
-| 11 | Logrado, propuesta | Vocabulario y material técnico; no se encontró grabación ni preguntas y respuestas de Fase 1 para acreditar toda la ejecución oral |
-| 12 | Logrado, propuesta | Diseño y automatización pertinentes; protección integral de activos no acreditada por la definición |
-| 13 | No logrado | No se encontraron abstract, conclusiones y reflexión en inglés de Fase 1; la excepción posterior de Fase 3 no se aplicó retroactivamente |
+| 1–8 | Completamente Logrado (CL, 100%) propuesto | Relevancia, competencias e intereses, viabilidad del laboratorio, objetivos, desarrollo incremental, ocho actividades/18 semanas y evidencias propuestas |
+| 9 | Completamente Logrado (CL, 100%) propuesto | Redacción comprensible y terminología consistente; formalización de referencias bibliográficas por ratificar, sin inventar citas |
+| 10 | Completamente Logrado (CL, 100%) propuesto | Organización y formato de la definición 1.5; criterio completo de formato por ratificar |
+| 11 | Completamente Logrado (CL, 100%) propuesto | Claridad y vocabulario del material de Fase 1; no consta grabación ni registro de preguntas para acreditar la ejecución oral completa |
+| 12 | Completamente Logrado (CL, 100%) propuesto | Diseño, automatización y evidencia técnica prevista; correspondencia completa con indicadores de calidad por ratificar, sin afirmar protección integral de activos |
+| 13 | N/A — No aplica solicitado | Exclusión solicitada personalmente por Axl, sujeta a confirmación docente de las instrucciones específicas de Redes para Fase 1 |
 
-El usuario autorizó elaboración y publicación; no se afirma que haya revisado manualmente esta versión final ni que la profesora haya asignado esos niveles.
+La rúbrica y el descriptor de inglés se conservan íntegros. El indicador 13 no tiene marca de No Logrado ni un 0% asignado; las cuatro categorías se dejan sin seleccionar y la solicitud N/A aparece separada del descriptor. No se inventan textos o presentaciones en inglés ni se repondera una nota final. Las marcas 1–12 son la propuesta personal autorizada por Axl, no una calificación o aprobación de la profesora.
+
+Se reescribieron las justificaciones con un enfoque favorable, breve y basado en las fuentes existentes de Fase 1. Esta versión se abrió de nuevo en Microsoft Word y sus diez páginas fueron renderizadas e inspeccionadas; se comprobaron doce marcas CL y la solicitud N/A, sin cortes de texto. El respaldo todavía no acreditado se concentra en una aclaración final. El Word anterior se conserva en un respaldo privado y no se alteran los documentos fuente ni las autoevaluaciones de otros integrantes.
 
 ## Informe 2.6 y separación de fases
 
@@ -81,7 +83,7 @@ Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados po
 4. Maikol: cerrar los campos de revisión en diario y autoevaluación 3.1/3.2.
 5. Thomas: cerrar registro 3.2 y revisar marcas de tiempo e inglés según el video real y la guía aplicable.
 6. Emilio: revisar la selección favorable de tiempo en 3.2, conservada desde su PDF.
-7. Axl: ratificar la propuesta oral/calidad de Fase 1 y revisar la versión preparada; la elaboración ya está autorizada.
+7. Axl y docente: revisar la propuesta personal CL de los indicadores 9–12 y sus respaldos identificados; la docente debe confirmar la solicitud N/A de inglés para Fase 1. No consta aprobación docente.
 8. Propietario de Drive: renombrar, si se desea, sin cambiar el enlace y comprobar que la profesora puede reproducir el video.
 9. Docente: resolver aceptación de plataforma y exceso de duración; no se simula cumplimiento de diez minutos.
 10. Integrantes: efectuar envíos AVA y conservar comprobantes. Esta regularización no acredita recepción.
