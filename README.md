@@ -62,7 +62,7 @@ grupo-1/
 | Presentación de Fase 1 | [Presentación inicial](Entregables-APT/Fase-1/Grupales/Grupo-1_Presentacion_Proyecto_Fase-1.pptx) |
 | Presentación del 22/09/2026 | [Avance de Fase 2](Entregables-APT/Fase-2/Grupales/Grupo-1_Presentacion_Avance_Proyecto_Fase-2_22-09-2026.pdf) |
 | Presentación realizada del 06/10/2026 | [PDF](Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pdf) · [PPTX](Entregables-APT/Fase-2/EV2-10/NetAudit_Evaluacion_2_APT_06-10-2026_Grupales.pptx) |
-| Diario de reflexión grupal | [2.1 grupal](Entregables-APT/Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) |
+| Diarios individuales de reflexión 2.1 | [Axl](Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx) · [Thomas](Entregables-APT/Fase-2/Individuales/Thomas-Henriquez/Henriquez_Thomas_2.1_APT122_DiarioReflexionFase2.docx) · [Maikol](Entregables-APT/Fase-2/Individuales/Maikol-Mamani/Mamani_Maikol_2.1_APT122_DiarioReflexionFase2.docx) · [Emilio](Entregables-APT/Fase-2/Individuales/Emilio-Cortes/Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx) |
 | Autoevaluación individual | [2.2 de Axl Urrutia](Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) |
 | Guía de desarrollo del proyecto | [2.4 grupal](Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) |
 | Plantillas y especificaciones docentes | [Referencias de Fase 2](Entregables-APT/Fase-2/Referencias/) |

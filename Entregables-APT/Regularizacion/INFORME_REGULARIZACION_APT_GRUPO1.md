@@ -20,7 +20,7 @@ Nombre académico confirmado por el usuario: **Axl Jesús Urrutia Maldonado**. S
 
 Las dos copias de 2.2 son idénticas byte por byte. Las dos 2.6 no son idénticas: conservan preguntas y estructura, pero una dice Portafolio de Título y la otra Asignatura Capstone. Se eligió esta última, sin sufijo (1), tras revisar las dos. Los originales del RAR se conservan fuera de Git.
 
-El nombre `1_APT122_DiarioReflexionFase2.docx` no apareció. El diario grupal existente identifica Equipo completo y los cuatro integrantes, con corte al 12/10. Se conserva como `2.1_Grupo1_DiarioReflexionFase2.docx`; no se reasignó a un integrante. No se borraron documentos de autor incierto. Los PDF personales conservados son complementos del Word editable, no nuevas versiones de respuesta.
+El diario grupal histórico se identificó por su encabezado y no se reasignó a un integrante. Posteriormente, por instrucción expresa del usuario, se retiró el archivo sobrante `2.1_Grupo1_DiarioReflexionFase2.docx` del repositorio y de Entrega-Regularizada-Grupo1. Se conservan intactos los cuatro diarios individuales 2.1 de Axl, Thomas, Maikol y Emilio; sus hashes no cambiaron. Se actualizaron los enlaces, la matriz y el manifiesto local. Los PDF personales conservados siguen siendo complementos del Word editable.
 
 ## Autoevaluación 1.3 de Axl
 
@@ -202,7 +202,7 @@ Rama documental indicada arriba; commits específicos para documentos y para evi
 | Entregables-APT\Fase-2\Individuales\Maikol-Mamani\2.2_APT122_AutoevaluacionAvance Fase2.docx.pdf | [Mamani_Maikol_2.2_APT122_AutoevaluacionAvanceFase2.pdf](../Fase-2/Individuales/Maikol-Mamani/Mamani_Maikol_2.2_APT122_AutoevaluacionAvanceFase2.pdf) | Contenido idéntico |
 | Entregables-APT\Fase-2\Individuales\Emilio-Cortes\2.1_APT122_DiarioReflexionFase2_Emilio_Cortes.docx | [Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx](../Fase-2/Individuales/Emilio-Cortes/Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx) | Contenido idéntico |
 | Entregables-APT\Fase-2\Individuales\Emilio-Cortes\2.2_APT122_AutoevaluacionAvance Fase2_Emilio_Cortes.docx | [Cortes_Emilio_2.2_APT122_AutoevaluacionAvanceFase2.docx](../Fase-2/Individuales/Emilio-Cortes/Cortes_Emilio_2.2_APT122_AutoevaluacionAvanceFase2.docx) | Contenido idéntico |
-| Entregables-APT\Fase-2\Grupales\2.1_APT122_DiarioReflexionFase2.docx | [2.1_Grupo1_DiarioReflexionFase2.docx](../Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | Contenido idéntico |
+| Diario grupal de Fase 2, normalizado durante la regularización inicial | Retirado posteriormente por instrucción expresa del usuario | Los cuatro diarios individuales 2.1 permanecen intactos |
 | Entregables-APT\Fase-3\Individuales\Axl-Urrutia\3.1_APT122_DiarioReflexionFase3_Axl_Urrutia.docx | [Urrutia_Axl_3.1_APT122_DiarioReflexionFase3.docx](../Fase-3/Individuales/Axl-Urrutia/Urrutia_Axl_3.1_APT122_DiarioReflexionFase3.docx) | Contenido idéntico |
 | Entregables-APT\Fase-3\Individuales\Axl-Urrutia\3.2_APT122_AutoevaluacionFase3_Axl_Urrutia.docx | [Urrutia_Axl_3.2_APT122_AutoevaluacionFase3.docx](../Fase-3/Individuales/Axl-Urrutia/Urrutia_Axl_3.2_APT122_AutoevaluacionFase3.docx) | Contenido idéntico |
 | Entregables-APT\Fase-3\Individuales\Thomas-Henriquez\3.1_APT122_DiarioReflexionFase3 thomas henriquez.docx | [Henriquez_Thomas_3.1_APT122_DiarioReflexionFase3.docx](../Fase-3/Individuales/Thomas-Henriquez/Henriquez_Thomas_3.1_APT122_DiarioReflexionFase3.docx) | Contenido idéntico |
@@ -229,7 +229,6 @@ Rama documental indicada arriba; commits específicos para documentos y para evi
 | [Henriquez_Thomas_1.1_APT122_AutoevaluacionCompetenciasFase1.docx](../Fase-1/Individuales/Thomas-Henriquez/Henriquez_Thomas_1.1_APT122_AutoevaluacionCompetenciasFase1.docx) | 3 |
 | [Henriquez_Thomas_1.2_APT122_DiarioReflexionFase1.docx](../Fase-1/Individuales/Thomas-Henriquez/Henriquez_Thomas_1.2_APT122_DiarioReflexionFase1.docx) | 4 |
 | [Henriquez_Thomas_1.3_APT122_AutoevaluacionFase1.docx](../Fase-1/Individuales/Thomas-Henriquez/Henriquez_Thomas_1.3_APT122_AutoevaluacionFase1.docx) | 9 |
-| [2.1_Grupo1_DiarioReflexionFase2.docx](../Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | 2 |
 | [2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx](../Fase-2/Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) | 6 |
 | [Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx](../Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx) | 3 |
 | [Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx](../Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) | 8 |
