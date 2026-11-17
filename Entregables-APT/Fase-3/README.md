@@ -1,6 +1,6 @@
 # Fase 3 de NetAudit
 
-Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del video están verificados. Los documentos de Axl incorporan su revisión adjunta; los de los demás integrantes permanecen a cargo de sus autores. **Preparar o publicar archivos no acredita su entrega en AVA ni OneDrive.** [Revisión detallada y tabla de tramos](Grupales/Revision_Entrega_Fase3.md).
+Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del video están verificados. Los documentos de Axl incorporan su revisión adjunta; los de los demás integrantes permanecen a cargo de sus autores. **Preparar o publicar archivos no acredita su recepción en AVA.** [Revisión detallada y tabla de tramos](Grupales/Revision_Entrega_Fase3.md).
 
 ## Material grupal
 
@@ -8,7 +8,7 @@ Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del v
 |---|---|---|
 | Informe grupal 3.3 | [Cierre técnico](Grupales/3.3_NetAudit_Informe_Cierre_Fase3.docx) | Preparado y revisado documentalmente; registra límites y pendientes académicos. |
 | Presentación final | [PPTX](Presentacion/NetAudit_Defensa_Final_Comision_2026.pptx) · [PDF](Presentacion/NetAudit_Defensa_Final_Comision_2026.pdf) | Versión final existente de once diapositivas, conservada sin modificar. |
-| Video grupal | [Grabación en Drive](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view) | 12:06,77; excede diez minutos. El equipo decidió conservarlo; no consta excepción docente. MP4 fuera de Git por tamaño; enlace institucional de lectura pendiente de verificar. |
+| Video grupal | [Grabación en Drive](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing) | 12:06,77; excede diez minutos. El equipo decidió conservarlo; no consta excepción docente. MP4 fuera de Git por tamaño; Drive es el enlace oficial elegido por el equipo. Permisos de lectura y ausencia de edición no comprobados en esta revisión. |
 | Tabla de segmentos | [Tramos observados](Grupales/Revision_Entrega_Fase3.md#tramos-observados) | Derivados de los subtítulos definitivos; pausas sin asignación de hablante. |
 | Transcripción VTT | [VTT definitivo](Grupales/3.2_Transcripcion_Grupo1.vtt) | 187 subtítulos; correcciones confirmadas, participantes identificados y formato comprobado con FFmpeg. |
 | PDF específico para el video | [PDF con tabla de tramos](Grupales/3.2_Presentacion_Grupo1.pdf) | 12 páginas: tabla de segmentos reales y las once diapositivas que aparecen en la grabación. PDF de defensa intacto; el exceso de duración se registra expresamente. |
@@ -17,7 +17,7 @@ Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del v
 
 | Integrante | Diario 3.1 | Autoevaluación 3.2 | Estado |
 |---|---|---|---|
-| Axl Urrutia | [Diario](Individuales/Axl-Urrutia/3.1_APT122_DiarioReflexionFase3_Axl_Urrutia.docx) | [Autoevaluación](Individuales/Axl-Urrutia/3.2_APT122_AutoevaluacionFase3_Axl_Urrutia.docx) | Diario revisado con todas sus subpreguntas y antecedentes de Fase 1. Autoevaluación con marcas originales conservadas y justificaciones contrastadas; la valoración oral personal y la pertinencia de indicadores se identifican para confirmación. |
+| Axl Urrutia | [Diario](Individuales/Axl-Urrutia/3.1_APT122_DiarioReflexionFase3_Axl_Urrutia.docx) | [Autoevaluación](Individuales/Axl-Urrutia/3.2_APT122_AutoevaluacionFase3_Axl_Urrutia.docx) | Diario revisado con todas sus subpreguntas y antecedentes de Fase 1. Autoevaluación personal actualizada desde el Word de Axl: CL, CL, LI, CL y CL; inglés sin marcar. Se mantienen las observaciones de ratificación, especialmente sobre metodología e indicador 4.1, sin atribuir aprobación docente. |
 | Thomas Henriquez | [Diario](Individuales/Thomas-Henriquez/3.1_APT122_DiarioReflexionFase3%20thomas%20henriquez.docx) | [Autoevaluación](Individuales/Thomas-Henriquez/3.2_APT122_AutoevaluacionFase3_Thomas_Henriquez.docx) | Archivos existentes intactos; la autoevaluación corresponde a Thomas y no se elabora en esta actualización. |
 | Maikol Mamani | [Diario](Individuales/Maikol-Mamani/3.1_APT122_DiarioReflexionFase3_Maikol_Mamani.docx) | [Autoevaluación](Individuales/Maikol-Mamani/3.2_APT122_AutoevaluacionFase3_Maikol_Mamani.docx) | Archivos existentes intactos; su diario personal y autoevaluación corresponden a su autor. |
 | Emilio Cortes | [Diario](Individuales/Emilio-Cortes/3.1_APT122_DiarioReflexionFase3_Emilio_Cortes.docx) | [Autoevaluación](Individuales/Emilio-Cortes/3.2_APT122_AutoevaluacionFase3_Emilio_Cortes.docx) | Archivos existentes intactos; su diario personal y autoevaluación corresponden a su autor. |
@@ -26,7 +26,7 @@ Se preservan las plantillas y rúbricas. Solo se actualizan los documentos de Ax
 
 ## Referencias y materiales anteriores
 
-Canales de entrega según la guía complementaria: diario individual 3.1 en AVA; autoevaluación individual 3.2, VTT y PDF grupales en GitHub; video de más de 100 MB en OneDrive Duoc con acceso para cuentas Duoc y vínculo real en este índice. Una publicación en GitHub no acredita recepción en AVA ni carga en OneDrive. No se ha verificado todavía un vínculo institucional nuevo.
+Canales: diario individual 3.1 en AVA; autoevaluación 3.2, VTT y PDF grupales en GitHub. Aunque la guía complementaria menciona OneDrive Duoc para videos grandes, el equipo decidió conservar exclusivamente el enlace oficial de Google Drive indicado arriba. No se genera otro vínculo ni se duplica el MP4 en Git. No consta aprobación docente de esta diferencia de plataforma ni recepción en AVA.
 
 - [Referencias oficiales y guía complementaria](Referencias/), conservadas sin editar.
 - [Avance técnico del 10 de noviembre](Avances-Tecnicos/avance-10-noviembre.md), [PPTX](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pptx) y [PDF](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pdf), sin cambios.
