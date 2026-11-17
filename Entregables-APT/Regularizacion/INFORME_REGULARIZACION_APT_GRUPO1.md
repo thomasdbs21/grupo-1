@@ -71,7 +71,7 @@ Se abrieron 31 Word en Microsoft Word y se exportaron sus 174 páginas. La inspe
 
 Las conversiones son editables y contienen texto y tablas, no imágenes de páginas. Conservan todas las X y resaltados; el cotejo automático de palabras es de 99,6–100 % por diferencias de extracción y separación de palabras. La definición pública reserva cuatro identificadores personales que siguen en el respaldo privado. Los originales PDF personales se conservan. El reflujo de texto de PDF a Word no es una reproducción binaria exacta: se mantuvieron instrucciones, estructura, logos y contenido, con los ajustes de tablas necesarios para que el texto fuese visible.
 
-Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados por otros autores no se completaron inventando respuestas. No se presentan como entregables aprobados. Se comprobaron 168 archivos protegidos por SHA-256, sin cambios de software, reglas, pruebas, dependencias, referencias o presentaciones anteriores.
+Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados por otros autores no se completaron inventando respuestas. No se presentan como entregables aprobados. Se comprobaron 470 enlaces locales sin rutas rotas y 168 archivos protegidos por SHA-256, sin cambios de software, reglas, pruebas, dependencias, referencias o presentaciones anteriores.
 
 ## Pendientes de intervención humana
 
@@ -88,7 +88,7 @@ Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados po
 
 ## Publicación
 
-Rama documental indicada arriba; commits específicos para documentos y para evidencias/índices. La publicación y el estado de main se registran en el PR del incremento y en el recibo local final. No se incluyen el MP4, respaldos, archivos privados, capturas auxiliares, herramientas de conversión ni credenciales.
+Rama documental indicada arriba; commits específicos para documentos y para evidencias/índices. PR de este incremento: [#27](https://github.com/thomasdbs21/grupo-1/pull/27). Commits documentales iniciales: f69b1df4c5073dbc4018f4e62eac55ade3da0c0a y bfbfdfe637ddbe50f04e60a0817c512f2e727618. El merge y la sincronización de main se verifican después de la revisión del PR y se registran en el recibo local final. No se incluyen el MP4, respaldos, archivos privados, capturas auxiliares, herramientas de conversión ni credenciales.
 
 ## Inventario inicial (61 archivos versionados de Entregables-APT)
 
