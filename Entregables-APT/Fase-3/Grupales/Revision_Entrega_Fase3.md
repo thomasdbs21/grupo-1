@@ -1,12 +1,12 @@
 # Revisión de la entrega de Fase 3
 
-Corte documental: 16 de noviembre de 2026. Se conservan el software, la presentación de defensa de once diapositivas y el video original. No se declara una entrega realizada en AVA o OneDrive.
+Corte documental: 16 de noviembre de 2026. Se conservan el software, la presentación de defensa de once diapositivas y el video original. No se declara una entrega recibida en AVA.
 
 ## Video disponible
 
-[Grabación original del grupo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view): 156.187.296 bytes y **12:06,77**. El equipo decidió conservar el original sin recortar ni volver a grabar, aceptando el exceso de **2:06,77** sobre los diez minutos. Esta decisión no equivale a una autorización docente ni a cumplimiento del límite.
+[Grabación original del grupo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing): 156.187.296 bytes y **12:06,77**. El equipo decidió conservar el original sin recortar ni volver a grabar, aceptando el exceso de **2:06,77** sobre los diez minutos. Esta decisión no equivale a una autorización docente ni a cumplimiento del límite.
 
-No se modifican permisos de Drive. En el corte anterior se observaron permisos de edición por enlace; se requiere comprobar y limitar el acceso de entrega a lectura. No existe todavía un vínculo de OneDrive Duoc verificado. El video permanece fuera de Git por tamaño. Antes de compartirlo se deben revisar los datos de laboratorio visibles.
+Google Drive es el único enlace oficial decidido por el equipo; no se solicita otra subida ni se modifica el video. La consulta actual mediante el conector confirma identidad, tipo MP4 y tamaño del archivo, pero no devuelve la lista de permisos; no se certifican lectura para evaluadores ni ausencia de edición. El antecedente anterior de edición por enlace no queda descartado. No se cambiaron permisos. El video permanece fuera de Git por tamaño. La elección de Drive difiere de la indicación de OneDrive Duoc de la guía; no se atribuye aprobación docente de esa diferencia.
 
 ## Tramos observados
 
@@ -45,20 +45,20 @@ La frase final confirmada «Y el asistente de IA va a explicar los hallazgos» o
 
 | Integrante | Diario 3.1 | Autoevaluación 3.2 | Acción pendiente |
 |---|---|---|---|
-| Axl Urrutia | Respuestas revisadas del ZIP; antecedentes iniciales contrastados con su Fase 1; todas las subpreguntas cubiertas | Se conservan 1 L, 2 L, 3 LI, 4 L, 5 L; inglés sin marcar. Justificaciones con tiempos y duración real | Ratificar su valoración oral personal y consultar la pertinencia de la selección de indicadores antes de entregar |
+| Axl Urrutia | Respuestas revisadas del ZIP; antecedentes iniciales contrastados con su Fase 1; todas las subpreguntas cubiertas | Nueva valoración personal aportada por Axl: 1 CL, 2 CL, 3 LI, 4 CL, 5 CL; inglés sin marcar. Justificaciones positivas con tiempos y duración real | Ratificar las observaciones de metodología, valoración oral e indicador 4.1; la propuesta no es una calificación docente |
 | Thomas Henriquez | Archivo publicado intacto; propuesta privada de forma disponible | Archivo publicado intacto; propuesta privada sin elegir niveles | Revisión y aprobación de su autor |
 | Maikol Mamani | Archivo publicado intacto; respuestas personales por completar | Archivo publicado intacto; no se eligen niveles en su nombre | Completar y aprobar sus documentos |
 | Emilio Cortes | Archivo publicado intacto; respuestas personales por completar | Archivo publicado intacto; no se eligen niveles en su nombre | Completar y aprobar sus documentos |
 
 El indicador 3 mantiene la valoración de Axl. La guía complementaria, parte C, contempla LI si se incumple tiempo y se cumple parte de la estructura; el descriptor de la rúbrica base no coincide exactamente con la situación observada. Se explica la discrepancia sin cambiar marcas ni atribuir una decisión a la docente.
 
-Para el indicador 5 se conserva la propuesta 2.3, 4.1 y 5.1: dos evidencias directas y una parcial; 2/3 = 66,7% dentro de esta selección propuesta, no una medición de toda la carrera. Su pertinencia debe confirmarse. La guía específica de Redes considera inglés opcional y no evaluado; se conserva la fila original sin marca y no se calcula una nota reponderada.
+En el indicador 5, Axl propone CL para la selección 2.3, 4.1 y 5.1. Los tres tienen evidencia visible, pero revisar políticas mediante ACL y acceso remoto no demuestra por sí solo la protección completa de activos de 4.1. Se conserva el 100% como propuesta personal, pendiente de ratificar aplicabilidad y alcance; no se presenta como cumplimiento completo verificado ni como una medición de toda la carrera. La guía específica de Redes considera inglés opcional y no evaluado; se conserva la fila original sin marca y no se calcula una nota reponderada.
 
 ## Material grupal y entregas
 
 El [PDF del video](3.2_Presentacion_Grupo1.pdf) tiene doce páginas: tabla de segmentos anterior y once diapositivas originales sin alteraciones. El [informe 3.3](3.3_NetAudit_Informe_Cierre_Fase3.docx) conserva su corte anterior; este registro actualiza el estado posterior de la transcripción y los documentos de Axl sin modificar su contenido técnico.
 
-1. OneDrive Duoc: cargar el MP4 original, comprobar reproducción y compartir con cuentas Duoc autorizadas en modo de lectura; incorporar al índice únicamente el vínculo real verificado. No hay constancia de esa carga.
+1. Conservar el enlace oficial de Drive indicado arriba. Comprobar que la docente puede visualizar el video y que el vínculo no concede edición. El conector actual no permite certificar esos permisos; no se genera un enlace alternativo.
 2. Entrega individual: completar o subir el diario 3.1 en AVA según su pauta. La guía complementaria indica publicar la autoevaluación 3.2 en GitHub, completada por su autor; no exige cargarla también en AVA salvo instrucción adicional de la docente. No usar propuestas de otros integrantes como documentos aprobados.
 3. AVA grupal: presentar el vínculo del video y los archivos solicitados por la docente; VTT y PDF están disponibles en este repositorio. Conservar el comprobante de envío.
 4. Dejar constancia del exceso de duración; su consecuencia académica corresponde a la docente.
