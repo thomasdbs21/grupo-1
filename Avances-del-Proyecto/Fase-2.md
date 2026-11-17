@@ -76,7 +76,7 @@ La retroalimentación docente solicitó diferenciar mejor el auditor de las herr
 
 | Entregable | Autoría |
 |---|---|
-| [Diario de Reflexión Fase 2](../Entregables-APT/Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | Equipo completo |
+| Diarios individuales de reflexión 2.1 | [Axl](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx) · [Thomas](../Entregables-APT/Fase-2/Individuales/Thomas-Henriquez/Henriquez_Thomas_2.1_APT122_DiarioReflexionFase2.docx) · [Maikol](../Entregables-APT/Fase-2/Individuales/Maikol-Mamani/Mamani_Maikol_2.1_APT122_DiarioReflexionFase2.docx) · [Emilio](../Entregables-APT/Fase-2/Individuales/Emilio-Cortes/Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx). Versiones individuales vigentes; grupal retirado por instrucción del usuario. |
 | [Guía de Desarrollo APT](../Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) | Equipo completo |
 | [Autoevaluación de Axl Urrutia](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) | Individual; los otros integrantes completan la propia |
 | [Especificaciones de presentación futura](../Entregables-APT/Fase-2/Referencias/Especificaciones_Presentacion_Avance_Fase2.docx) | Referencia docente sin modificaciones |
