@@ -19,7 +19,7 @@ el motor vigente y ejecuta la suite actual.
 
 Se relaciona con la actividad «Pruebas y validación» de la Carta Gantt,
 páginas 5–6 de la
-[definición APT](../../Entregables-APT/Fase-1/Grupales/Grupo-1_Definicion_Proyecto_APT_Fase-1.pdf),
+[definición APT](../../Entregables-APT/Fase-1/Grupales/1.5_Grupo1_DefinicionProyecto_APT_Fase1.pdf),
 y con el seguimiento de [Fase 2](../../Avances-del-Proyecto/Fase-2.md).
 En la preparación inicial no se agregaron reglas ni se alteró el motor,
 el collector o los endpoints. El corte estático posterior añadió cinco reglas

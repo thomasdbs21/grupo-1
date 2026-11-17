@@ -62,7 +62,7 @@ La interfaz, los reportes y el asistente conversacional de IA permanecen como et
 
 ### Fuentes de contraste
 
-- [Definición del proyecto y Carta Gantt de Fase 1, páginas 5–6](../Entregables-APT/Fase-1/Grupales/Grupo-1_Definicion_Proyecto_APT_Fase-1.pdf).
+- [Definición del proyecto y Carta Gantt de Fase 1, páginas 5–6](../Entregables-APT/Fase-1/Grupales/1.5_Grupo1_DefinicionProyecto_APT_Fase1.pdf).
 - [Registro técnico del Incremento 8: pruebas automatizadas y validación real](../Proyecto-Titulo-Cisco-IOS/docs/registro-incremento-8-expansion-reglas-deterministas.md).
 - [Definición del Incremento 9: persistencia planificada, no implementada](../Proyecto-Titulo-Cisco-IOS/docs/definicion-incremento-9-persistencia-relacional.md).
 
@@ -76,9 +76,9 @@ La retroalimentación docente solicitó diferenciar mejor el auditor de las herr
 
 | Entregable | Autoría |
 |---|---|
-| [Diario de Reflexión Fase 2](../Entregables-APT/Fase-2/Grupales/2.1_APT122_DiarioReflexionFase2.docx) | Equipo completo |
+| [Diario de Reflexión Fase 2](../Entregables-APT/Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | Equipo completo |
 | [Guía de Desarrollo APT](../Entregables-APT/Fase-2/Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) | Equipo completo |
-| [Autoevaluación de Axl Urrutia](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/2.2_APT122_AutoevaluacionAvance_Fase2_Axl_Urrutia.docx) | Individual; los otros integrantes completan la propia |
+| [Autoevaluación de Axl Urrutia](../Entregables-APT/Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) | Individual; los otros integrantes completan la propia |
 | [Especificaciones de presentación futura](../Entregables-APT/Fase-2/Referencias/Especificaciones_Presentacion_Avance_Fase2.docx) | Referencia docente sin modificaciones |
 
 Los originales de los tres instrumentos se conservan en [Plantillas](../Entregables-APT/Fase-2/Referencias/Plantillas/). El [registro de auditoría](Auditoria-2026-10-13.md) contiene el contraste de versiones, las evidencias y las validaciones actuales.

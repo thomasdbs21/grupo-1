@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="app.diagrams.net" version="24.7.17">
+  <diagram name="Laboratorio CSR1000v" id="csr-lab">
+    <mxGraphModel dx="1400" dy="950" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1400" pageHeight="950">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="LABORATORIO CISCO CSR1000v · GRUPO 1" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#102B46;strokeColor=#102B46;fontColor=#FFFFFF;fontFamily=Calibri;fontSize=28;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1320" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="physical" value="VISTA FÍSICA · UN SOLO COMPUTADOR WINDOWS ANFITRIÓN" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#F4F8FB;strokeColor=#95AABD;fontColor=#112D46;fontFamily=Calibri;fontSize=19;align=center;verticalAlign=middle;spacing=10;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="95" width="1320" height="325" as="geometry"/>
+        </mxCell>
+        <mxCell id="netaudit" value="NetAudit en Windows&#10;Streamlit + FastAPI&#10;Recolección controlada con Netmiko" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E5F5FC;strokeColor=#2D92C1;fontColor=#112D46;fontFamily=Calibri;fontSize=21;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="90" y="200" width="520" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="virtualbox" value="Oracle VirtualBox · Hypervisor en el mismo anfitrión" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#EAF0FA;strokeColor=#6E87AC;fontColor=#112D46;fontFamily=Calibri;fontSize=19;align=center;verticalAlign=middle;spacing=10;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="710" y="160" width="600" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="vm" value="Máquina virtual ETW-CSR1000v&#10;Router Cisco CSR1000v&#10;IOS XE 16.09.05" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#6E87AC;fontColor=#112D46;fontFamily=Calibri;fontSize=21;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="220" width="440" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="logical" value="VISTA LÓGICA · RED VIRTUAL SOLO-ANFITRIÓN" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#102B46;strokeColor=#102B46;fontColor=#FFFFFF;fontFamily=Calibri;fontSize=21;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="1320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="host" value="Windows / NetAudit&#10;VirtualBox Host-Only Ethernet Adapter&#10;192.168.56.1/24" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#E5F5FC;strokeColor=#2D92C1;fontColor=#112D46;fontFamily=Calibri;fontSize=20;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="520" width="400" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="segment" value="Red Host-Only&#10;192.168.56.0/24&#10;Conectividad virtual local" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#F2F5F8;strokeColor=#95AABD;fontColor=#112D46;fontFamily=Calibri;fontSize=20;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="565" y="520" width="280" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="csr" value="VM ETW-CSR1000v&#10;GigabitEthernet1 · up/up&#10;192.168.56.105/24" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#EAF0FA;strokeColor=#6E87AC;fontColor=#112D46;fontFamily=Calibri;fontSize=20;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="520" width="400" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="l1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#95AABD;strokeWidth=2;" edge="1" parent="1" source="host" target="segment">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#95AABD;strokeWidth=2;" edge="1" parent="1" source="segment" target="csr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="request" value="Solicitud SSH · TCP/22 · comandos autorizados de solo lectura" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;strokeColor=#1675AE;strokeWidth=3;endArrow=block;endFill=1;fontFamily=Calibri;fontSize=17;fontColor=#1675AE;labelBackgroundColor=#FFFFFF;exitX=0.8;exitY=1;entryX=0.2;entryY=1;" edge="1" parent="1" source="host" target="csr">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="700"/>
+              <mxPoint x="1010" y="700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="response" value="Evidencia de configuración y comandos show → análisis NetAudit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;strokeColor=#23856F;strokeWidth=3;endArrow=block;endFill=1;fontFamily=Calibri;fontSize=17;fontColor=#23856F;labelBackgroundColor=#FFFFFF;exitX=0.8;exitY=1;entryX=0.2;entryY=1;" edge="1" parent="1" source="csr" target="host">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1250" y="775"/>
+              <mxPoint x="160" y="775"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="scope" value="Alcance: laboratorio virtual educativo. La VM y NetAudit comparten un anfitrión; no son dos equipos físicos.&#10;Capturas aportadas: ping 4/4 y TcpTestSucceeded=True; no se repitió SSH en esta regularización.&#10;Sin VLAN, switches, OSPF ni redes domésticas/VPN añadidos al diagrama." style="rounded=1;whiteSpace=wrap;html=0;fillColor=#F4F8FB;strokeColor=#95AABD;fontColor=#112D46;fontFamily=Calibri;fontSize=18;align=center;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="825" width="1320" height="100" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
