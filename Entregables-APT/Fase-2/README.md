@@ -11,9 +11,9 @@ Regularización documental del 17 de noviembre de 2026. Los DOCX son las version
 
 ## Material grupal
 
-[Informe 2.6 preparado para revisión](Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) · [Guía 2.4 histórica al 12/10](Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) · [Diario grupal histórico](Grupales/2.1_Grupo1_DiarioReflexionFase2.docx)
+[Informe 2.6 completado con base documental](Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) · [Guía 2.4 histórica al 12/10](Grupales/2.4_GuiaEstudiante_Fase2_DesarrolloProyecto_APT.docx) · [Diario grupal histórico](Grupales/2.1_Grupo1_DiarioReflexionFase2.docx)
 
-El informe 2.6 distingue el cierre técnico de Fase 2 (21 reglas, ocho consultas y registros históricos) de las 24 reglas de Fase 3. Las reflexiones profesionales de Thomas, Maikol y Emilio permanecen identificadas para sus autores. No se declara el documento aprobado por todos.
+El informe 2.6 distingue el cierre técnico de Fase 2 (21 reglas, ocho consultas y registros históricos) de las 24 reglas de Fase 3. Las cuatro reflexiones profesionales están COMPLETADAS CON BASE DOCUMENTAL, recuperando las ideas ya expresadas en sus diarios. No se atribuye una nueva aprobación personal ni entrega en AVA.
 
 [Configuraciones, pruebas, automatización y topología del laboratorio](Evidencias-Tecnicas/README.md)
 

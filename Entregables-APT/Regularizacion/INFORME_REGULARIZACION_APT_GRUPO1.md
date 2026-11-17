@@ -14,7 +14,7 @@ Nombre académico confirmado por el usuario: **Axl Jesús Urrutia Maldonado**. S
 
 - Cuatro autoevaluaciones 1.3 de Fase 1. Axl tiene una propuesta fundamentada; Thomas, Maikol y Emilio tienen la rúbrica sin niveles seleccionados y requieren revisión de sus autores.
 - Autoevaluación 2.2 de Thomas: plantilla oficial con referencias grupales, sin seleccionar sus niveles.
-- Informe grupal 2.6: todas las preguntas y subpreguntas conservadas y respondidas con evidencia disponible; reflexiones profesionales de tres integrantes expresamente pendientes de sus autores.
+- Informe grupal 2.6: todas las preguntas y subpreguntas conservadas y respondidas con evidencia disponible; cuatro reflexiones profesionales completadas con base documental, mediante síntesis de sus diarios existentes.
 
 ## Plantillas, duplicados y versiones
 
@@ -41,11 +41,20 @@ Se reescribieron las justificaciones con un enfoque favorable, breve y basado en
 
 ## Informe 2.6 y separación de fases
 
-Cinco páginas. Conserva el objetivo general y cinco objetivos específicos, áreas, competencias oficiales pertinentes, relevancia, desarrollo incremental, etapas, dificultades, facilitadores, ajustes, evidencia e intereses profesionales. Utiliza las formulaciones oficiales de mantener la red de datos, monitorear políticas de seguridad y diseñar soluciones de conectividad; no atribuye una nueva LAN/WAN, QoS o protección de todos los activos.
+Seis páginas tras completar las reflexiones. Conserva el objetivo general y cinco objetivos específicos, áreas, competencias oficiales pertinentes, relevancia, desarrollo incremental, etapas, dificultades, facilitadores, ajustes, evidencia e intereses profesionales. Utiliza las formulaciones oficiales de mantener la red de datos, monitorear políticas de seguridad y diseñar soluciones de conectividad; no atribuye una nueva LAN/WAN, QoS o protección de todos los activos.
 
 El cierre técnico de Fase 2 se documenta al 26/10: 21 reglas (14 de configuración y siete operacionales), ocho consultas, 815 pruebas aprobadas y 63/63 comparaciones sintéticas registradas. La evidencia de Gemini del 25/10 es histórica. La guía 2.4 al 12/10 conserva su corte de ocho reglas en main y 21 en rama; no se reescribió ese antecedente como estado actual. Fase 3 tiene 24 reglas y otros registros; no se mezclan los cortes.
 
-Las reflexiones de Thomas, Maikol y Emilio requieren sus respuestas. La síntesis de Axl utiliza sus diarios existentes. El informe completo queda **PREPARADO PARA REVISIÓN**, no aprobado por los cuatro.
+El apartado 9 queda **COMPLETADO CON BASE DOCUMENTAL**. Las cuatro reflexiones se redactaron en primera persona con los intereses, fortalezas, aprendizajes, dificultades y proyecciones ya expresados en los diarios 1.2 y 2.1. Los diarios 3.1 solo se utilizaron para contrastar coherencia, sin trasladar logros posteriores a Fase 2. El informe queda completamente redactado; la síntesis no equivale a una nueva aprobación expresa de los cuatro integrantes ni a entrega en AVA.
+
+### Cierre documental de las cuatro reflexiones
+
+- Axl: redes Cisco, auditoría, arquitectura e integración; proyección hacia infraestructura, redes híbridas y seguridad cloud.
+- Thomas: diagnóstico y administración de redes; aprendizaje mediante búsqueda de información y colaboración, con automatización como área por fortalecer.
+- Maikol: Linux, redes, seguridad y automatización; análisis de configuraciones, reglas y validación consistente de resultados.
+- Emilio: infraestructura, soporte y gestión; interfaz, documentación, integración y trazabilidad de las evidencias.
+
+Fuentes primarias por integrante: diarios personales 1.2 de Fase 1 y 2.1 de Fase 2. Se contrastaron las autoevaluaciones iniciales 1.1 y los diarios 3.1 posteriores para verificar coherencia; estos últimos no se utilizaron para atribuir logros técnicos a Fase 2. La participación en presentaciones se consultó como contexto, no como origen de nuevas opiniones personales. El registro detallado de trazabilidad y los respaldos permanecen privados, fuera de Git. Se abrió el Word en Microsoft Word, se verificaron las seis páginas renderizadas y se conservaron preguntas, encabezados, logos y tablas; fuera de la respuesta de intereses y proyecciones no se modificó el contenido del DOCX. No se modificaron las autoevaluaciones ni los diarios fuente.
 
 ## Topología y evidencias técnicas
 
@@ -79,7 +88,7 @@ Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados po
 
 1. Thomas, Maikol y Emilio: completar y aprobar sus autoevaluaciones 1.3.
 2. Thomas: completar y aprobar la 2.2; revisar datos sin completar en sus documentos aportados.
-3. Thomas, Maikol y Emilio: aportar reflexiones profesionales para el informe 2.6 y aprobar el documento grupal.
+3. Informe 2.6: apartado de reflexiones COMPLETADO CON BASE DOCUMENTAL; no se requiere volver a redactar las ideas ya recuperadas. No se atribuye aprobación personal nueva ni recepción en AVA.
 4. Maikol: cerrar los campos de revisión en diario y autoevaluación 3.1/3.2.
 5. Thomas: cerrar registro 3.2 y revisar marcas de tiempo e inglés según el video real y la guía aplicable.
 6. Emilio: revisar la selección favorable de tiempo en 3.2, conservada desde su PDF.
@@ -175,7 +184,7 @@ Rama documental indicada arriba; commits específicos para documentos y para evi
 | [1.5_Grupo1_DefinicionProyecto_APT_Fase1.docx](../Fase-1/Grupales/1.5_Grupo1_DefinicionProyecto_APT_Fase1.docx) | convertido desde PDF |
 | [Henriquez_Thomas_2.2_APT122_AutoevaluacionAvanceFase2.docx](../Fase-2/Individuales/Thomas-Henriquez/Henriquez_Thomas_2.2_APT122_AutoevaluacionAvanceFase2.docx) | preparado sin valoración personal |
 | [Mamani_Maikol_2.2_APT122_AutoevaluacionAvanceFase2.docx](../Fase-2/Individuales/Maikol-Mamani/Mamani_Maikol_2.2_APT122_AutoevaluacionAvanceFase2.docx) | convertido desde PDF |
-| [2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx](../Fase-2/Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) | informe completado con preguntas originales; revisión de autores pendiente |
+| [2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx](../Fase-2/Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) | informe completamente redactado; cuatro reflexiones completadas con base documental |
 | [Cortes_Emilio_3.1_APT122_DiarioReflexionFase3.docx](../Fase-3/Individuales/Emilio-Cortes/Cortes_Emilio_3.1_APT122_DiarioReflexionFase3.docx) | convertido desde PDF del autor |
 | [Cortes_Emilio_3.2_APT122_AutoevaluacionFase3.docx](../Fase-3/Individuales/Emilio-Cortes/Cortes_Emilio_3.2_APT122_AutoevaluacionFase3.docx) | convertido desde PDF del autor |
 
@@ -221,7 +230,7 @@ Rama documental indicada arriba; commits específicos para documentos y para evi
 | [Henriquez_Thomas_1.2_APT122_DiarioReflexionFase1.docx](../Fase-1/Individuales/Thomas-Henriquez/Henriquez_Thomas_1.2_APT122_DiarioReflexionFase1.docx) | 4 |
 | [Henriquez_Thomas_1.3_APT122_AutoevaluacionFase1.docx](../Fase-1/Individuales/Thomas-Henriquez/Henriquez_Thomas_1.3_APT122_AutoevaluacionFase1.docx) | 9 |
 | [2.1_Grupo1_DiarioReflexionFase2.docx](../Fase-2/Grupales/2.1_Grupo1_DiarioReflexionFase2.docx) | 2 |
-| [2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx](../Fase-2/Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) | 5 |
+| [2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx](../Fase-2/Grupales/2.6_GuiaEstudiante_Fase2_InformeFinalProyectoAPT.docx) | 6 |
 | [Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx](../Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.1_APT122_DiarioReflexionFase2.docx) | 3 |
 | [Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx](../Fase-2/Individuales/Axl-Urrutia/Urrutia_Axl_2.2_APT122_AutoevaluacionAvanceFase2.docx) | 8 |
 | [Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx](../Fase-2/Individuales/Emilio-Cortes/Cortes_Emilio_2.1_APT122_DiarioReflexionFase2.docx) | 3 |
