@@ -7,11 +7,11 @@ Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del v
 | Entregable | Ubicación | Estado real |
 |---|---|---|
 | Informe grupal 3.3 | [Cierre técnico](Grupales/3.3_NetAudit_Informe_Cierre_Fase3.docx) | Preparado y revisado documentalmente; registra límites y pendientes académicos. |
-| Presentación final | [PPTX](Presentacion/NetAudit_Defensa_Final_Comision_2026.pptx) · [PDF](Presentacion/NetAudit_Defensa_Final_Comision_2026.pdf) | Versión final existente de once diapositivas, conservada sin modificar. |
+| Presentación final | [PPTX](Presentacion/NetAudit_Defensa_Final_Comision_2026.pptx) · [PDF](Presentacion/NetAudit_Defensa_Final_Comision_2026.pdf) | Defensa actualizada a diez diapositivas: retirada la sección de validación; conclusiones renumeradas a 10. |
 | Video grupal | [Grabación en Drive](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing) | 12:06,77; excede diez minutos. El equipo decidió conservarlo; no consta excepción docente. MP4 fuera de Git por tamaño; Drive es el enlace oficial elegido por el equipo. Permisos de lectura y ausencia de edición no comprobados en esta revisión. |
 | Tabla de segmentos | [Tramos observados](Grupales/Revision_Entrega_Fase3.md#tramos-observados) | Derivados de los subtítulos definitivos; pausas sin asignación de hablante. |
 | Transcripción VTT | [VTT definitivo](Grupales/3.2_Transcripcion_Grupo1.vtt) | 187 subtítulos; correcciones confirmadas, participantes identificados y formato comprobado con FFmpeg. |
-| PDF específico para el video | [PDF con tabla de tramos](Grupales/3.2_Presentacion_Grupo1.pdf) | 12 páginas: tabla de segmentos reales y las once diapositivas que aparecen en la grabación. PDF de defensa intacto; el exceso de duración se registra expresamente. |
+| PDF específico para el video | [PDF con tabla de tramos](Grupales/3.2_Presentacion_Grupo1.pdf) | 12 páginas: tabla de segmentos reales y las once diapositivas que aparecen en la grabación. PDF específico del video intacto; la defensa actualizada tiene diez diapositivas. El exceso de duración del video se registra expresamente. |
 
 ## Documentos individuales
 
