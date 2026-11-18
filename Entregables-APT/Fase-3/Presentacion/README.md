@@ -1,6 +1,6 @@
 # Presentación de defensa de NetAudit
 
-La versión publicada consta de once diapositivas: [PowerPoint](NetAudit_Defensa_Final_Comision_2026.pptx) y [PDF](NetAudit_Defensa_Final_Comision_2026.pdf). No se encontró una versión posterior en Desktop/APT y se conservan ambos archivos sin modificar.
+La defensa actualizada consta de diez diapositivas: [PowerPoint](NetAudit_Defensa_Final_Comision_2026.pptx) y [PDF](NetAudit_Defensa_Final_Comision_2026.pdf). Actualización del 18/11/2026: se retiró la antigua diapositiva 10 de validación; las conclusiones pasan a ser la número 10. PowerPoint y PDF corresponden a la misma versión. El video y su PDF específico conservan sus once diapositivas originales.
 
 La [grabación del grupo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing) dura 12:06,77. No cumple el límite de diez minutos sin una excepción docente. No se recortó ni se incorporó el MP4 a Git.
 
