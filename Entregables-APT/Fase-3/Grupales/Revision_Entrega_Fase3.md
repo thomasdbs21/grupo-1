@@ -1,12 +1,14 @@
 # Revisión de la entrega de Fase 3
 
-Corte documental: 16 de noviembre de 2026. Se conservan el software, la presentación de defensa de once diapositivas y el video original. No se declara una entrega recibida en AVA.
+[Resultados y estado vigente](../../Regularizacion/AUDITORIA_FINAL_ENTREGABLES_2026-11-19.md#actualización-de-cierre-de-las-autoevaluaciones). Los estados de las autoevaluaciones de esta revisión describen el corte audiovisual anterior al cierre documental. Las cuatro 3.2 ya están completas y el inglés figura como N/A.
+
+Corte audiovisual: 16 de noviembre de 2026. La grabación y su PDF conservan las once diapositivas registradas. La defensa vigente tiene diez diapositivas. Recepción formal en AVA sin acreditar.
 
 ## Video disponible
 
 [Grabación original del grupo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing): 156.187.296 bytes y **12:06,77**. El equipo decidió conservar el original sin recortar ni volver a grabar, aceptando el exceso de **2:06,77** sobre los diez minutos. Esta decisión no equivale a una autorización docente ni a cumplimiento del límite.
 
-Google Drive es el único enlace oficial decidido por el equipo; no se solicita otra subida ni se modifica el video. La consulta actual mediante el conector confirma identidad, tipo MP4 y tamaño del archivo, pero no devuelve la lista de permisos; no se certifican lectura para evaluadores ni ausencia de edición. El antecedente anterior de edición por enlace no queda descartado. No se cambiaron permisos. El video permanece fuera de Git por tamaño. La elección de Drive difiere de la indicación de OneDrive Duoc de la guía; no se atribuye aprobación docente de esa diferencia.
+Google Drive es el único enlace oficial decidido por el equipo; no se solicita otra subida ni se modifica el video. La consulta actual mediante el conector confirma identidad, tipo MP4 y tamaño del archivo, pero no devuelve la lista de permisos; no se certifican lectura para evaluadores ni ausencia de edición. El antecedente anterior de edición por enlace no queda descartado. No se cambiaron permisos. El video permanece fuera de Git por tamaño. Axl Urrutia confirmó que la profesora aceptó Google Drive para el video y que los antecedentes pendientes se compartieron en el mismo chat de las observaciones. La confirmación se refiere al canal. La excepción de duración y la recepción en AVA se verifican por separado.
 
 ## Tramos observados
 

@@ -1,5 +1,7 @@
 # Informe de regularización APT · Grupo 1
 
+[Resultados y estado vigente](AUDITORIA_FINAL_ENTREGABLES_2026-11-19.md#actualización-de-cierre-de-las-autoevaluaciones). Este registro conserva las observaciones y controles de la etapa previa. Los pendientes sobre casillas, anexos e inglés de las autoevaluaciones se actualizaron en el cierre enlazado.
+
 Fecha: 17 de noviembre de 2026. Proyecto NetAudit, Ingeniería en Conectividad y Redes, Duoc UC.
 
 Base sincronizada antes de editar: `5aa551c453a245b66b78ea51326e8dcd54898519`. Rama: `docs/regularizacion-apt-grupo1`. Se incorporaron las cargas personales recientes existentes en main antes de preparar las conversiones. El precheck real estaba limpio; no existía una diferencia local de rule_results.py que descartar o publicar.
@@ -12,7 +14,7 @@ Nombre académico confirmado por el usuario: **Axl Jesús Urrutia Maldonado**. S
 
 ## Archivos que faltaban y fueron preparados
 
-- Cuatro autoevaluaciones 1.3 de Fase 1. Axl tiene una propuesta fundamentada; Thomas, Maikol y Emilio tienen la rúbrica sin niveles seleccionados y requieren revisión de sus autores.
+- Cuatro autoevaluaciones 1.3 de Fase 1. Axl tiene una propuesta fundamentada. Thomas y Emilio conservan la plantilla sin valorar. Maikol incorporó justificaciones 1–12 y N/A en 13, con los niveles 1–12 aún sin selección.
 - Autoevaluación 2.2 de Thomas: plantilla oficial con referencias grupales, sin seleccionar sus niveles.
 - Informe grupal 2.6: todas las preguntas y subpreguntas conservadas y respondidas con evidencia disponible; cuatro reflexiones profesionales completadas con base documental, mediante síntesis de sus diarios existentes.
 
@@ -74,7 +76,7 @@ PPTX y PDF de defensa, Avances-Tecnicos, informe 3.3, PDF del video y VTT perman
 
 Video local: `3.2_Video_Grupo1.mp4`, 156.187.296 bytes, **12:06,77**. No se recortó ni recomprimió. [Enlace oficial elegido por el equipo](https://drive.google.com/file/d/13xljM3MTVf63o-4bAlqgR-aTDXeMuSMA/view?usp=sharing).
 
-Drive mantiene el título Presentacion fase 3 APT.mp4: el intento de renombrado fue rechazado por permisos de edición insuficientes. La metadata no permitió comprobar reproducción anónima ni ausencia de edición. El enlace no cambió. La aceptación de Drive en lugar de OneDrive y del exceso de duración requiere criterio docente; no se inventó una excepción. El MP4 permanece fuera de Git.
+Drive mantiene el título Presentacion fase 3 APT.mp4: el intento de renombrado fue rechazado por permisos de edición insuficientes. La metadata no permitió comprobar reproducción anónima ni ausencia de edición. El enlace no cambió. Actualización del 19/11: Axl Urrutia confirmó que la profesora aceptó la entrega del video por Google Drive y que los antecedentes pendientes se compartieron en el mismo chat. Sigue sin acreditarse una excepción de duración o recepción formal en AVA. El MP4 permanece fuera de Git.
 
 ## Revisión de formato y conservación
 
@@ -89,12 +91,12 @@ Las cajas vacías y etiquetas de borrador que pertenecen a archivos aportados po
 1. Thomas, Maikol y Emilio: completar y aprobar sus autoevaluaciones 1.3.
 2. Thomas: completar y aprobar la 2.2; revisar datos sin completar en sus documentos aportados.
 3. Informe 2.6: apartado de reflexiones COMPLETADO CON BASE DOCUMENTAL; no se requiere volver a redactar las ideas ya recuperadas. No se atribuye aprobación personal nueva ni recepción en AVA.
-4. Maikol: cerrar los campos de revisión en diario y autoevaluación 3.1/3.2.
+4. Maikol: el diario 3.1 vigente está respondido. En 3.2 debe consignar niveles 1–5 y cerrar el rótulo de borrador tras validar el anexo.
 5. Thomas: cerrar registro 3.2 y revisar marcas de tiempo e inglés según el video real y la guía aplicable.
 6. Emilio: revisar la selección favorable de tiempo en 3.2, conservada desde su PDF.
 7. Axl y docente: revisar la propuesta personal CL de los indicadores 9–12 y sus respaldos identificados; la docente debe confirmar la solicitud N/A de inglés para Fase 1. No consta aprobación docente.
 8. Propietario de Drive: renombrar, si se desea, sin cambiar el enlace y comprobar que la profesora puede reproducir el video.
-9. Docente: resolver aceptación de plataforma y exceso de duración; no se simula cumplimiento de diez minutos.
+9. Docente: resolver si acepta el exceso de duración y el reparto de tiempos. El canal Google Drive ya fue aceptado según Axl Urrutia.
 10. Integrantes: efectuar envíos AVA y conservar comprobantes. Esta regularización no acredita recepción.
 
 ## Publicación

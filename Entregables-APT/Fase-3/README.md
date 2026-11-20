@@ -1,6 +1,6 @@
 # Fase 3 de NetAudit
 
-Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del video están verificados. Los documentos de Axl incorporan su revisión adjunta; los de los demás integrantes permanecen a cargo de sus autores. **Preparar o publicar archivos no acredita su recepción en AVA.** [Revisión detallada y tabla de tramos](Grupales/Revision_Entrega_Fase3.md).
+Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del video están verificados. Los documentos de Axl incorporan su revisión adjunta; las cuatro autoevaluaciones 3.2 tienen niveles y resultados comprobados. **Preparar o publicar archivos no acredita su recepción en AVA.** [Revisión detallada y tabla de tramos](Grupales/Revision_Entrega_Fase3.md).
 
 ## Material grupal
 
@@ -17,16 +17,16 @@ Revisión de cierre al 16 de noviembre de 2026. El VTT definitivo y el PDF del v
 
 | Integrante | Diario 3.1 | Autoevaluación 3.2 | Estado |
 |---|---|---|---|
-| Axl Urrutia | [Diario](Individuales/Axl-Urrutia/Urrutia_Axl_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Axl-Urrutia/Urrutia_Axl_3.2_APT122_AutoevaluacionFase3.docx) | Diario revisado con todas sus subpreguntas y antecedentes de Fase 1. Autoevaluación personal actualizada desde el Word de Axl: CL, CL, LI, CL y CL; inglés sin marcar. Se mantienen las observaciones de ratificación, especialmente sobre metodología e indicador 4.1, sin atribuir aprobación docente. |
-| Thomas Henriquez | [Diario](Individuales/Thomas-Henriquez/Henriquez_Thomas_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Thomas-Henriquez/Henriquez_Thomas_3.2_APT122_AutoevaluacionFase3.docx) | Versiones aportadas al repositorio conservadas y renombradas; no se seleccionan niveles ni se atribuye aprobación personal nueva. |
-| Maikol Mamani | [Diario](Individuales/Maikol-Mamani/Mamani_Maikol_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Maikol-Mamani/Mamani_Maikol_3.2_APT122_AutoevaluacionFase3.docx) | Contenido y marcas aportados por su autor conservados; versiones editables con nomenclatura regularizada. La aprobación personal sigue a cargo del integrante. |
-| Emilio Cortes | [Diario](Individuales/Emilio-Cortes/Cortes_Emilio_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Emilio-Cortes/Cortes_Emilio_3.2_APT122_AutoevaluacionFase3.docx) | Contenido y marcas aportados por su autor conservados; versiones editables con nomenclatura regularizada. La aprobación personal sigue a cargo del integrante. |
+| Axl Urrutia | [Diario](Individuales/Axl-Urrutia/Urrutia_Axl_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Axl-Urrutia/Urrutia_Axl_3.2_APT122_AutoevaluacionFase3.docx) | Diario revisado con todas sus subpreguntas y antecedentes de Fase 1. Autoevaluación personal actualizada desde el Word de Axl: CL, CL, LI, CL y CL; inglés N/A. Se mantienen las observaciones de ratificación, especialmente sobre metodología e indicador 4.1, sin atribuir aprobación docente. |
+| Thomas Henriquez | [Diario](Individuales/Thomas-Henriquez/Henriquez_Thomas_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Thomas-Henriquez/Henriquez_Thomas_3.2_APT122_AutoevaluacionFase3.docx) | Autoevaluación 3.2 con L, L, LI, L, L. Inglés N/A. Resultado 51/90 (56,67 %). |
+| Maikol Mamani | [Diario](Individuales/Maikol-Mamani/Mamani_Maikol_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Maikol-Mamani/Mamani_Maikol_3.2_APT122_AutoevaluacionFase3.docx) | Autoevaluación 3.2 con L, L, LI, L, L. Inglés N/A. Resultado 51/90 (56,67 %). |
+| Emilio Cortes | [Diario](Individuales/Emilio-Cortes/Cortes_Emilio_3.1_APT122_DiarioReflexionFase3.docx) | [Autoevaluación](Individuales/Emilio-Cortes/Cortes_Emilio_3.2_APT122_AutoevaluacionFase3.docx) | Autoevaluación 3.2 con L, L, LI, L, L. Inglés N/A. Resultado 51/90 (56,67 %). |
 
-Se preservan las plantillas y rúbricas. Esta regularización conserva las respuestas y marcas recibidas, añade conversiones editables y corrige nombres. No se seleccionan nuevas valoraciones de los demás integrantes. La guía complementaria de Redes considera el inglés opcional y no evaluado; la fila original se conserva sin marcar y no se calcula una nota final reponderada.
+Las rúbricas se conservan. Los cuatro Word 3.2 incluyen resultados ponderados sobre los cinco indicadores aplicables, con inglés N/A.
 
 ## Referencias y materiales anteriores
 
-Canales: diario individual 3.1 en AVA; autoevaluación 3.2, VTT y PDF grupales en GitHub. Aunque la guía complementaria menciona OneDrive Duoc para videos grandes, el equipo decidió conservar exclusivamente el enlace oficial de Google Drive indicado arriba. No se genera otro vínculo ni se duplica el MP4 en Git. No consta aprobación docente de esta diferencia de plataforma ni recepción en AVA.
+Canales: diario individual 3.1 en AVA; autoevaluación 3.2, VTT y PDF grupales en GitHub. Según confirmó Axl Urrutia, la profesora aceptó Google Drive como canal para el video y los antecedentes pendientes se compartieron en el mismo chat de las observaciones. La excepción por duración y la recepción formal en AVA siguen sin acreditarse.
 
 - [Referencias oficiales y guía complementaria](Referencias/), conservadas sin editar.
 - [Avance técnico del 10 de noviembre](Avances-Tecnicos/avance-10-noviembre.md), [PPTX](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pptx) y [PDF](Avances-Tecnicos/NetAudit_Avance_Fase3_10_Noviembre.pdf), sin cambios.
@@ -36,6 +36,6 @@ Se mantienen como hitos el 17 de noviembre para video y documentos, el ensayo de
 
 ## Regularización del 17 de noviembre
 
-Se conservaron byte por byte el diario corregido y la autoevaluación favorable de Axl, ahora con prefijo Urrutia_Axl. Se incorporaron las cargas recientes de compañeros desde main. Emilio dispone de conversión editable de sus dos PDF, conservando cinco selecciones CL mediante resaltado. La marca sobre tiempo requiere revisión frente a 12:06,77. Thomas conserva selecciones de tiempo e inglés para ratificar; Maikol mantiene campos de revisión personal. No se inventan aprobaciones.
+[Resultados y estado vigente](../Regularizacion/AUDITORIA_FINAL_ENTREGABLES_2026-11-19.md#actualización-de-cierre-de-las-autoevaluaciones). Los diarios se conservan. El cierre añade valoraciones y respaldos en las 3.2 de Thomas, Maikol y Emilio. Axl conserva sus niveles aplicables.
 
 [Matriz por observación](../Regularizacion/MATRIZ_CORRECCIONES_APT.md) · [Informe de regularización](../Regularizacion/INFORME_REGULARIZACION_APT_GRUPO1.md).
