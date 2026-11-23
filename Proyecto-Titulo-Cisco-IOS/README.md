@@ -88,6 +88,8 @@ El análisis integral combina **24 reglas deterministas: 17 de configuración y 
 
 Las condiciones, recomendaciones, referencias y límites se encuentran en el [catálogo de reglas](docs/catalogo-reglas.md) y el [registro de ampliación del catálogo integral](docs/registro-controles-adicionales-evaluacion-2.md). Las reglas utilizan lógica Python y metadatos YAML; la IA no sustituye su evaluación.
 
+[Fundamentos técnicos y fuentes oficiales de las 24 reglas](docs/fundamentos-tecnicos-reglas.md)
+
 [Demostración y resultados de Fase 3](docs/avance-fase3.md) · [Recorrido del código para la defensa](docs/guia-codigo-defensa.md).
 
 ### Comandos autorizados
